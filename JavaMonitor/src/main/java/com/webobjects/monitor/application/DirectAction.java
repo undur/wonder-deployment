@@ -31,95 +31,97 @@ import er.extensions.appserver.ERXResponse;
 
 public class DirectAction extends WODirectAction {
 
-    public DirectAction(WORequest aRequest) {
-        super(aRequest);
-    }
+	public DirectAction( WORequest aRequest ) {
+		super( aRequest );
+	}
 
-    @Override
-    public WOActionResults defaultAction() {
-    	if (request().stringFormValueForKey("pw") != null ) {
-    		Main loginPage = (Main) pageWithName(Main.class.getName());
-    		loginPage.setPassword(request().stringFormValueForKey("pw"));
-    		return loginPage.loginClicked();
-    	}
-    	return super.defaultAction();
-    }
-    
-    public WOComponent MainAction() {
-        return pageWithName("Main");
-    }
+	@Override
+	public WOActionResults defaultAction() {
+		if( request().stringFormValueForKey( "pw" ) != null ) {
+			Main loginPage = (Main)pageWithName( Main.class.getName() );
+			loginPage.setPassword( request().stringFormValueForKey( "pw" ) );
+			return loginPage.loginClicked();
+		}
+		return super.defaultAction();
+	}
 
-    protected MSiteConfig siteConfig() {
-        return WOTaskdHandler.siteConfig();
-    }
-    
-    private Object nonNull(Object value) {
-        if(value == null) {
-            return "";
-        }
-        return value;
-    }
+	public WOComponent MainAction() {
+		return pageWithName( "Main" );
+	}
 
-    private NSDictionary historyEntry(MApplication app) {
-        NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
-        result.setObjectForKey(app.name(), "applicationName");
-        NSArray<MInstance> allInstances = app.instanceArray();
-        result.setObjectForKey(Integer.valueOf(allInstances.count()), "configuredInstances");
-        
-        int runningInstances = 0;
-        int refusingInstances = 0;
-        NSMutableArray instances = new NSMutableArray();
-        for (MInstance instance : allInstances) {
-            if (instance.isRunning_M()) {
-                runningInstances++;
-                instances.addObject(instance);
-            }
-            if (instance.isRefusingNewSessions()) {
-                refusingInstances++;
-            }
-        }
-        result.setObjectForKey(Integer.valueOf(runningInstances), "runningInstances");
-        result.setObjectForKey(Integer.valueOf(refusingInstances), "refusingInstances");
-        
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@sum.activeSessionsValue")), "sumSessions");
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@max.activeSessionsValue")), "maxSessions");
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@avg.activeSessionsValue")), "avgSessions");
-        
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@sum.transactionsValue")), "sumTransactions");
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@max.transactionsValue")), "maxTransactions");
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@avg.transactionsValue")), "avgTransactions");
-        
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@max.avgTransactionTimeValue")), "maxAvgTransactionTime");
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@avg.avgTransactionTimeValue")), "avgAvgTransactionTime");
+	protected MSiteConfig siteConfig() {
+		return WOTaskdHandler.siteConfig();
+	}
 
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@max.avgIdleTimeValue")), "maxAvgIdleTime");
-        result.setObjectForKey(nonNull(app.instanceArray().valueForKeyPath("@avg.avgIdleTimeValue")), "avgAvgIdleTime");
-          
-        return result;
-    }
-    
-    public WOResponse statisticsAction() {
-        ERXResponse response = new ERXResponse();
-        String pw = context().request().stringFormValueForKey("pw");
-        if(siteConfig().compareStringWithPassword(pw)) {
-            WOTaskdHandler handler = new WOTaskdHandler(new ErrorCollector() {
+	private Object nonNull( Object value ) {
+		if( value == null ) {
+			return "";
+		}
+		return value;
+	}
 
-                public void addObjectsFromArrayIfAbsentToErrorMessageArray(NSArray<String> aErrors) {
-                    
-                }});
-            handler.startReading();
-            try {
-                NSMutableArray stats = new NSMutableArray();
-                for (MApplication app : siteConfig().applicationArray()) {
-                    handler.getInstanceStatusForHosts(app.hostArray());
-                    NSDictionary appStats = historyEntry(app);
-                    stats.addObject(appStats);
-                }
-                response.appendContentString(NSPropertyListSerialization.stringFromPropertyList(stats));
-            } finally {
-                handler.endReading();
-            }
-        }
-        return response;
-    }
+	private NSDictionary historyEntry( MApplication app ) {
+		NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
+		result.setObjectForKey( app.name(), "applicationName" );
+		NSArray<MInstance> allInstances = app.instanceArray();
+		result.setObjectForKey( Integer.valueOf( allInstances.count() ), "configuredInstances" );
+
+		int runningInstances = 0;
+		int refusingInstances = 0;
+		NSMutableArray instances = new NSMutableArray();
+		for( MInstance instance : allInstances ) {
+			if( instance.isRunning_M() ) {
+				runningInstances++;
+				instances.addObject( instance );
+			}
+			if( instance.isRefusingNewSessions() ) {
+				refusingInstances++;
+			}
+		}
+		result.setObjectForKey( Integer.valueOf( runningInstances ), "runningInstances" );
+		result.setObjectForKey( Integer.valueOf( refusingInstances ), "refusingInstances" );
+
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@sum.activeSessionsValue" ) ), "sumSessions" );
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.activeSessionsValue" ) ), "maxSessions" );
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.activeSessionsValue" ) ), "avgSessions" );
+
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@sum.transactionsValue" ) ), "sumTransactions" );
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.transactionsValue" ) ), "maxTransactions" );
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.transactionsValue" ) ), "avgTransactions" );
+
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.avgTransactionTimeValue" ) ), "maxAvgTransactionTime" );
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.avgTransactionTimeValue" ) ), "avgAvgTransactionTime" );
+
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.avgIdleTimeValue" ) ), "maxAvgIdleTime" );
+		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.avgIdleTimeValue" ) ), "avgAvgIdleTime" );
+
+		return result;
+	}
+
+	public WOResponse statisticsAction() {
+		ERXResponse response = new ERXResponse();
+		String pw = context().request().stringFormValueForKey( "pw" );
+		if( siteConfig().compareStringWithPassword( pw ) ) {
+			WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
+
+				public void addObjectsFromArrayIfAbsentToErrorMessageArray( NSArray<String> aErrors ) {
+
+				}
+			} );
+			handler.startReading();
+			try {
+				NSMutableArray stats = new NSMutableArray();
+				for( MApplication app : siteConfig().applicationArray() ) {
+					handler.getInstanceStatusForHosts( app.hostArray() );
+					NSDictionary appStats = historyEntry( app );
+					stats.addObject( appStats );
+				}
+				response.appendContentString( NSPropertyListSerialization.stringFromPropertyList( stats ) );
+			}
+			finally {
+				handler.endReading();
+			}
+		}
+		return response;
+	}
 }

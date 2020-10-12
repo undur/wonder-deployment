@@ -8,17 +8,17 @@ import er.extensions.eof.ERXQ;
 import er.rest.ERXRestContext;
 
 public class MApplicationRestDelegate extends JavaMonitorRestDelegate {
-    public Object primaryKeyForObject(Object obj, ERXRestContext context) {
-        NSArray<MApplication> objects = ERXQ.filtered(siteConfig().applicationArray(), ERXQ.is("name", obj));
-        return objects.size() == 0 ? null : objects.objectAtIndex(0);
-    }
+	public Object primaryKeyForObject( Object obj, ERXRestContext context ) {
+		NSArray<MApplication> objects = ERXQ.filtered( siteConfig().applicationArray(), ERXQ.is( "name", obj ) );
+		return objects.size() == 0 ? null : objects.objectAtIndex( 0 );
+	}
 
-    public Object createObjectOfEntityWithID(EOClassDescription entity, Object id, ERXRestContext context) {
-        return new MApplication((String)id, siteConfig());
-    }
+	public Object createObjectOfEntityWithID( EOClassDescription entity, Object id, ERXRestContext context ) {
+		return new MApplication( (String)id, siteConfig() );
+	}
 
-    public Object objectOfEntityWithID(EOClassDescription entity, Object id, ERXRestContext context) {
-        return (siteConfig().applicationWithName((String)id));
-    }
+	public Object objectOfEntityWithID( EOClassDescription entity, Object id, ERXRestContext context ) {
+		return (siteConfig().applicationWithName( (String)id ));
+	}
 
 }

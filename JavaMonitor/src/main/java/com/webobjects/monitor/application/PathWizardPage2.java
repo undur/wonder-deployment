@@ -20,69 +20,69 @@ import com.webobjects.monitor._private.MHost;
 import er.extensions.foundation.ERXStringUtilities;
 
 public class PathWizardPage2 extends MonitorComponent {
-    /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = 4910748680027936695L;
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 4910748680027936695L;
 
-    public MHost host;
+	public MHost host;
 
-    public String callbackKeypath;
+	public String callbackKeypath;
 
-    public String callbackExpand;
+	public String callbackExpand;
 
-    public WOComponent callbackPage;
+	public WOComponent callbackPage;
 
-    public String aPath = null;
+	public String aPath = null;
 
-    public boolean showFiles = true;
+	public boolean showFiles = true;
 
-    public PathWizardPage2(WOContext aWocontext) {
-        super(aWocontext);
-    }
+	public PathWizardPage2( WOContext aWocontext ) {
+		super( aWocontext );
+	}
 
-    public void setHost(MHost aHost) {
-        host = aHost;
-    }
+	public void setHost( MHost aHost ) {
+		host = aHost;
+	}
 
-    public void setCallbackKeypath(String aValue) {
-        callbackKeypath = aValue;
-        if (myApplication() != null) {
-            String key = ERXStringUtilities.lastPropertyKeyInKeyPath(callbackKeypath);
-            aPath = (String) myApplication().valueForKey(key);
-         }
-    }
+	public void setCallbackKeypath( String aValue ) {
+		callbackKeypath = aValue;
+		if( myApplication() != null ) {
+			String key = ERXStringUtilities.lastPropertyKeyInKeyPath( callbackKeypath );
+			aPath = (String)myApplication().valueForKey( key );
+		}
+	}
 
-    public void setCallbackExpand(String aValue) {
-        callbackExpand = aValue;
-    }
+	public void setCallbackExpand( String aValue ) {
+		callbackExpand = aValue;
+	}
 
-    public void setCallbackPage(WOComponent aValue) {
-        callbackPage = aValue;
-    }
+	public void setCallbackPage( WOComponent aValue ) {
+		callbackPage = aValue;
+	}
 
-    public void setShowFiles(boolean aValue) {
-        showFiles = aValue;
-    }
+	public void setShowFiles( boolean aValue ) {
+		showFiles = aValue;
+	}
 
-    public WOComponent updateClicked() {
-        return this;
-    }
+	public WOComponent updateClicked() {
+		return this;
+	}
 
-    public WOComponent selectionClicked() {
-        // May have to do explicit update here!
-        WOComponent aPage = callbackPage;
-        aPage.takeValueForKeyPath(aPath, callbackKeypath);
+	public WOComponent selectionClicked() {
+		// May have to do explicit update here!
+		WOComponent aPage = callbackPage;
+		aPage.takeValueForKeyPath( aPath, callbackKeypath );
 
-        if (callbackExpand != null) {
-            aPage.takeValueForKey(Boolean.TRUE, callbackExpand);
-        }
-        return aPage;
-    }
+		if( callbackExpand != null ) {
+			aPage.takeValueForKey( Boolean.TRUE, callbackExpand );
+		}
+		return aPage;
+	}
 
-    public static PathWizardPage2 create(WOContext context, MApplication application) {
-        PathWizardPage2 aPage = (PathWizardPage2) context.page().pageWithName(PathWizardPage2.class.getName());
-        aPage.setMyApplication(application);
-        return aPage;
-    }
+	public static PathWizardPage2 create( WOContext context, MApplication application ) {
+		PathWizardPage2 aPage = (PathWizardPage2)context.page().pageWithName( PathWizardPage2.class.getName() );
+		aPage.setMyApplication( application );
+		return aPage;
+	}
 }

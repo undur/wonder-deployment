@@ -34,106 +34,111 @@ public class RemoteBrowseClient extends MonitorComponent {
 
 	static private byte[] evilHack = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>".getBytes();
 
-	public RemoteBrowseClient(WOContext aWocontext) {
-		super(aWocontext);
+	public RemoteBrowseClient( WOContext aWocontext ) {
+		super( aWocontext );
 	}
 
-	static public NSDictionary _getFileListOutOfResponse(WOResponse aResponse, String thePath) throws MonitorException {
+	static public NSDictionary _getFileListOutOfResponse( WOResponse aResponse, String thePath ) throws MonitorException {
 		NSData responseContent = aResponse.content();
 		NSArray anArray = NSArray.EmptyArray;
-		if (responseContent != null) {
+		if( responseContent != null ) {
 			byte[] responseContentBytes = responseContent.bytes();
-			String responseContentString = new String(responseContentBytes);
+			String responseContentString = new String( responseContentBytes );
 
-			if (responseContentString.startsWith("ERROR")) {
-				throw new MonitorException("Path " + thePath + " does not exist");
-			} 
+			if( responseContentString.startsWith( "ERROR" ) ) {
+				throw new MonitorException( "Path " + thePath + " does not exist" );
+			}
 
 			_JavaMonitorDecoder aDecoder = new _JavaMonitorDecoder();
 			try {
 				byte[] evilHackCombined = new byte[responseContentBytes.length + evilHack.length];
 				// System.arraycopy(src, src_pos, dst, dst_pos, length);
-				System.arraycopy(evilHack, 0, evilHackCombined, 0, evilHack.length);
-				System.arraycopy(responseContentBytes, 0, evilHackCombined, evilHack.length,
-						responseContentBytes.length);
-				anArray = (NSArray) aDecoder.decodeRootObject(new NSData(evilHackCombined));
-			} catch (WOXMLException wxe) {
-				NSLog.err.appendln("RemoteBrowseClient _getFileListOutOfResponse Error decoding response: "
-						+ responseContentString);
-				throw new MonitorException("Host returned bad response for path " + thePath);
+				System.arraycopy( evilHack, 0, evilHackCombined, 0, evilHack.length );
+				System.arraycopy( responseContentBytes, 0, evilHackCombined, evilHack.length,
+						responseContentBytes.length );
+				anArray = (NSArray)aDecoder.decodeRootObject( new NSData( evilHackCombined ) );
+			}
+			catch( WOXMLException wxe ) {
+				NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding response: "
+						+ responseContentString );
+				throw new MonitorException( "Host returned bad response for path " + thePath );
 			}
 
-		} else {
-			NSLog.err.appendln("RemoteBrowseClient _getFileListOutOfResponse Error decoding null response");
-			throw new MonitorException("Host returned null response for path " + thePath);
+		}
+		else {
+			NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding null response" );
+			throw new MonitorException( "Host returned null response for path " + thePath );
 		}
 
-		String isRoots = aResponse.headerForKey("isRoots");
-		String filepath = aResponse.headerForKey("filepath");
+		String isRoots = aResponse.headerForKey( "isRoots" );
+		String filepath = aResponse.headerForKey( "filepath" );
 
 		NSMutableDictionary aDict = new NSMutableDictionary();
-		aDict.takeValueForKey(isRoots, "isRoots");
-		aDict.takeValueForKey(filepath, "filepath");
-		aDict.takeValueForKey(anArray, "fileArray");
+		aDict.takeValueForKey( isRoots, "isRoots" );
+		aDict.takeValueForKey( filepath, "filepath" );
+		aDict.takeValueForKey( anArray, "fileArray" );
 
 		return aDict;
 	}
 
 	private static String getPathString = "/cgi-bin/WebObjects/wotaskd.woa/wa/RemoteBrowse/getPath";
 
-	static public NSDictionary fileListForStartingPathHost(String aString, MHost aHost, boolean showFiles)
-	throws MonitorException {
-		if (NSLog.debugLoggingAllowedForLevelAndGroups(NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment))
-			NSLog.debug.appendln("!@#$!@#$ fileListForStartingPathHost creates a WOHTTPConnection");
+	static public NSDictionary fileListForStartingPathHost( String aString, MHost aHost, boolean showFiles )
+			throws MonitorException {
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+			NSLog.debug.appendln( "!@#$!@#$ fileListForStartingPathHost creates a WOHTTPConnection" );
 		NSDictionary aFileListDictionary = null;
 		try {
-			Application theApplication = (Application) WOApplication.application();
-			WOHTTPConnection anHTTPConnection = new WOHTTPConnection(aHost.name(), theApplication.lifebeatDestinationPort());
+			Application theApplication = (Application)WOApplication.application();
+			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( aHost.name(), theApplication.lifebeatDestinationPort() );
 			@SuppressWarnings("cast")
-			NSMutableDictionary<String, NSMutableArray<String>> aHeadersDict = (NSMutableDictionary<String, NSMutableArray<String>>) WOTaskdHandler.siteConfig().passwordDictionary().mutableClone();
+			NSMutableDictionary<String, NSMutableArray<String>> aHeadersDict = (NSMutableDictionary<String, NSMutableArray<String>>)WOTaskdHandler.siteConfig().passwordDictionary().mutableClone();
 			WORequest aRequest = null;
 			WOResponse aResponse = null;
 			boolean requestSucceeded = false;
-			if (aString != null && aString.length() > 0) {
-				aHeadersDict.setObjectForKey(new NSMutableArray<>(aString), "filepath");
+			if( aString != null && aString.length() > 0 ) {
+				aHeadersDict.setObjectForKey( new NSMutableArray<>( aString ), "filepath" );
 			}
-			if (showFiles) {
-				aHeadersDict.setObjectForKey(new NSMutableArray<>("YES"), "showFiles");
+			if( showFiles ) {
+				aHeadersDict.setObjectForKey( new NSMutableArray<>( "YES" ), "showFiles" );
 			}
 
-			aRequest = new WORequest(MObject._GET, RemoteBrowseClient.getPathString, MObject._HTTP1, aHeadersDict,
-					null, null);
-			anHTTPConnection.setReceiveTimeout(5000);
+			aRequest = new WORequest( MObject._GET, RemoteBrowseClient.getPathString, MObject._HTTP1, aHeadersDict,
+					null, null );
+			anHTTPConnection.setReceiveTimeout( 5000 );
 
-			requestSucceeded = anHTTPConnection.sendRequest(aRequest);
+			requestSucceeded = anHTTPConnection.sendRequest( aRequest );
 
-			if (requestSucceeded) {
+			if( requestSucceeded ) {
 				aResponse = anHTTPConnection.readResponse();
 			}
 
-			if ((aResponse == null) || (!requestSucceeded) || (aResponse.status() != 200)) {
-				throw new MonitorException("Error requesting directory listing for " + aString + " from " + aHost.name());
+			if( (aResponse == null) || (!requestSucceeded) || (aResponse.status() != 200) ) {
+				throw new MonitorException( "Error requesting directory listing for " + aString + " from " + aHost.name() );
 			}
 
 			try {
-				aFileListDictionary = _getFileListOutOfResponse(aResponse, aString);
-			} catch (MonitorException me) {
-				if (NSLog
-						.debugLoggingAllowedForLevelAndGroups(NSLog.DebugLevelCritical, NSLog.DebugGroupDeployment))
-					NSLog.debug.appendln("caught exception: " + me);
+				aFileListDictionary = _getFileListOutOfResponse( aResponse, aString );
+			}
+			catch( MonitorException me ) {
+				if( NSLog
+						.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelCritical, NSLog.DebugGroupDeployment ) )
+					NSLog.debug.appendln( "caught exception: " + me );
 				throw me;
 			}
 
 			aHost.isAvailable = true;
-		} catch (MonitorException me) {
+		}
+		catch( MonitorException me ) {
 			aHost.isAvailable = true;
 			throw me;
-		} catch (Exception localException) {
+		}
+		catch( Exception localException ) {
 			aHost.isAvailable = false;
-			NSLog.err.appendln("Exception requesting directory listing: ");
+			NSLog.err.appendln( "Exception requesting directory listing: " );
 			localException.printStackTrace();
-			throw new MonitorException("Exception requesting directory listing for " + aString + " from "
-					+ aHost.name() + ": " + localException.toString());
+			throw new MonitorException( "Exception requesting directory listing for " + aString + " from "
+					+ aHost.name() + ": " + localException.toString() );
 		}
 		return aFileListDictionary;
 	}

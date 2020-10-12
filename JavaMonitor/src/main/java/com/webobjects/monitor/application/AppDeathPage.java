@@ -19,34 +19,34 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 
 public class AppDeathPage extends MonitorComponent {
-    private static final long serialVersionUID = -2462045617649768062L;
+	private static final long serialVersionUID = -2462045617649768062L;
 
-    public Object aDeath;
+	public Object aDeath;
 
-    public int anIndex;
+	public int anIndex;
 
-    public AppDeathPage(WOContext aWocontext) {
-        super(aWocontext);
-    }
+	public AppDeathPage( WOContext aWocontext ) {
+		super( aWocontext );
+	}
 
-    public WOComponent clearDeathsClicked() {
-        handler().sendClearDeathsToWotaskds(new NSArray<>(myInstance()),
-                new NSArray<>(myInstance().host()));
+	public WOComponent clearDeathsClicked() {
+		handler().sendClearDeathsToWotaskds( new NSArray<>( myInstance() ),
+				new NSArray<>( myInstance().host() ) );
 
-        return AppDetailPage.create(context(), myApplication());
-    }
+		return AppDetailPage.create( context(), myApplication() );
+	}
 
-    public WOComponent returnClicked() {
-        return AppDetailPage.create(context(), myApplication());
-    }
+	public WOComponent returnClicked() {
+		return AppDetailPage.create( context(), myApplication() );
+	}
 
-    public int anIndexPlusOne() {
-        return (anIndex + 1);
-    }
+	public int anIndexPlusOne() {
+		return (anIndex + 1);
+	}
 
-	public static AppDeathPage create(WOContext context, MInstance instance ) {
-		AppDeathPage page = (AppDeathPage) context.page().pageWithName(AppDeathPage.class.getName());
-		page.setMyInstance(instance);
+	public static AppDeathPage create( WOContext context, MInstance instance ) {
+		AppDeathPage page = (AppDeathPage)context.page().pageWithName( AppDeathPage.class.getName() );
+		page.setMyInstance( instance );
 		return page;
 	}
 }

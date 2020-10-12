@@ -20,8 +20,8 @@ import com.webobjects.monitor._private.MObject;
 
 public class HostConfigurePage extends MonitorComponent {
 
-	public HostConfigurePage(WOContext aWocontext) {
-		super(aWocontext);
+	public HostConfigurePage( WOContext aWocontext ) {
+		super( aWocontext );
 	}
 
 	/**
@@ -34,11 +34,11 @@ public class HostConfigurePage extends MonitorComponent {
 	public NSArray hostTypeList = MObject.hostTypeArray;
 
 	public String hostTypeSelection() {
-		if (_hostTypeSelection == null) {
+		if( _hostTypeSelection == null ) {
 			String type = myHost().osType();
-			for (int i = hostTypeList.count() - 1; i >= 0; i--) {
-				String myHostTypeSelection = (String) hostTypeList.objectAtIndex(i);
-				if (type.equalsIgnoreCase(myHostTypeSelection)) {
+			for( int i = hostTypeList.count() - 1; i >= 0; i-- ) {
+				String myHostTypeSelection = (String)hostTypeList.objectAtIndex( i );
+				if( type.equalsIgnoreCase( myHostTypeSelection ) ) {
 					_hostTypeSelection = myHostTypeSelection;
 				}
 			}
@@ -46,7 +46,7 @@ public class HostConfigurePage extends MonitorComponent {
 		return _hostTypeSelection;
 	}
 
-	public void setHostTypeSelection(String newType) {
+	public void setHostTypeSelection( String newType ) {
 		_hostTypeSelection = newType;
 	}
 
@@ -55,28 +55,29 @@ public class HostConfigurePage extends MonitorComponent {
 		try {
 			MHost host = myHost();
 
-			if ((_hostTypeSelection != null) && (!(_hostTypeSelection.toUpperCase().equals(host.osType())))) {
-				host.setOsType(_hostTypeSelection.toUpperCase());
-				handler().sendUpdateHostToWotaskds(host, siteConfig().hostArray());
+			if( (_hostTypeSelection != null) && (!(_hostTypeSelection.toUpperCase().equals( host.osType() ))) ) {
+				host.setOsType( _hostTypeSelection.toUpperCase() );
+				handler().sendUpdateHostToWotaskds( host, siteConfig().hostArray() );
 			}
-		} finally {
+		}
+		finally {
 			handler().endWriting();
 		}
 
-		return HostConfigurePage.create(context(), myHost());
+		return HostConfigurePage.create( context(), myHost() );
 	}
 
 	public WOComponent syncHostClicked() {
 		MHost host = myHost();
-		siteConfig().hostErrorArray.addObjectIfAbsent(host);
-		handler().sendUpdateHostToWotaskds(host, new NSArray(host));
+		siteConfig().hostErrorArray.addObjectIfAbsent( host );
+		handler().sendUpdateHostToWotaskds( host, new NSArray( host ) );
 
-		return HostConfigurePage.create(context(), myHost());
+		return HostConfigurePage.create( context(), myHost() );
 	}
 
-	public static HostConfigurePage create(WOContext context, MHost host) {
-		HostConfigurePage page = (HostConfigurePage) context.page().pageWithName(HostConfigurePage.class.getName());
-		page.setMyHost(host);
+	public static HostConfigurePage create( WOContext context, MHost host ) {
+		HostConfigurePage page = (HostConfigurePage)context.page().pageWithName( HostConfigurePage.class.getName() );
+		page.setMyHost( host );
 		return page;
 	}
 

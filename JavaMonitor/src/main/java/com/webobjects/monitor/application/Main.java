@@ -16,51 +16,52 @@ import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 
 public class Main extends MonitorComponent {
-    private static final long serialVersionUID = -6041828876924813157L;
+	private static final long serialVersionUID = -6041828876924813157L;
 
-    private String _password;
-		private String _message;
+	private String _password;
+	private String _message;
 
-    public WOComponent appPageClicked() {
-        return ApplicationsPage.create(context());
-    }
+	public WOComponent appPageClicked() {
+		return ApplicationsPage.create( context() );
+	}
 
-    public Main(WOContext aWocontext) {
-        super(aWocontext);
-    }
+	public Main( WOContext aWocontext ) {
+		super( aWocontext );
+	}
 
-    public String password() {
-        return _password;
-    }
+	public String password() {
+		return _password;
+	}
 
-    public void setPassword(String aString) {
-        _password = aString;
-    }
+	public void setPassword( String aString ) {
+		_password = aString;
+	}
 
-    public boolean loginRequired() {
-    		boolean result = false;
-        if (siteConfig() != null) {
-            result = (!mySession().isLoggedIn() && siteConfig().isPasswordRequired());
-        }
-        return result;
-    }
+	public boolean loginRequired() {
+		boolean result = false;
+		if( siteConfig() != null ) {
+			result = (!mySession().isLoggedIn() && siteConfig().isPasswordRequired());
+		}
+		return result;
+	}
 
-    public WOComponent loginClicked() {
-        if (siteConfig().compareStringWithPassword(password())) {
-            mySession().setIsLoggedIn(true);
-        } else {
-            mySession().addErrorIfAbsent("Incorrect Password");
-            return pageWithName(Main.class);
-        }
+	public WOComponent loginClicked() {
+		if( siteConfig().compareStringWithPassword( password() ) ) {
+			mySession().setIsLoggedIn( true );
+		}
+		else {
+			mySession().addErrorIfAbsent( "Incorrect Password" );
+			return pageWithName( Main.class );
+		}
 
-        return pageWithName(ApplicationsPage.class.getName());
-    }
-    
-    @Override
-    public String message() {
-    	if (_message == null) {
-    		_message = ((Session)session()).message();
-    	}
-    	return _message;
-    }
+		return pageWithName( ApplicationsPage.class.getName() );
+	}
+
+	@Override
+	public String message() {
+		if( _message == null ) {
+			_message = ((Session)session()).message();
+		}
+		return _message;
+	}
 }

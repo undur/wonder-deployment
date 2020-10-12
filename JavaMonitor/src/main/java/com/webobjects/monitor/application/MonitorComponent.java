@@ -26,68 +26,68 @@ import er.extensions.components.ERXComponent;
 
 public class MonitorComponent extends ERXComponent {
 
-    public static final boolean isClickToOpenEnabled = Boolean.parseBoolean(System.getProperty("er.component.clickToOpen", "false"));
-	
-	protected Logger log = Logger.getLogger(getClass());
-	
-    private static final long serialVersionUID = -1880897151494772932L;
+	public static final boolean isClickToOpenEnabled = Boolean.parseBoolean( System.getProperty( "er.component.clickToOpen", "false" ) );
 
-    public final int APP_PAGE = 0;
+	protected Logger log = Logger.getLogger( getClass() );
 
-    public final int HOST_PAGE = 1;
+	private static final long serialVersionUID = -1880897151494772932L;
 
-    public final int SITE_PAGE = 2;
+	public final int APP_PAGE = 0;
 
-    public final int PREF_PAGE = 3;
+	public final int HOST_PAGE = 1;
 
-    public final int HELP_PAGE = 4;
+	public final int SITE_PAGE = 2;
 
-    public final int MIGRATION_PAGE = 5;
+	public final int PREF_PAGE = 3;
 
-    public final int MOD_PROXY_PAGE = 6;
+	public final int HELP_PAGE = 4;
 
-    public Application theApplication = (Application) WOApplication.application();
+	public final int MIGRATION_PAGE = 5;
 
-    private WOTaskdHandler _handler;
-    
-    private MApplication myApplication;
-    private MInstance myInstance;
-    private MHost myHost;
-    
-    private String _message;
+	public final int MOD_PROXY_PAGE = 6;
 
-    public MonitorComponent(WOContext aWocontext) {
-        super(aWocontext);
-        _handler = new WOTaskdHandler(mySession());
-    }
+	public Application theApplication = (Application)WOApplication.application();
 
-    @Override
-    public void awake() {
-    	super.awake();
-    	_message = null;
-    }
-    
-    protected NSMutableArray allHosts() {
-        return siteConfig().hostArray();
-    }
+	private WOTaskdHandler _handler;
 
-    protected MSiteConfig siteConfig() {
-        return WOTaskdHandler.siteConfig();
-    }
+	private MApplication myApplication;
+	private MInstance myInstance;
+	private MHost myHost;
 
-    public Session mySession() {
-        return (Session) super.session();
-    }
-    
-    public WOTaskdHandler handler() {
-        return _handler;
-    }
+	private String _message;
+
+	public MonitorComponent( WOContext aWocontext ) {
+		super( aWocontext );
+		_handler = new WOTaskdHandler( mySession() );
+	}
+
+	@Override
+	public void awake() {
+		super.awake();
+		_message = null;
+	}
+
+	protected NSMutableArray allHosts() {
+		return siteConfig().hostArray();
+	}
+
+	protected MSiteConfig siteConfig() {
+		return WOTaskdHandler.siteConfig();
+	}
+
+	public Session mySession() {
+		return (Session)super.session();
+	}
+
+	public WOTaskdHandler handler() {
+		return _handler;
+	}
 
 	public final MApplication myApplication() {
 		return myApplication;
 	}
 
-	public void setMyApplication(MApplication application) {
+	public void setMyApplication( MApplication application ) {
 		assert application != null;
 		myApplication = application;
 		myInstance = null;
@@ -97,33 +97,33 @@ public class MonitorComponent extends ERXComponent {
 		return myInstance;
 	}
 
-	public void setMyInstance(MInstance instance) {
+	public void setMyInstance( MInstance instance ) {
 		assert instance != null;
 		myInstance = instance;
 		myApplication = instance.application();
 	}
-	
+
 	public final MHost myHost() {
 		return myHost;
 	}
 
-	public void setMyHost(MHost host) {
+	public void setMyHost( MHost host ) {
 		myHost = host;
 	}
-	
+
 	public String message() {
-		if (_message == null) {
+		if( _message == null ) {
 			_message = ((Session)session()).message();
 		}
 		return _message;
 	}
-	
+
 	/*
-    public void appendToResponse(WOResponse response, WOContext context) {
-        ERXClickToOpenSupport.preProcessResponse(response, context, isClickToOpenEnabled);
-        super.appendToResponse(response, context);
-        ERXClickToOpenSupport.postProcessResponse(getClass(), response, context, isClickToOpenEnabled);
-    }
-    */
+	public void appendToResponse(WOResponse response, WOContext context) {
+	    ERXClickToOpenSupport.preProcessResponse(response, context, isClickToOpenEnabled);
+	    super.appendToResponse(response, context);
+	    ERXClickToOpenSupport.postProcessResponse(getClass(), response, context, isClickToOpenEnabled);
+	}
+	*/
 
 }

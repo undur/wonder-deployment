@@ -321,345 +321,358 @@ import er.extensions.appserver.ERXResponse;
  * 
  */
 public class AdminAction extends WODirectAction {
-    public class DirectActionException extends RuntimeException {
+	public class DirectActionException extends RuntimeException {
 
-        public int status;
+		public int status;
 
-        public DirectActionException(String s, int i) {
-            super(s);
-            status = i;
-        }
-    }
+		public DirectActionException( String s, int i ) {
+			super( s );
+			status = i;
+		}
+	}
 
-    protected static NSArray supportedActionNames = new NSArray(new String[] { "running", "bounce", "stopped", "start", "stop", "forceQuit", "turnAutoRecoverOn", "turnAutoRecoverOff",
-            "turnRefuseNewSessionsOn", "turnRefuseNewSessionsOff", "turnScheduledOn", "turnScheduledOff", "turnAutoRecoverOn", "turnAutoRecoverOff", "clearDeaths", "info" });
+	protected static NSArray supportedActionNames = new NSArray( new String[] { "running", "bounce", "stopped", "start", "stop", "forceQuit", "turnAutoRecoverOn", "turnAutoRecoverOff",
+			"turnRefuseNewSessionsOn", "turnRefuseNewSessionsOff", "turnScheduledOn", "turnScheduledOff", "turnAutoRecoverOn", "turnAutoRecoverOff", "clearDeaths", "info" } );
 
-    protected AdminApplicationsPage applicationsPage;
+	protected AdminApplicationsPage applicationsPage;
 
-    protected NSMutableArray instances;
+	protected NSMutableArray instances;
 
-    protected NSMutableArray applications;
+	protected NSMutableArray applications;
 
-    private WOTaskdHandler _handler;
+	private WOTaskdHandler _handler;
 
-    public AdminAction(WORequest worequest) {
-        super(worequest);
-        instances = new NSMutableArray();
-        applications = new NSMutableArray();
-        _handler = new WOTaskdHandler(mySession());
-    }
+	public AdminAction( WORequest worequest ) {
+		super( worequest );
+		instances = new NSMutableArray();
+		applications = new NSMutableArray();
+		_handler = new WOTaskdHandler( mySession() );
+	}
 
-    public WOComponent MainAction() {
-        return pageWithName("Main");
-    }
+	public WOComponent MainAction() {
+		return pageWithName( "Main" );
+	}
 
-    protected AdminApplicationsPage applicationsPage() {
-        if (applicationsPage == null)
-            applicationsPage = new AdminApplicationsPage(context());
-        return applicationsPage;
-    }
+	protected AdminApplicationsPage applicationsPage() {
+		if( applicationsPage == null )
+			applicationsPage = new AdminApplicationsPage( context() );
+		return applicationsPage;
+	}
 
-    public WOActionResults infoAction() {
-        ERXResponse woresponse = new ERXResponse();
-        String result = "";
-        for (Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements();) {
-            MInstance minstance = (MInstance) enumeration.nextElement();
-            result += (result.length() == 0 ? "" : ", \n");
-            result += "{";
-            result += "\"name\": \"" + minstance.applicationName() + "\", ";
-            result += "\"id\": \"" + minstance.id() + "\", ";
-            result += "\"host\": \"" + minstance.hostName() + "\", ";
-            result += "\"port\": \"" + minstance.port() + "\", ";
-            result += "\"state\": \"" + MObject.stateArray[minstance.state] + "\", ";
-            result += "\"deaths\": \"" + minstance.deathCount() + "\", ";
-            result += "\"refusingNewSessions\": " + minstance.isRefusingNewSessions() + ", ";
-            result += "\"scheduled\": " + minstance.isScheduled() + ", ";
-            result += "\"schedulingHourlyStartTime\": " + minstance.schedulingHourlyStartTime() + ", ";
-            result += "\"schedulingDailyStartTime\": " + minstance.schedulingDailyStartTime() + ", ";
-            result += "\"schedulingWeeklyStartTime\": " + minstance.schedulingWeeklyStartTime() + ", ";
-            result += "\"schedulingType\": \"" + minstance.schedulingType() + "\", ";
-            result += "\"schedulingStartDay\": " + minstance.schedulingStartDay() + ", ";
-            result += "\"schedulingInterval\": " + minstance.schedulingInterval() + ", ";
-            result += "\"transactions\": \"" + minstance.transactions() + "\", ";
-            result += "\"activeSessions\": \"" + minstance.activeSessions() + "\", ";
-            result += "\"averageIdlePeriod\": \"" + minstance.averageIdlePeriod() + "\", ";
-            result += "\"avgTransactionTime\": \"" + minstance.avgTransactionTime() + "\",";
-            result += "\"autoRecover\": \"" + minstance.isAutoRecovering() + "\"";
-            
-            String infoMode = (String) context().request().formValueForKey("info");
-            if ("full".equalsIgnoreCase(infoMode)) {
-                result += ", \"additionalArgs\": \"";
-                if (minstance.additionalArgs() != null) {
-                    result += minstance.additionalArgs().replace("\"", "\\\"");
-                }
-                result += "\"";
-            }
-            result += "}";
-        }
-        woresponse.appendContentString("[" + result + "]");
-        return woresponse;
-    }
+	public WOActionResults infoAction() {
+		ERXResponse woresponse = new ERXResponse();
+		String result = "";
+		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
+			MInstance minstance = (MInstance)enumeration.nextElement();
+			result += (result.length() == 0 ? "" : ", \n");
+			result += "{";
+			result += "\"name\": \"" + minstance.applicationName() + "\", ";
+			result += "\"id\": \"" + minstance.id() + "\", ";
+			result += "\"host\": \"" + minstance.hostName() + "\", ";
+			result += "\"port\": \"" + minstance.port() + "\", ";
+			result += "\"state\": \"" + MObject.stateArray[minstance.state] + "\", ";
+			result += "\"deaths\": \"" + minstance.deathCount() + "\", ";
+			result += "\"refusingNewSessions\": " + minstance.isRefusingNewSessions() + ", ";
+			result += "\"scheduled\": " + minstance.isScheduled() + ", ";
+			result += "\"schedulingHourlyStartTime\": " + minstance.schedulingHourlyStartTime() + ", ";
+			result += "\"schedulingDailyStartTime\": " + minstance.schedulingDailyStartTime() + ", ";
+			result += "\"schedulingWeeklyStartTime\": " + minstance.schedulingWeeklyStartTime() + ", ";
+			result += "\"schedulingType\": \"" + minstance.schedulingType() + "\", ";
+			result += "\"schedulingStartDay\": " + minstance.schedulingStartDay() + ", ";
+			result += "\"schedulingInterval\": " + minstance.schedulingInterval() + ", ";
+			result += "\"transactions\": \"" + minstance.transactions() + "\", ";
+			result += "\"activeSessions\": \"" + minstance.activeSessions() + "\", ";
+			result += "\"averageIdlePeriod\": \"" + minstance.averageIdlePeriod() + "\", ";
+			result += "\"avgTransactionTime\": \"" + minstance.avgTransactionTime() + "\",";
+			result += "\"autoRecover\": \"" + minstance.isAutoRecovering() + "\"";
 
-    public WOActionResults runningAction() {
-        ERXResponse woresponse = new ERXResponse("YES");
-        String num = (String) context().request().formValueForKey("num");
-    	int numberOfInstancesRequested = -1;
-        if (num != null && !num.equals("") && !num.equalsIgnoreCase("all")) {
-        	try {
-        		numberOfInstancesRequested = Integer.valueOf(num).intValue();
-        		if (numberOfInstancesRequested > instances.count()) {
-        			numberOfInstancesRequested = -1;
-        		}
-        	} catch (Exception e) {
-        		// ignore
-        	}
-        }
-        int instancesAlive = 0;
-        for (Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements();) {
-            MInstance minstance = (MInstance) enumeration.nextElement();
-            if (minstance.state == MObject.ALIVE) {
-            	instancesAlive++;
-            }
-        }
-        if ((numberOfInstancesRequested == -1 && instancesAlive < instances.count()) || instancesAlive < numberOfInstancesRequested) {
-        	woresponse.setContent("NO");
-            woresponse.setStatus(ERXHttpStatusCodes.EXPECTATION_FAILED);
-        }
-        return woresponse;
-    }
+			String infoMode = (String)context().request().formValueForKey( "info" );
+			if( "full".equalsIgnoreCase( infoMode ) ) {
+				result += ", \"additionalArgs\": \"";
+				if( minstance.additionalArgs() != null ) {
+					result += minstance.additionalArgs().replace( "\"", "\\\"" );
+				}
+				result += "\"";
+			}
+			result += "}";
+		}
+		woresponse.appendContentString( "[" + result + "]" );
+		return woresponse;
+	}
 
-    public WOActionResults stoppedAction() {
-        ERXResponse woresponse = new ERXResponse("YES");
-        for (Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements();) {
-            MInstance minstance = (MInstance) enumeration.nextElement();
-            if (minstance.state == MObject.DEAD)
-                continue;
-            woresponse.setContent("NO");
-            woresponse.setStatus(ERXHttpStatusCodes.EXPECTATION_FAILED);
-            break;
-        }
-        return woresponse;
-    }
+	public WOActionResults runningAction() {
+		ERXResponse woresponse = new ERXResponse( "YES" );
+		String num = (String)context().request().formValueForKey( "num" );
+		int numberOfInstancesRequested = -1;
+		if( num != null && !num.equals( "" ) && !num.equalsIgnoreCase( "all" ) ) {
+			try {
+				numberOfInstancesRequested = Integer.valueOf( num ).intValue();
+				if( numberOfInstancesRequested > instances.count() ) {
+					numberOfInstancesRequested = -1;
+				}
+			}
+			catch( Exception e ) {
+				// ignore
+			}
+		}
+		int instancesAlive = 0;
+		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
+			MInstance minstance = (MInstance)enumeration.nextElement();
+			if( minstance.state == MObject.ALIVE ) {
+				instancesAlive++;
+			}
+		}
+		if( (numberOfInstancesRequested == -1 && instancesAlive < instances.count()) || instancesAlive < numberOfInstancesRequested ) {
+			woresponse.setContent( "NO" );
+			woresponse.setStatus( ERXHttpStatusCodes.EXPECTATION_FAILED );
+		}
+		return woresponse;
+	}
 
-    public WOActionResults bounceAction() {
-        ERXResponse woresponse = new ERXResponse("OK");
-        String bouncetype = (String) context().request().formValueForKey("bouncetype");
-        String maxwaitString = (String) context().request().formValueForKey("maxwait");
-        if (bouncetype == null || bouncetype == "" || bouncetype.equalsIgnoreCase("graceful")) {
-        	applicationsPage().bounceGraceful(applications);
-        } else if (bouncetype.equalsIgnoreCase("shutdown")) {
-        	int maxwait = 30;
-        	if (maxwaitString != null) {
-        		try {
-        			maxwait = Integer.valueOf(maxwaitString).intValue();
-        		} catch (NumberFormatException e) {
+	public WOActionResults stoppedAction() {
+		ERXResponse woresponse = new ERXResponse( "YES" );
+		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
+			MInstance minstance = (MInstance)enumeration.nextElement();
+			if( minstance.state == MObject.DEAD )
+				continue;
+			woresponse.setContent( "NO" );
+			woresponse.setStatus( ERXHttpStatusCodes.EXPECTATION_FAILED );
+			break;
+		}
+		return woresponse;
+	}
+
+	public WOActionResults bounceAction() {
+		ERXResponse woresponse = new ERXResponse( "OK" );
+		String bouncetype = (String)context().request().formValueForKey( "bouncetype" );
+		String maxwaitString = (String)context().request().formValueForKey( "maxwait" );
+		if( bouncetype == null || bouncetype == "" || bouncetype.equalsIgnoreCase( "graceful" ) ) {
+			applicationsPage().bounceGraceful( applications );
+		}
+		else if( bouncetype.equalsIgnoreCase( "shutdown" ) ) {
+			int maxwait = 30;
+			if( maxwaitString != null ) {
+				try {
+					maxwait = Integer.valueOf( maxwaitString ).intValue();
+				}
+				catch( NumberFormatException e ) {
 					// ignore
 				}
-        	}
-        	applicationsPage().bounceShutdown(applications, maxwait);
-        } else if (bouncetype.equalsIgnoreCase("rolling")) {
-        	applicationsPage().bounceRolling(applications);
-        } else {
-        	woresponse.setContent("Unknown bouncetype");
-            woresponse.setStatus(ERXHttpStatusCodes.NOT_ACCEPTABLE);
-        }
-        return woresponse;
-    }
+			}
+			applicationsPage().bounceShutdown( applications, maxwait );
+		}
+		else if( bouncetype.equalsIgnoreCase( "rolling" ) ) {
+			applicationsPage().bounceRolling( applications );
+		}
+		else {
+			woresponse.setContent( "Unknown bouncetype" );
+			woresponse.setStatus( ERXHttpStatusCodes.NOT_ACCEPTABLE );
+		}
+		return woresponse;
+	}
 
-    public void clearDeathsAction() {
-        applicationsPage().clearDeaths(instances);
-    }
-    
-    public void scheduleTypeAction() {
-        String scheduleType = (String) context().request().formValueForKey("scheduleType");
-        if (scheduleType != null && ("HOURLY".equals(scheduleType) ||  "DAILY".equals(scheduleType) || "WEEKLY".equals(scheduleType)))
-        		applicationsPage().scheduleType(instances, scheduleType);
-    }
+	public void clearDeathsAction() {
+		applicationsPage().clearDeaths( instances );
+	}
 
-    public void hourlyScheduleRangeAction() {
-        String beginScheduleWindow = (String) context().request().formValueForKey("hourBegin");
-        String endScheduleWindow = (String) context().request().formValueForKey("hourEnd");
-        String interval = (String) context().request().formValueForKey("interval");
-        if (beginScheduleWindow != null && endScheduleWindow != null && interval != null)
-        		applicationsPage().hourlyStartHours(instances, Integer.parseInt(beginScheduleWindow), Integer.parseInt(endScheduleWindow), Integer.parseInt(interval));
-    }
+	public void scheduleTypeAction() {
+		String scheduleType = (String)context().request().formValueForKey( "scheduleType" );
+		if( scheduleType != null && ("HOURLY".equals( scheduleType ) || "DAILY".equals( scheduleType ) || "WEEKLY".equals( scheduleType )) )
+			applicationsPage().scheduleType( instances, scheduleType );
+	}
 
-    public void dailyScheduleRangeAction() {
-        String beginScheduleWindow = (String) context().request().formValueForKey("hourBegin");
-        String endScheduleWindow = (String) context().request().formValueForKey("hourEnd");
-        if (beginScheduleWindow != null && endScheduleWindow != null)
-        		applicationsPage().dailyStartHours(instances, Integer.parseInt(beginScheduleWindow), Integer.parseInt(endScheduleWindow));
-    }
-    
-    public void weeklyScheduleRangeAction() {
-        String beginScheduleWindow = (String) context().request().formValueForKey("hourBegin");
-        String endScheduleWindow = (String) context().request().formValueForKey("hourEnd");
-        String weekDay = (String) context().request().formValueForKey("weekDay");
-        if (beginScheduleWindow != null && endScheduleWindow != null && weekDay != null)
-        		applicationsPage().weeklyStartHours(instances, Integer.parseInt(beginScheduleWindow), Integer.parseInt(endScheduleWindow), Integer.parseInt(weekDay));
-    }
+	public void hourlyScheduleRangeAction() {
+		String beginScheduleWindow = (String)context().request().formValueForKey( "hourBegin" );
+		String endScheduleWindow = (String)context().request().formValueForKey( "hourEnd" );
+		String interval = (String)context().request().formValueForKey( "interval" );
+		if( beginScheduleWindow != null && endScheduleWindow != null && interval != null )
+			applicationsPage().hourlyStartHours( instances, Integer.parseInt( beginScheduleWindow ), Integer.parseInt( endScheduleWindow ), Integer.parseInt( interval ) );
+	}
 
-    public void setAdditionalArgsAction() {
-        String arguments = (String) context().request().formValueForKey("args");
-        if (arguments != null)
-                applicationsPage().setAdditionalArgs(instances, arguments);
-    }
+	public void dailyScheduleRangeAction() {
+		String beginScheduleWindow = (String)context().request().formValueForKey( "hourBegin" );
+		String endScheduleWindow = (String)context().request().formValueForKey( "hourEnd" );
+		if( beginScheduleWindow != null && endScheduleWindow != null )
+			applicationsPage().dailyStartHours( instances, Integer.parseInt( beginScheduleWindow ), Integer.parseInt( endScheduleWindow ) );
+	}
 
-    public void turnScheduledOnAction() {
-        applicationsPage().turnScheduledOn(instances);
-    }
+	public void weeklyScheduleRangeAction() {
+		String beginScheduleWindow = (String)context().request().formValueForKey( "hourBegin" );
+		String endScheduleWindow = (String)context().request().formValueForKey( "hourEnd" );
+		String weekDay = (String)context().request().formValueForKey( "weekDay" );
+		if( beginScheduleWindow != null && endScheduleWindow != null && weekDay != null )
+			applicationsPage().weeklyStartHours( instances, Integer.parseInt( beginScheduleWindow ), Integer.parseInt( endScheduleWindow ), Integer.parseInt( weekDay ) );
+	}
 
-    public void turnScheduledOffAction() {
-        applicationsPage().turnScheduledOff(instances);
-    }
+	public void setAdditionalArgsAction() {
+		String arguments = (String)context().request().formValueForKey( "args" );
+		if( arguments != null )
+			applicationsPage().setAdditionalArgs( instances, arguments );
+	}
 
-    public void turnRefuseNewSessionsOnAction() {
-        applicationsPage().turnRefuseNewSessionsOn(instances);
-    }
+	public void turnScheduledOnAction() {
+		applicationsPage().turnScheduledOn( instances );
+	}
 
-    public void turnRefuseNewSessionsOffAction() {
-        applicationsPage().turnRefuseNewSessionsOff(instances);
-    }
+	public void turnScheduledOffAction() {
+		applicationsPage().turnScheduledOff( instances );
+	}
 
-    public void turnAutoRecoverOnAction() {
-        applicationsPage().turnAutoRecoverOn(instances);
-    }
+	public void turnRefuseNewSessionsOnAction() {
+		applicationsPage().turnRefuseNewSessionsOn( instances );
+	}
 
-    public void turnAutoRecoverOffAction() {
-        applicationsPage().turnAutoRecoverOff(instances);
-    }
+	public void turnRefuseNewSessionsOffAction() {
+		applicationsPage().turnRefuseNewSessionsOff( instances );
+	}
 
-    public void forceQuitAction() {
-        applicationsPage().forceQuit(instances);
-    }
+	public void turnAutoRecoverOnAction() {
+		applicationsPage().turnAutoRecoverOn( instances );
+	}
 
-    public void stopAction() {
-        applicationsPage().stop(instances);
-    }
+	public void turnAutoRecoverOffAction() {
+		applicationsPage().turnAutoRecoverOff( instances );
+	}
 
-    public void startAction() {
-        applicationsPage().start(instances);
-    }
+	public void forceQuitAction() {
+		applicationsPage().forceQuit( instances );
+	}
 
-    protected void prepareApplications(NSArray<String> appNames) {
-        if (appNames == null)
-            throw new DirectActionException("at least one application name needs to be specified for type app", 406);
-        for (Enumeration enumeration = appNames.objectEnumerator(); enumeration.hasMoreElements();) {
-            String s = (String) enumeration.nextElement();
-            MApplication mapplication = siteConfig().applicationWithName(s);
-            if (mapplication != null) {
-                applications.addObject(mapplication);
-                addInstancesForApplication(mapplication);
-            }
-            else
-                throw new DirectActionException("Unknown application " + s, 404);
-        }
+	public void stopAction() {
+		applicationsPage().stop( instances );
+	}
 
-    }
-    
-    protected void prepareApplicationsOnHosts(NSArray<String> appNames, NSArray<String> hostNames) {
-        if (appNames == null)
-            throw new DirectActionException("at least one application name needs to be specified for type app", 406);
-        for (Enumeration enumeration = appNames.objectEnumerator(); enumeration.hasMoreElements();) {
-            String s = (String) enumeration.nextElement();
-            MApplication mapplication = siteConfig().applicationWithName(s);
-            if (mapplication != null) {
-            	NSArray<MInstance> hostInstances = MInstance.HOST_NAME.in(hostNames).filtered(mapplication.instanceArray());
-            	instances.addObjectsFromArray(hostInstances);
-            }
-            else
-                throw new DirectActionException("Unknown application " + s, 404);
-        }
+	public void startAction() {
+		applicationsPage().start( instances );
+	}
 
-    }
-    
-    protected void prepareInstances(NSArray<String> appNamesAndNumbers) {
-        if (appNamesAndNumbers == null)
-            throw new DirectActionException("at least one instance name needs to be specified for type ins", 406);
-        for (Enumeration enumeration = appNamesAndNumbers.objectEnumerator(); enumeration.hasMoreElements();) {
-            String s = (String) enumeration.nextElement();
-            MInstance minstance = siteConfig().instanceWithName(s);
-            if (minstance != null)
-                instances.addObject(minstance);
-            else
-                throw new DirectActionException("Unknown instance " + s, 404);
-        }
+	protected void prepareApplications( NSArray<String> appNames ) {
+		if( appNames == null )
+			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
+		for( Enumeration enumeration = appNames.objectEnumerator(); enumeration.hasMoreElements(); ) {
+			String s = (String)enumeration.nextElement();
+			MApplication mapplication = siteConfig().applicationWithName( s );
+			if( mapplication != null ) {
+				applications.addObject( mapplication );
+				addInstancesForApplication( mapplication );
+			}
+			else
+				throw new DirectActionException( "Unknown application " + s, 404 );
+		}
 
-    }
+	}
 
-    protected void addInstancesForApplication(MApplication mapplication) {
-        instances.addObjectsFromArray(mapplication.instanceArray());
-    }
+	protected void prepareApplicationsOnHosts( NSArray<String> appNames, NSArray<String> hostNames ) {
+		if( appNames == null )
+			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
+		for( Enumeration enumeration = appNames.objectEnumerator(); enumeration.hasMoreElements(); ) {
+			String s = (String)enumeration.nextElement();
+			MApplication mapplication = siteConfig().applicationWithName( s );
+			if( mapplication != null ) {
+				NSArray<MInstance> hostInstances = MInstance.HOST_NAME.in( hostNames ).filtered( mapplication.instanceArray() );
+				instances.addObjectsFromArray( hostInstances );
+			}
+			else
+				throw new DirectActionException( "Unknown application " + s, 404 );
+		}
 
-    protected void refreshInformation() {
-        for (Enumeration enumeration = (new NSSet((NSArray) instances.valueForKey("application"))).objectEnumerator(); enumeration.hasMoreElements();) {
-            MApplication mapplication = (MApplication) enumeration.nextElement();
-            
-            @SuppressWarnings("unused")
-						AppDetailPage dummy = AppDetailPage.create(context(), mapplication);
-        }
-    }
+	}
 
-    public WOActionResults performMonitorActionNamed(String s) {
-        String s1 = (String) context().request().formValueForKey("type");
-        if ("all".equalsIgnoreCase(s1)) {
-            prepareApplications((NSArray) siteConfig().applicationArray().valueForKey("name"));
-        } else {
-            NSArray appNames = context().request().formValuesForKey("name");
-            NSArray hosts = context().request().formValuesForKey("host");
+	protected void prepareInstances( NSArray<String> appNamesAndNumbers ) {
+		if( appNamesAndNumbers == null )
+			throw new DirectActionException( "at least one instance name needs to be specified for type ins", 406 );
+		for( Enumeration enumeration = appNamesAndNumbers.objectEnumerator(); enumeration.hasMoreElements(); ) {
+			String s = (String)enumeration.nextElement();
+			MInstance minstance = siteConfig().instanceWithName( s );
+			if( minstance != null )
+				instances.addObject( minstance );
+			else
+				throw new DirectActionException( "Unknown instance " + s, 404 );
+		}
 
-            if ("app".equalsIgnoreCase(s1)) {
-            	if (hosts == null || hosts.isEmpty()) {
-            		prepareApplications(appNames);
-            	} else {
-            		prepareApplicationsOnHosts(appNames, hosts);
-            	}
-            } else if ("ins".equalsIgnoreCase(s1))
-                prepareInstances(appNames);
-            else
-                throw new DirectActionException("Invalid type " + s1, 406);
-        }
-        refreshInformation();
-        _handler.startReading();
-        try {
-            WOActionResults woactionresults = super.performActionNamed(s);
-            return woactionresults;
-        } finally {
-            _handler.endReading();
-        }
-    }
+	}
 
-    private MSiteConfig siteConfig() {
-        return WOTaskdHandler.siteConfig();
-    }
+	protected void addInstancesForApplication( MApplication mapplication ) {
+		instances.addObjectsFromArray( mapplication.instanceArray() );
+	}
 
-    @Override
-    public WOActionResults performActionNamed(String s) {
-        WOResponse woresponse = new ERXResponse();
-        if (!siteConfig().isPasswordRequired() || siteConfig().compareStringWithPassword(context().request().stringFormValueForKey("pw"))) {
-            try {
-                WOActionResults woactionresults = performMonitorActionNamed(s);
-                if (woactionresults != null && (woactionresults instanceof WOResponse)) {
-                    woresponse = (WOResponse) woactionresults;
-                } else {
-                    woresponse.setContent("OK");
-                }
-            } catch (DirectActionException directactionexception) {
-                woresponse.setStatus(directactionexception.status);
-                woresponse.setContent(s + " action failed: " + directactionexception.getMessage());
-            } catch (Exception throwable) {
-                woresponse.setStatus(ERXHttpStatusCodes.INTERNAL_ERROR);
-                woresponse.setContent(s + " action failed: " + throwable.getMessage() + ". See Monitor's log for a stack trace.");
-                throwable.printStackTrace();
-            }
-        } else {
-            woresponse.setStatus(ERXHttpStatusCodes.FORBIDDEN);
-            woresponse.setContent("Monitor is password protected - password missing or incorrect.");
-        }
-        return woresponse;
-    }
+	protected void refreshInformation() {
+		for( Enumeration enumeration = (new NSSet( (NSArray)instances.valueForKey( "application" ) )).objectEnumerator(); enumeration.hasMoreElements(); ) {
+			MApplication mapplication = (MApplication)enumeration.nextElement();
 
-    public Session mySession() {
-        return (Session) session();
-    }
+			@SuppressWarnings("unused")
+			AppDetailPage dummy = AppDetailPage.create( context(), mapplication );
+		}
+	}
+
+	public WOActionResults performMonitorActionNamed( String s ) {
+		String s1 = (String)context().request().formValueForKey( "type" );
+		if( "all".equalsIgnoreCase( s1 ) ) {
+			prepareApplications( (NSArray)siteConfig().applicationArray().valueForKey( "name" ) );
+		}
+		else {
+			NSArray appNames = context().request().formValuesForKey( "name" );
+			NSArray hosts = context().request().formValuesForKey( "host" );
+
+			if( "app".equalsIgnoreCase( s1 ) ) {
+				if( hosts == null || hosts.isEmpty() ) {
+					prepareApplications( appNames );
+				}
+				else {
+					prepareApplicationsOnHosts( appNames, hosts );
+				}
+			}
+			else if( "ins".equalsIgnoreCase( s1 ) )
+				prepareInstances( appNames );
+			else
+				throw new DirectActionException( "Invalid type " + s1, 406 );
+		}
+		refreshInformation();
+		_handler.startReading();
+		try {
+			WOActionResults woactionresults = super.performActionNamed( s );
+			return woactionresults;
+		}
+		finally {
+			_handler.endReading();
+		}
+	}
+
+	private MSiteConfig siteConfig() {
+		return WOTaskdHandler.siteConfig();
+	}
+
+	@Override
+	public WOActionResults performActionNamed( String s ) {
+		WOResponse woresponse = new ERXResponse();
+		if( !siteConfig().isPasswordRequired() || siteConfig().compareStringWithPassword( context().request().stringFormValueForKey( "pw" ) ) ) {
+			try {
+				WOActionResults woactionresults = performMonitorActionNamed( s );
+				if( woactionresults != null && (woactionresults instanceof WOResponse) ) {
+					woresponse = (WOResponse)woactionresults;
+				}
+				else {
+					woresponse.setContent( "OK" );
+				}
+			}
+			catch( DirectActionException directactionexception ) {
+				woresponse.setStatus( directactionexception.status );
+				woresponse.setContent( s + " action failed: " + directactionexception.getMessage() );
+			}
+			catch( Exception throwable ) {
+				woresponse.setStatus( ERXHttpStatusCodes.INTERNAL_ERROR );
+				woresponse.setContent( s + " action failed: " + throwable.getMessage() + ". See Monitor's log for a stack trace." );
+				throwable.printStackTrace();
+			}
+		}
+		else {
+			woresponse.setStatus( ERXHttpStatusCodes.FORBIDDEN );
+			woresponse.setContent( "Monitor is password protected - password missing or incorrect." );
+		}
+		return woresponse;
+	}
+
+	public Session mySession() {
+		return (Session)session();
+	}
 }

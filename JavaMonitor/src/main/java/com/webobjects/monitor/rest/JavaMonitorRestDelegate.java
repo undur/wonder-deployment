@@ -7,8 +7,8 @@ import er.rest.ERXAbstractRestDelegate;
 
 public abstract class JavaMonitorRestDelegate extends ERXAbstractRestDelegate {
 
-    protected MSiteConfig siteConfig() {
-        return WOTaskdHandler.siteConfig();
-    }
+	protected MSiteConfig siteConfig() {
+		return WOTaskdHandler.siteConfig();
+	}
 
 }

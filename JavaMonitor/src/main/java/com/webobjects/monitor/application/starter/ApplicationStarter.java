@@ -14,59 +14,60 @@ import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
  */
 public abstract class ApplicationStarter extends Thread implements ErrorCollector {
 
-    private MApplication _app;
+	private MApplication _app;
 
-    private WOTaskdHandler _handler;
+	private WOTaskdHandler _handler;
 
-    private NSMutableSet<String> _errors;
+	private NSMutableSet<String> _errors;
 
-    private String _status;
+	private String _status;
 
-    public ApplicationStarter(MApplication app) {
-        _app = app;
-        _handler = new WOTaskdHandler(this);
-        setName("Bouncer: " + app.name());
-    }
+	public ApplicationStarter( MApplication app ) {
+		_app = app;
+		_handler = new WOTaskdHandler( this );
+		setName( "Bouncer: " + app.name() );
+	}
 
-    protected abstract void bounce() throws InterruptedException;
+	protected abstract void bounce() throws InterruptedException;
 
-    protected void log(Object msg) {
-        NSLog.out.appendln(msg);
-        _status = msg != null ? msg.toString() : "No status";
-    }
+	protected void log( Object msg ) {
+		NSLog.out.appendln( msg );
+		_status = msg != null ? msg.toString() : "No status";
+	}
 
-    public WOTaskdHandler handler() {
-        return _handler;
-    }
+	public WOTaskdHandler handler() {
+		return _handler;
+	}
 
-    public MApplication application() {
-        return _app;
-    }
+	public MApplication application() {
+		return _app;
+	}
 
-    @Override
-    public void run() {
-        try {
-            _errors = new NSMutableSet<>();
-            bounce();
-        } catch (InterruptedException e) {
-            log(e);
-        }
-    }
+	@Override
+	public void run() {
+		try {
+			_errors = new NSMutableSet<>();
+			bounce();
+		}
+		catch( InterruptedException e ) {
+			log( e );
+		}
+	}
 
-    public synchronized void addObjectsFromArrayIfAbsentToErrorMessageArray(NSArray<String> aErrors) {
-        _errors.addObjectsFromArray(aErrors);
-    }
+	public synchronized void addObjectsFromArrayIfAbsentToErrorMessageArray( NSArray<String> aErrors ) {
+		_errors.addObjectsFromArray( aErrors );
+	}
 
-    public synchronized NSArray<String> errors() {
-        return _errors.allObjects();
-    }
+	public synchronized NSArray<String> errors() {
+		return _errors.allObjects();
+	}
 
-    @Override
-    public String toString() {
-        return "Bouncer: " + _app.name() + "->" + _status;
-    }
+	@Override
+	public String toString() {
+		return "Bouncer: " + _app.name() + "->" + _status;
+	}
 
-    public String status() {
-        return _status;
-    }
+	public String status() {
+		return _status;
+	}
 }

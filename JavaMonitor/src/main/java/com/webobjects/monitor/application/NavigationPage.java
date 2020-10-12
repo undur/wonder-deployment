@@ -27,14 +27,14 @@ public class NavigationPage extends MonitorComponent {
 	public String title;
 	public String pageId;
 
-	public NavigationPage(WOContext aWocontext) {
-		super(aWocontext);
+	public NavigationPage( WOContext aWocontext ) {
+		super( aWocontext );
 	}
 
 	@Override
-	public void appendToResponse(WOResponse response, WOContext context) {
-		super.appendToResponse(response, context);
-		AjaxUtils.addScriptResourceInHead(context, response, "Ajax", "prototype.js");
+	public void appendToResponse( WOResponse response, WOContext context ) {
+		super.appendToResponse( response, context );
+		AjaxUtils.addScriptResourceInHead( context, response, "Ajax", "prototype.js" );
 	}
 
 	public String pageTitle() {
@@ -42,32 +42,32 @@ public class NavigationPage extends MonitorComponent {
 	}
 
 	public WOComponent ApplicationsPageClicked() {
-		return ApplicationsPage.create(context());
+		return ApplicationsPage.create( context() );
 	}
 
 	public WOComponent HostsPageClicked() {
-		return HostsPage.create(context());
+		return HostsPage.create( context() );
 	}
 
 	public WOComponent ConfigurePageClicked() {
-		return ConfigurePage.create(context());
+		return ConfigurePage.create( context() );
 	}
 
 	public WOComponent PrefsPageClicked() {
-		return PrefsPage.create(context());
+		return PrefsPage.create( context() );
 	}
 
 	public WOComponent HelpPageClicked() {
-		return pageWithName("HelpPage");
+		return pageWithName( "HelpPage" );
 	}
 
 	@Deprecated
 	public WOComponent MigrationPageClicked() {
-		return pageWithName("MigrationPage");
+		return pageWithName( "MigrationPage" );
 	}
 
 	public WOComponent ModProxyPageClicked() {
-		return pageWithName("ModProxyPage");
+		return pageWithName( "ModProxyPage" );
 	}
 
 	public boolean logoutRequired() {
@@ -75,16 +75,16 @@ public class NavigationPage extends MonitorComponent {
 	}
 
 	public WOComponent logoutClicked() {
-		mySession().setIsLoggedIn(false);
-		return pageWithName("Main");
+		mySession().setIsLoggedIn( false );
+		return pageWithName( "Main" );
 	}
-	
+
 	@Deprecated
 	public boolean showMigrationsTab() {
-		return ERXProperties.booleanForKeyWithDefault("er.javamonitor.showMigrationsTab", false);
+		return ERXProperties.booleanForKeyWithDefault( "er.javamonitor.showMigrationsTab", false );
 	}
 
 	public boolean showModProxyTab() {
-		return ERXProperties.booleanForKeyWithDefault("er.javamonitor.showModProxyTab", false);
+		return ERXProperties.booleanForKeyWithDefault( "er.javamonitor.showModProxyTab", false );
 	}
 }

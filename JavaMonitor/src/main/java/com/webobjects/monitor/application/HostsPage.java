@@ -37,211 +37,227 @@ import com.webobjects.monitor._private.String_Extensions;
 
 public class HostsPage extends MonitorComponent {
 
-    public HostsPage(WOContext aWocontext) {
-        super(aWocontext);
-        handler().updateForPage(name());
-    }
+	public HostsPage( WOContext aWocontext ) {
+		super( aWocontext );
+		handler().updateForPage( name() );
+	}
 
-    /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = -4009657723964398636L;
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -4009657723964398636L;
 
-    public MHost currentHost;
+	public MHost currentHost;
 
-    public String newHostName;
+	public String newHostName;
 
-    public String hostTypeSelection;
+	public String hostTypeSelection;
 
-    public NSArray hostTypeList = MObject.hostTypeArray;
+	public NSArray hostTypeList = MObject.hostTypeArray;
 
-    public WOComponent addHostClicked() {
-        String nullOrError = null;
+	public WOComponent addHostClicked() {
+		String nullOrError = null;
 
-        if (newHostName != null && (newHostName.length() > 0) && (String_Extensions.isValidXMLString(newHostName))) {
-            try {
-                InetAddress anAddress = InetAddress.getByName(newHostName);
+		if( newHostName != null && (newHostName.length() > 0) && (String_Extensions.isValidXMLString( newHostName )) ) {
+			try {
+				InetAddress anAddress = InetAddress.getByName( newHostName );
 
-                handler().startWriting();
-                try {
-                    if (newHostName.equalsIgnoreCase("localhost") || newHostName.equals("127.0.0.1")) {
-                        // only allow this to happen if we have no other hosts!
-                        if (! ((siteConfig().hostArray() != null) && (siteConfig().hostArray().count() == 0)) ) {
-                            // we're OK to add localhost.
-                            nullOrError = "Hosts named localhost or 127.0.0.1 may not be added while other hosts are configured.";
-                        }
-                    } else {
-                        // this is for non-localhost hosts
-                        // only allow this to happen if localhost/127.0.0.1
-                        // doesn't already exist!
-                        if (siteConfig().localhostOrLoopbackHostExists()) {
-                            nullOrError = "Additional hosts may not be added while a host named localhost or 127.0.0.1 is configured.";
-                        } 
-                    }
+				handler().startWriting();
+				try {
+					if( newHostName.equalsIgnoreCase( "localhost" ) || newHostName.equals( "127.0.0.1" ) ) {
+						// only allow this to happen if we have no other hosts!
+						if( !((siteConfig().hostArray() != null) && (siteConfig().hostArray().count() == 0)) ) {
+							// we're OK to add localhost.
+							nullOrError = "Hosts named localhost or 127.0.0.1 may not be added while other hosts are configured.";
+						}
+					}
+					else {
+						// this is for non-localhost hosts
+						// only allow this to happen if localhost/127.0.0.1
+						// doesn't already exist!
+						if( siteConfig().localhostOrLoopbackHostExists() ) {
+							nullOrError = "Additional hosts may not be added while a host named localhost or 127.0.0.1 is configured.";
+						}
+					}
 
-                    if ((nullOrError == null) && (siteConfig().hostWithAddress(anAddress) == null)) {
-                        if (hostMeetsMinimumVersion(anAddress)) {
+					if( (nullOrError == null) && (siteConfig().hostWithAddress( anAddress ) == null) ) {
+						if( hostMeetsMinimumVersion( anAddress ) ) {
 
-                            MHost host = new MHost(siteConfig(), newHostName, hostTypeSelection.toUpperCase());
+							MHost host = new MHost( siteConfig(), newHostName, hostTypeSelection.toUpperCase() );
 
-                            // To avoid overwriting hosts
-                            NSArray tempHostArray = new NSArray(siteConfig().hostArray());
-                            siteConfig().addHost_M(host);
+							// To avoid overwriting hosts
+							NSArray tempHostArray = new NSArray( siteConfig().hostArray() );
+							siteConfig().addHost_M( host );
 
-                            handler().sendOverwriteToWotaskd(host);
+							handler().sendOverwriteToWotaskd( host );
 
-                            if (tempHostArray.count() != 0) {
-                                handler().sendAddHostToWotaskds(host, tempHostArray);
-                            }
+							if( tempHostArray.count() != 0 ) {
+								handler().sendAddHostToWotaskds( host, tempHostArray );
+							}
 
-                        } else {
-                            mySession().addErrorIfAbsent(
-                                    "The wotaskd on " + newHostName
-                                            + " is an older version, please upgrade before adding...");
-                        }
+						}
+						else {
+							mySession().addErrorIfAbsent(
+									"The wotaskd on " + newHostName
+											+ " is an older version, please upgrade before adding..." );
+						}
 
-                    } else {
-                        if (nullOrError != null) {
-                            mySession().addErrorIfAbsent(nullOrError);
-                        } else {
-                            mySession().addErrorIfAbsent("The host " + newHostName + " has already been added");
-                        }
-                    }
-                } finally {
-                    handler().endWriting();
-                }
-            } catch (UnknownHostException ex) {
-                mySession().addErrorIfAbsent("ERROR: Cannot find IP address for hostname: " + newHostName);
-            }
-        } else {
-            mySession().addErrorIfAbsent(newHostName + " is not a valid hostname");
-        }
-        newHostName = null;
+					}
+					else {
+						if( nullOrError != null ) {
+							mySession().addErrorIfAbsent( nullOrError );
+						}
+						else {
+							mySession().addErrorIfAbsent( "The host " + newHostName + " has already been added" );
+						}
+					}
+				}
+				finally {
+					handler().endWriting();
+				}
+			}
+			catch( UnknownHostException ex ) {
+				mySession().addErrorIfAbsent( "ERROR: Cannot find IP address for hostname: " + newHostName );
+			}
+		}
+		else {
+			mySession().addErrorIfAbsent( newHostName + " is not a valid hostname" );
+		}
+		newHostName = null;
 
-        return HostsPage.create(context());
-    }
+		return HostsPage.create( context() );
+	}
 
-    public WOComponent removeHostClicked() {
+	public WOComponent removeHostClicked() {
 
-        final MHost host = currentHost;
+		final MHost host = currentHost;
 
-        return ConfirmationPage.create(context(), new ConfirmationPage.Delegate() {
+		return ConfirmationPage.create( context(), new ConfirmationPage.Delegate() {
 
-            public WOComponent cancel() {
-                return HostsPage.create(context());
-            }
+			public WOComponent cancel() {
+				return HostsPage.create( context() );
+			}
 
-            public WOComponent confirm() {
-                handler().startWriting();
-                try {
-                    siteConfig().removeHost_M(host);
-                    NSMutableArray tempHostArray = new NSMutableArray(siteConfig().hostArray());
-                    tempHostArray.addObject(host);
+			public WOComponent confirm() {
+				handler().startWriting();
+				try {
+					siteConfig().removeHost_M( host );
+					NSMutableArray tempHostArray = new NSMutableArray( siteConfig().hostArray() );
+					tempHostArray.addObject( host );
 
-                    handler().sendRemoveHostToWotaskds(host, tempHostArray);
-                } finally {
-                    handler().endWriting();
-                }
-                return HostsPage.create(context());
-            }
+					handler().sendRemoveHostToWotaskds( host, tempHostArray );
+				}
+				finally {
+					handler().endWriting();
+				}
+				return HostsPage.create( context() );
+			}
 
-            public String explaination() {
-                return "Selecting 'Yes' will shutdown any running instances of this host, and remove those instance configurations.";
-            }
+			public String explaination() {
+				return "Selecting 'Yes' will shutdown any running instances of this host, and remove those instance configurations.";
+			}
 
-            public int pageType() {
-                return HOST_PAGE;
-            }
+			public int pageType() {
+				return HOST_PAGE;
+			}
 
-            public String question() {
-                return "Are you sure you want to delete the host <I>" + host.name() + "</I>?";
-            }
+			public String question() {
+				return "Are you sure you want to delete the host <I>" + host.name() + "</I>?";
+			}
 
-        });
-    }
+		} );
+	}
 
-    public WOComponent configureHostClicked() {
-        return HostConfigurePage.create(context(), currentHost);
-    }
+	public WOComponent configureHostClicked() {
+		return HostConfigurePage.create( context(), currentHost );
+	}
 
-    public WOComponent displayWotaskdInfoClicked() {
-        if (NSLog.debugLoggingAllowedForLevelAndGroups(NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment))
-            NSLog.debug.appendln("!@#$!@#$ displayWotaskdInfoClicked creates a WOHTTPConnection");
-        WotaskdInfoPage aPage = (WotaskdInfoPage) pageWithName("WotaskdInfoPage");
-        WORequest aRequest = new WORequest(MObject._POST, "/", MObject._HTTP1, siteConfig().passwordDictionary(), null,
-                null);
+	public WOComponent displayWotaskdInfoClicked() {
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+			NSLog.debug.appendln( "!@#$!@#$ displayWotaskdInfoClicked creates a WOHTTPConnection" );
+		WotaskdInfoPage aPage = (WotaskdInfoPage)pageWithName( "WotaskdInfoPage" );
+		WORequest aRequest = new WORequest( MObject._POST, "/", MObject._HTTP1, siteConfig().passwordDictionary(), null,
+				null );
 
-        WOResponse aResponse = null;
+		WOResponse aResponse = null;
 
-        try {
-            WOHTTPConnection anHTTPConnection = new WOHTTPConnection(currentHost.name(), theApplication
-                    .lifebeatDestinationPort());
-            anHTTPConnection.setReceiveTimeout(10000);
+		try {
+			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( currentHost.name(), theApplication
+					.lifebeatDestinationPort() );
+			anHTTPConnection.setReceiveTimeout( 10000 );
 
-            if (anHTTPConnection.sendRequest(aRequest)) {
-                aResponse = anHTTPConnection.readResponse();
-            }
-        } catch (Throwable localException) {
-            NSLog._conditionallyLogPrivateException(localException);
-        }
-        if (aResponse == null) {
-            aPage.wotaskdText = "Failed to get response from wotaskd " + currentHost.name() + ": "
-                    + WOApplication.application().lifebeatDestinationPort();
-        } else {
-            aPage.wotaskdText = aResponse.contentString();
-        }
-        return aPage;
-    }
+			if( anHTTPConnection.sendRequest( aRequest ) ) {
+				aResponse = anHTTPConnection.readResponse();
+			}
+		}
+		catch( Throwable localException ) {
+			NSLog._conditionallyLogPrivateException( localException );
+		}
+		if( aResponse == null ) {
+			aPage.wotaskdText = "Failed to get response from wotaskd " + currentHost.name() + ": "
+					+ WOApplication.application().lifebeatDestinationPort();
+		}
+		else {
+			aPage.wotaskdText = aResponse.contentString();
+		}
+		return aPage;
+	}
 
-    private boolean hostMeetsMinimumVersion(InetAddress anAddress) {
-        byte[] versionRequest;
+	private boolean hostMeetsMinimumVersion( InetAddress anAddress ) {
+		byte[] versionRequest;
 
-        try {
-            versionRequest = ("womp://queryVersion").getBytes(CharEncoding.UTF_8);
-        } catch (UnsupportedEncodingException uee) {
-            versionRequest = ("womp://queryVersion").getBytes();
-        }
-        DatagramPacket outgoingPacket = new DatagramPacket(versionRequest, versionRequest.length, anAddress,
-                WOApplication.application().lifebeatDestinationPort());
+		try {
+			versionRequest = ("womp://queryVersion").getBytes( CharEncoding.UTF_8 );
+		}
+		catch( UnsupportedEncodingException uee ) {
+			versionRequest = ("womp://queryVersion").getBytes();
+		}
+		DatagramPacket outgoingPacket = new DatagramPacket( versionRequest, versionRequest.length, anAddress,
+				WOApplication.application().lifebeatDestinationPort() );
 
-        byte[] mbuffer = new byte[1000];
-        DatagramPacket incomingPacket = new DatagramPacket(mbuffer, mbuffer.length);
-        DatagramSocket socket = null;
+		byte[] mbuffer = new byte[1000];
+		DatagramPacket incomingPacket = new DatagramPacket( mbuffer, mbuffer.length );
+		DatagramSocket socket = null;
 
-        try {
-            socket = new DatagramSocket();
-            socket.send(outgoingPacket);
-            incomingPacket.setLength(mbuffer.length);
-            socket.setSoTimeout(2000);
-            socket.receive(incomingPacket);
-            String reply = new String(incomingPacket.getData());
-            if (reply.startsWith("womp://replyVersion/")) {
-                int lastIndex = reply.lastIndexOf(":webObjects");
-                lastIndex += 11;
-                String version = reply.substring(lastIndex);
-                if (version.equals("4.5")) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } catch (InterruptedIOException iioe) {
-            return true;
-        } catch (SocketException se) {
-            return true;
-        } catch (Throwable e) {
-            return false;
-        } finally {
-            if (socket != null) {
-                socket.close();
-            }
-        }
+		try {
+			socket = new DatagramSocket();
+			socket.send( outgoingPacket );
+			incomingPacket.setLength( mbuffer.length );
+			socket.setSoTimeout( 2000 );
+			socket.receive( incomingPacket );
+			String reply = new String( incomingPacket.getData() );
+			if( reply.startsWith( "womp://replyVersion/" ) ) {
+				int lastIndex = reply.lastIndexOf( ":webObjects" );
+				lastIndex += 11;
+				String version = reply.substring( lastIndex );
+				if( version.equals( "4.5" ) ) {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+		catch( InterruptedIOException iioe ) {
+			return true;
+		}
+		catch( SocketException se ) {
+			return true;
+		}
+		catch( Throwable e ) {
+			return false;
+		}
+		finally {
+			if( socket != null ) {
+				socket.close();
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-	public static HostsPage create(WOContext context) {
-		return (HostsPage) context.page().pageWithName(HostsPage.class.getName());
+	public static HostsPage create( WOContext context ) {
+		return (HostsPage)context.page().pageWithName( HostsPage.class.getName() );
 	}
 
 }

@@ -22,126 +22,129 @@ import com.webobjects.monitor._private.String_Extensions;
 import er.extensions.appserver.ERXRedirect;
 
 public class ConfigurePage extends MonitorComponent {
-    public String backupNote;
-    public boolean isAdaptorSettingsSectionVisible = false;
-    public boolean isEmailSectionVisible = false;
-    public boolean isBackupSectionVisible = false;
-    
-    public ConfigurePage(WOContext aWocontext) {
-        super(aWocontext);
-    }
+	public String backupNote;
+	public boolean isAdaptorSettingsSectionVisible = false;
+	public boolean isEmailSectionVisible = false;
+	public boolean isBackupSectionVisible = false;
 
-    /*
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = -3447899695208425947L;
-
-    /* ******** HTTP Server Section ********* */
-    public WOComponent HTTPServerUpdateClicked() {
-        handler().sendUpdateSiteToWotaskds();
-
-        ConfigurePage aPage = ConfigurePage.create(context());
-        return aPage;
-    }
-
-    /* ******* */
-
-    /* ******** Email Section ********* */
-    
-    public WOComponent emailUpdateClicked() {
-        handler().sendUpdateSiteToWotaskds();
-
-        ConfigurePage aPage = ConfigurePage.create(context());
-        return aPage;
-    }
-
-    /* ******* */
-
-    /* ******** Adaptor Section ********* */
-    public String _loadSchedulerSelection = null;
-
-    public String loadSchedulerItem;
-
-    public NSArray loadSchedulerList = MObject.loadSchedulerArray;
-
-    public Integer urlVersionItem;
-
-    public NSArray urlVersionList = MObject.urlVersionArray;
-
-    public String customSchedulerName;
-
-    public String adaptorInfoUsername;
-    public String adaptorInfoPassword;
-    
-    public String loadSchedulerSelection() {
-        if ((theApplication != null) && (siteConfig().scheduler() != null)) {
-            int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOfObject(siteConfig().scheduler());
-            if (indexOfScheduler != -1) {
-                _loadSchedulerSelection = (String) loadSchedulerList.objectAtIndex(indexOfScheduler);
-            } else {
-                // Custom scheduler
-                _loadSchedulerSelection = (String) loadSchedulerList.objectAtIndex(loadSchedulerList.count() - 1);
-                customSchedulerName = siteConfig().scheduler();
-            }
-        }
-        return _loadSchedulerSelection;
-    }
-
-    public void setLoadSchedulerSelection(String value) {
-        _loadSchedulerSelection = value;
-    }
-
-    public Integer urlVersionSelection() {
-        if (theApplication != null)
-            return siteConfig().urlVersion();
-        return null;
-    }
-
-    public void setUrlVersionSelection(Integer value) {
-        if (theApplication != null)
-            siteConfig().setUrlVersion(value);
-    }
-
-    public WOComponent adaptorUpdateClicked() {
-        String newValue;
-
-        int i = loadSchedulerList.indexOfObject(_loadSchedulerSelection);
-        if (i == 0) {
-            newValue = null;
-        } else if (i == (loadSchedulerList.count() - 1)) {
-            newValue = customSchedulerName;
-            if (!String_Extensions.isValidXMLString(newValue)) {
-                newValue = null;
-            }
-        } else {
-            newValue = (String) MObject.loadSchedulerArrayValues.objectAtIndex(i);
-        }
-        siteConfig().setScheduler(newValue);
-
-        handler().sendUpdateSiteToWotaskds();
-
-        ConfigurePage aPage = ConfigurePage.create(context());
-        return aPage;
-    }
-    
-    public WOComponent backupConfiguration() {
-        siteConfig().forceBackup(backupNote);
-        return context().page();
-    }
-    
-    /* ******* */
-
-	public static ConfigurePage create(WOContext context) {
-		return (ConfigurePage) context.page().pageWithName(ConfigurePage.class.getName());
+	public ConfigurePage( WOContext aWocontext ) {
+		super( aWocontext );
 	}
 
-    public WOActionResults adaptorInfoLoginClicked() {
-    	String url = siteConfig().woAdaptor() + "/WOAdaptorInfo?" + adaptorInfoUsername + "+" + adaptorInfoPassword;
-    	if (url.startsWith("http://"))
-    		url = url.replaceFirst("http://", "https://");
-    	ERXRedirect redirect = pageWithName(ERXRedirect.class);
-    	redirect.setUrl(url);
-    	return redirect;
-    }
-    
+	/*
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -3447899695208425947L;
+
+	/* ******** HTTP Server Section ********* */
+	public WOComponent HTTPServerUpdateClicked() {
+		handler().sendUpdateSiteToWotaskds();
+
+		ConfigurePage aPage = ConfigurePage.create( context() );
+		return aPage;
+	}
+
+	/* ******* */
+
+	/* ******** Email Section ********* */
+
+	public WOComponent emailUpdateClicked() {
+		handler().sendUpdateSiteToWotaskds();
+
+		ConfigurePage aPage = ConfigurePage.create( context() );
+		return aPage;
+	}
+
+	/* ******* */
+
+	/* ******** Adaptor Section ********* */
+	public String _loadSchedulerSelection = null;
+
+	public String loadSchedulerItem;
+
+	public NSArray loadSchedulerList = MObject.loadSchedulerArray;
+
+	public Integer urlVersionItem;
+
+	public NSArray urlVersionList = MObject.urlVersionArray;
+
+	public String customSchedulerName;
+
+	public String adaptorInfoUsername;
+	public String adaptorInfoPassword;
+
+	public String loadSchedulerSelection() {
+		if( (theApplication != null) && (siteConfig().scheduler() != null) ) {
+			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOfObject( siteConfig().scheduler() );
+			if( indexOfScheduler != -1 ) {
+				_loadSchedulerSelection = (String)loadSchedulerList.objectAtIndex( indexOfScheduler );
+			}
+			else {
+				// Custom scheduler
+				_loadSchedulerSelection = (String)loadSchedulerList.objectAtIndex( loadSchedulerList.count() - 1 );
+				customSchedulerName = siteConfig().scheduler();
+			}
+		}
+		return _loadSchedulerSelection;
+	}
+
+	public void setLoadSchedulerSelection( String value ) {
+		_loadSchedulerSelection = value;
+	}
+
+	public Integer urlVersionSelection() {
+		if( theApplication != null )
+			return siteConfig().urlVersion();
+		return null;
+	}
+
+	public void setUrlVersionSelection( Integer value ) {
+		if( theApplication != null )
+			siteConfig().setUrlVersion( value );
+	}
+
+	public WOComponent adaptorUpdateClicked() {
+		String newValue;
+
+		int i = loadSchedulerList.indexOfObject( _loadSchedulerSelection );
+		if( i == 0 ) {
+			newValue = null;
+		}
+		else if( i == (loadSchedulerList.count() - 1) ) {
+			newValue = customSchedulerName;
+			if( !String_Extensions.isValidXMLString( newValue ) ) {
+				newValue = null;
+			}
+		}
+		else {
+			newValue = (String)MObject.loadSchedulerArrayValues.objectAtIndex( i );
+		}
+		siteConfig().setScheduler( newValue );
+
+		handler().sendUpdateSiteToWotaskds();
+
+		ConfigurePage aPage = ConfigurePage.create( context() );
+		return aPage;
+	}
+
+	public WOComponent backupConfiguration() {
+		siteConfig().forceBackup( backupNote );
+		return context().page();
+	}
+
+	/* ******* */
+
+	public static ConfigurePage create( WOContext context ) {
+		return (ConfigurePage)context.page().pageWithName( ConfigurePage.class.getName() );
+	}
+
+	public WOActionResults adaptorInfoLoginClicked() {
+		String url = siteConfig().woAdaptor() + "/WOAdaptorInfo?" + adaptorInfoUsername + "+" + adaptorInfoPassword;
+		if( url.startsWith( "http://" ) )
+			url = url.replaceFirst( "http://", "https://" );
+		ERXRedirect redirect = pageWithName( ERXRedirect.class );
+		redirect.setUrl( url );
+		return redirect;
+	}
+
 }

@@ -28,52 +28,52 @@ import er.rest.routes.ERXRouteRequestHandler;
 
 public class Application extends ERXApplication {
 
-    static public void main(String argv[]) {
-    	ERXApplication.main(argv, Application.class);
-    }
+	static public void main( String argv[] ) {
+		ERXApplication.main( argv, Application.class );
+	}
 
-    public Application() {
-        super();
-        String dd = System.getProperties().getProperty("_DeploymentDebugging");
-        if (dd != null) {
-            NSLog.debug.setIsVerbose(true);
-            NSLog.out.setIsVerbose(true);
-            NSLog.err.setIsVerbose(true);
-            NSLog.allowDebugLoggingForGroups(NSLog.DebugGroupDeployment);
-            NSLog.debug.setAllowedDebugLevel(NSLog.DebugLevelDetailed);
-        }
-        WOTaskdHandler.createSiteConfig();
-        registerRequestHandler(new WODirectActionRequestHandler() {
-            @Override
-            public NSArray getRequestHandlerPathForRequest(WORequest worequest) {
-                NSArray nsarray = new NSArray(AdminAction.class.getName());
-                return nsarray.arrayByAddingObject(worequest.requestHandlerPath());
-            }
+	public Application() {
+		super();
+		String dd = System.getProperties().getProperty( "_DeploymentDebugging" );
+		if( dd != null ) {
+			NSLog.debug.setIsVerbose( true );
+			NSLog.out.setIsVerbose( true );
+			NSLog.err.setIsVerbose( true );
+			NSLog.allowDebugLoggingForGroups( NSLog.DebugGroupDeployment );
+			NSLog.debug.setAllowedDebugLevel( NSLog.DebugLevelDetailed );
+		}
+		WOTaskdHandler.createSiteConfig();
+		registerRequestHandler( new WODirectActionRequestHandler() {
+			@Override
+			public NSArray getRequestHandlerPathForRequest( WORequest worequest ) {
+				NSArray nsarray = new NSArray( AdminAction.class.getName() );
+				return nsarray.arrayByAddingObject( worequest.requestHandlerPath() );
+			}
 
-        }, "admin");
-        setAllowsConcurrentRequestHandling(true);
-        ERXRouteRequestHandler restHandler = new ERXRouteRequestHandler();
-        restHandler.addDefaultRoutes("MApplication", false, MApplicationController.class);
-        // Old code. The two lines below are replaced by the following line.  The addInstanceOnAllHosts action throws an exception if the host is not localhost. 
-        // The addInstance action now handles any missing host as well as a host passed in as a key/value pair. kib 20110622
-        //		restHandler.insertRoute(new ERXRoute("MApplication","/mApplications/{name:MApplication}/addInstance", ERXRoute.Method.Get, MApplicationController.class, "addInstanceOnAllHosts"));
-        //		restHandler.insertRoute(new ERXRoute("MApplication","/mApplications/{name:MApplication}/addInstance/{host:MHost}", ERXRoute.Method.Get, MApplicationController.class, "addInstance"));
-        restHandler.insertRoute(new ERXRoute("MApplication","/mApplications/{name:MApplication}/addInstance", ERXRoute.Method.Get, MApplicationController.class, "addInstance"));
-        restHandler.insertRoute(new ERXRoute("MApplication","/mApplications/{name:MApplication}/deleteInstance", ERXRoute.Method.Get, MApplicationController.class, "deleteInstance"));
-        restHandler.addDefaultRoutes("MHost", false, MHostController.class);
-        restHandler.addDefaultRoutes("MSiteConfig", false, MSiteConfigController.class);
-        restHandler.insertRoute(new ERXRoute("MSiteConfig","/mSiteConfig", ERXRoute.Method.Put, MSiteConfigController.class, "update"));
+		}, "admin" );
+		setAllowsConcurrentRequestHandling( true );
+		ERXRouteRequestHandler restHandler = new ERXRouteRequestHandler();
+		restHandler.addDefaultRoutes( "MApplication", false, MApplicationController.class );
+		// Old code. The two lines below are replaced by the following line.  The addInstanceOnAllHosts action throws an exception if the host is not localhost. 
+		// The addInstance action now handles any missing host as well as a host passed in as a key/value pair. kib 20110622
+		//		restHandler.insertRoute(new ERXRoute("MApplication","/mApplications/{name:MApplication}/addInstance", ERXRoute.Method.Get, MApplicationController.class, "addInstanceOnAllHosts"));
+		//		restHandler.insertRoute(new ERXRoute("MApplication","/mApplications/{name:MApplication}/addInstance/{host:MHost}", ERXRoute.Method.Get, MApplicationController.class, "addInstance"));
+		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/addInstance", ERXRoute.Method.Get, MApplicationController.class, "addInstance" ) );
+		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/deleteInstance", ERXRoute.Method.Get, MApplicationController.class, "deleteInstance" ) );
+		restHandler.addDefaultRoutes( "MHost", false, MHostController.class );
+		restHandler.addDefaultRoutes( "MSiteConfig", false, MSiteConfigController.class );
+		restHandler.insertRoute( new ERXRoute( "MSiteConfig", "/mSiteConfig", ERXRoute.Method.Put, MSiteConfigController.class, "update" ) );
 
-        ERXRouteRequestHandler.register(restHandler);
-    }
+		ERXRouteRequestHandler.register( restHandler );
+	}
 
-    @Override
-    public NSMutableDictionary handleMalformedCookieString(RuntimeException arg0, String arg1, NSMutableDictionary arg2) {
-        NSLog.err.appendln("Malformed cookies: " + arg1);
-        return arg2 == null ? new NSMutableDictionary() : arg2;
-    }
-    
-    public MSiteConfig _siteConfig() {
-        return WOTaskdHandler.siteConfig();
-    }
+	@Override
+	public NSMutableDictionary handleMalformedCookieString( RuntimeException arg0, String arg1, NSMutableDictionary arg2 ) {
+		NSLog.err.appendln( "Malformed cookies: " + arg1 );
+		return arg2 == null ? new NSMutableDictionary() : arg2;
+	}
+
+	public MSiteConfig _siteConfig() {
+		return WOTaskdHandler.siteConfig();
+	}
 }

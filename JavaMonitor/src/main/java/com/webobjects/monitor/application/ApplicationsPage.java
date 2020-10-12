@@ -22,148 +22,144 @@ import com.webobjects.monitor._private.String_Extensions;
 
 public class ApplicationsPage extends MonitorComponent {
 
-    private static final long serialVersionUID = -2523319756655905750L;
+	private static final long serialVersionUID = -2523319756655905750L;
 
 	private int _totalInstancesConfigured = 0;
 	private int _totalInstancesRunning = 0;
-	
-	
-    public ApplicationsPage(WOContext aWocontext) {
-        super(aWocontext);
-        handler().updateForPage(name());
-    }
- 
 
-    public MApplication currentApplication;
+	public ApplicationsPage( WOContext aWocontext ) {
+		super( aWocontext );
+		handler().updateForPage( name() );
+	}
 
-    public String newApplicationName;
+	public MApplication currentApplication;
 
-    public NSArray<MApplication> applications() {
-    	NSMutableArray<MApplication> applications = new NSMutableArray<>();
-    	applications.addObjectsFromArray(mySession().siteConfig().applicationArray());
-    	EOSortOrdering order= new EOSortOrdering("name", EOSortOrdering.CompareAscending);
-    	EOSortOrdering.sortArrayUsingKeyOrderArray(applications, new NSArray(order));
-    	
-    	calculateTotals(applications);
-     	return applications;
-    }
-    
-    public String hrefToApp() {
-        String aURL = siteConfig().woAdaptor();
-        if (aURL != null) {
-            aURL = aURL + "/" + currentApplication.name();
-        }
-        return aURL;
-    }
+	public String newApplicationName;
 
-    public WOComponent appDetailsClicked() {
-        return AppDetailPage.create(context(), currentApplication);
-    }
+	public NSArray<MApplication> applications() {
+		NSMutableArray<MApplication> applications = new NSMutableArray<>();
+		applications.addObjectsFromArray( mySession().siteConfig().applicationArray() );
+		EOSortOrdering order = new EOSortOrdering( "name", EOSortOrdering.CompareAscending );
+		EOSortOrdering.sortArrayUsingKeyOrderArray( applications, new NSArray( order ) );
 
-    public WOComponent addApplicationClicked() {
-        if (String_Extensions.isValidXMLString(newApplicationName)) {
-            handler().startReading();
-            try {
-                if (siteConfig().applicationWithName(newApplicationName) == null) {
-                    MApplication newApplication = new MApplication(newApplicationName, siteConfig());
-                    siteConfig().addApplication_M(newApplication);
+		calculateTotals( applications );
+		return applications;
+	}
 
-                    if (siteConfig().hostArray().count() != 0) {
-                        handler().sendAddApplicationToWotaskds(newApplication, siteConfig().hostArray());
-                    }
+	public String hrefToApp() {
+		String aURL = siteConfig().woAdaptor();
+		if( aURL != null ) {
+			aURL = aURL + "/" + currentApplication.name();
+		}
+		return aURL;
+	}
 
-                    AppConfigurePage aPage = AppConfigurePage.create(context(), newApplication);
-                    aPage.isNewInstanceSectionVisible = true;
+	public WOComponent appDetailsClicked() {
+		return AppDetailPage.create( context(), currentApplication );
+	}
 
-                    // endReading in the finally block below
-                    return aPage;
-                }
-            } finally {
-                handler().endReading();
-            }
-        }
-        newApplicationName = null;
-        return ApplicationsPage.create(context());
-    }
+	public WOComponent addApplicationClicked() {
+		if( String_Extensions.isValidXMLString( newApplicationName ) ) {
+			handler().startReading();
+			try {
+				if( siteConfig().applicationWithName( newApplicationName ) == null ) {
+					MApplication newApplication = new MApplication( newApplicationName, siteConfig() );
+					siteConfig().addApplication_M( newApplication );
 
-  public static WOComponent create(WOContext context) {
-		return context.page().pageWithName(ApplicationsPage.class.getName());
+					if( siteConfig().hostArray().count() != 0 ) {
+						handler().sendAddApplicationToWotaskds( newApplication, siteConfig().hostArray() );
+					}
+
+					AppConfigurePage aPage = AppConfigurePage.create( context(), newApplication );
+					aPage.isNewInstanceSectionVisible = true;
+
+					// endReading in the finally block below
+					return aPage;
+				}
+			}
+			finally {
+				handler().endReading();
+			}
+		}
+		newApplicationName = null;
+		return ApplicationsPage.create( context() );
+	}
+
+	public static WOComponent create( WOContext context ) {
+		return context.page().pageWithName( ApplicationsPage.class.getName() );
 	}
 
 	public WOComponent deleteClicked() {
-	    
-	    final MApplication application = currentApplication;
-	    
-	    return ConfirmationPage.create(context(), new ConfirmationPage.Delegate() {
 
-            public WOComponent cancel() {
-                return ApplicationsPage.create(context());
-            }
+		final MApplication application = currentApplication;
 
-            public WOComponent confirm() {
-                handler().startWriting();
-                try {
-                    siteConfig().removeApplication_M(application);
+		return ConfirmationPage.create( context(), new ConfirmationPage.Delegate() {
 
-                    if (siteConfig().hostArray().count() != 0) {
-                        handler().sendRemoveApplicationToWotaskds(application, siteConfig().hostArray());
-                    }
-                } finally {
-                    handler().endWriting();
-                }
-                return ApplicationsPage.create(context());
-            }
+			public WOComponent cancel() {
+				return ApplicationsPage.create( context() );
+			}
 
-            public String explaination() {
-                return "Selecting 'Yes' will shutdown any running instances of this application, delete all instance configurations, and remove this application from the Application page.";
-            }
+			public WOComponent confirm() {
+				handler().startWriting();
+				try {
+					siteConfig().removeApplication_M( application );
 
-            public int pageType() {
-                return APP_PAGE;
-            }
+					if( siteConfig().hostArray().count() != 0 ) {
+						handler().sendRemoveApplicationToWotaskds( application, siteConfig().hostArray() );
+					}
+				}
+				finally {
+					handler().endWriting();
+				}
+				return ApplicationsPage.create( context() );
+			}
 
-            public String question() {
-                return "Are you sure you want to delete the <I>" + application.name() + "</I> Application?";
-            }
-	        
-	    });
-    }
+			public String explaination() {
+				return "Selecting 'Yes' will shutdown any running instances of this application, delete all instance configurations, and remove this application from the Application page.";
+			}
 
-	
-	
-    public WOComponent bounceClicked() {
-        AppDetailPage page = AppDetailPage.create(context(), currentApplication);
-        page = (AppDetailPage) page.bounceClicked();
-        return page;
-    }
+			public int pageType() {
+				return APP_PAGE;
+			}
 
-    public WOComponent configureClicked() {
-        AppConfigurePage aPage = AppConfigurePage.create(context(), currentApplication);
-        aPage.isNewInstanceSectionVisible = true;
-        return aPage;
-    }
-    
-    
-    /**
-     * Calculates and sets the {@link #totalInstancesConfigured()} and {@link #totalInstancesRunning()}
-     * for the given array of applications
-     * 
-     * @param applications
-     */
-    public void calculateTotals(NSMutableArray<MApplication> applications){
-    	int totalRunningInstances = 0;
-    	int totalConfiguredInstances = 0;
-    	
-    	// use for-loop to preserve compile-time error-checking instead of using valueForKey("runningInstancesCount.@sum")
-    	for (MApplication mApplication : applications) {
-    		totalRunningInstances = totalRunningInstances + mApplication.runningInstancesCount();
-    		totalConfiguredInstances = totalConfiguredInstances +  mApplication.instanceArray().count();
+			public String question() {
+				return "Are you sure you want to delete the <I>" + application.name() + "</I> Application?";
+			}
+
+		} );
+	}
+
+	public WOComponent bounceClicked() {
+		AppDetailPage page = AppDetailPage.create( context(), currentApplication );
+		page = (AppDetailPage)page.bounceClicked();
+		return page;
+	}
+
+	public WOComponent configureClicked() {
+		AppConfigurePage aPage = AppConfigurePage.create( context(), currentApplication );
+		aPage.isNewInstanceSectionVisible = true;
+		return aPage;
+	}
+
+	/**
+	 * Calculates and sets the {@link #totalInstancesConfigured()} and {@link #totalInstancesRunning()}
+	 * for the given array of applications
+	 * 
+	 * @param applications
+	 */
+	public void calculateTotals( NSMutableArray<MApplication> applications ) {
+		int totalRunningInstances = 0;
+		int totalConfiguredInstances = 0;
+
+		// use for-loop to preserve compile-time error-checking instead of using valueForKey("runningInstancesCount.@sum")
+		for( MApplication mApplication : applications ) {
+			totalRunningInstances = totalRunningInstances + mApplication.runningInstancesCount();
+			totalConfiguredInstances = totalConfiguredInstances + mApplication.instanceArray().count();
 		}
-    	setTotalInstancesConfigured(totalConfiguredInstances);
-    	setTotalInstancesRunning(totalRunningInstances);
-    }
+		setTotalInstancesConfigured( totalConfiguredInstances );
+		setTotalInstancesRunning( totalRunningInstances );
+	}
 
-    
 	/**
 	 * @return the total number of instances configured for all applications
 	 */
@@ -175,7 +171,7 @@ public class ApplicationsPage extends MonitorComponent {
 	 * Sets the total number of instances configured for all applications
 	 * @param totalInstancesConfigured 
 	 */
-	public void setTotalInstancesConfigured(int totalInstancesConfigured) {
+	public void setTotalInstancesConfigured( int totalInstancesConfigured ) {
 		_totalInstancesConfigured = totalInstancesConfigured;
 	}
 
@@ -190,10 +186,8 @@ public class ApplicationsPage extends MonitorComponent {
 	 * Sets the total number of running instances for all applications
 	 * @param totalInstancesRunning
 	 */
-	public void setTotalInstancesRunning(int totalInstancesRunning) {
+	public void setTotalInstancesRunning( int totalInstancesRunning ) {
 		_totalInstancesRunning = totalInstancesRunning;
 	}
 
-    
-    
 }

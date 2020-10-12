@@ -10,13 +10,13 @@ import er.rest.routes.ERXDefaultRouteController;
 
 public class JavaMonitorController extends ERXDefaultRouteController {
 
-    private WOTaskdHandler _handler;
+	private WOTaskdHandler _handler;
 
-	public JavaMonitorController(WORequest request) {
-		super(request);
-		_handler = new WOTaskdHandler(mySession());
+	public JavaMonitorController( WORequest request ) {
+		super( request );
+		_handler = new WOTaskdHandler( mySession() );
 	}
-		
+
 	protected MSiteConfig siteConfig() {
 		return WOTaskdHandler.siteConfig();
 	}
@@ -24,10 +24,10 @@ public class JavaMonitorController extends ERXDefaultRouteController {
 	public WOTaskdHandler handler() {
 		return _handler;
 	}
-    
-    public Session mySession() {
-        return (Session) super.session();
-    }
+
+	public Session mySession() {
+		return (Session)super.session();
+	}
 
 	@Override
 	public WOActionResults createAction() throws Throwable {
@@ -64,12 +64,12 @@ public class JavaMonitorController extends ERXDefaultRouteController {
 		// TODO Auto-generated method stub
 		return null;
 	}
-    
+
 	protected void checkPassword() throws SecurityException {
-        String pw = context().request().stringFormValueForKey("pw");
-        if(!siteConfig().compareStringWithPassword(pw)) {
-			throw new SecurityException("Invalid password");
-        }
+		String pw = context().request().stringFormValueForKey( "pw" );
+		if( !siteConfig().compareStringWithPassword( pw ) ) {
+			throw new SecurityException( "Invalid password" );
+		}
 	}
-	  
+
 }

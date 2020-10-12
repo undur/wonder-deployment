@@ -22,247 +22,256 @@ import com.webobjects.monitor._private.MObject;
 
 public class InstConfigurePage extends MonitorComponent {
 
-    public InstConfigurePage(WOContext aWocontext) {
-        super(aWocontext);
-    }
+	public InstConfigurePage( WOContext aWocontext ) {
+		super( aWocontext );
+	}
 
-    /*
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = 2930097368474314793L;
+	/*
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 2930097368474314793L;
 
-    public boolean isWindowsHost() {
-        return myInstance().host().osType().equals("WINDOWS");
-    }
+	public boolean isWindowsHost() {
+		return myInstance().host().osType().equals( "WINDOWS" );
+	}
 
-    public WOComponent returnClicked() {
-        return AppDetailPage.create(context(), myInstance().application());
-    }
+	public WOComponent returnClicked() {
+		return AppDetailPage.create( context(), myInstance().application() );
+	}
 
-    public WOComponent appConfigLinkClicked() {
-        AppConfigurePage aPage = AppConfigurePage.create(context(), myApplication());
-        aPage.isNewInstanceSectionVisible = true;
-        return aPage;
-    }
+	public WOComponent appConfigLinkClicked() {
+		AppConfigurePage aPage = AppConfigurePage.create( context(), myApplication() );
+		aPage.isNewInstanceSectionVisible = true;
+		return aPage;
+	}
 
-    /* ******** Startup Section ********* */
-    private WOComponent _pathPickerWizardClicked(String callbackKeyPath) {
-        PathWizardPage1 aPage = PathWizardPage1.create(context(), myApplication());
-        aPage.setCallbackKeypath(callbackKeyPath);
-        aPage.setCallbackPage(this);
-        aPage.setShowFiles(true);
-        return aPage;
-    }
+	/* ******** Startup Section ********* */
+	private WOComponent _pathPickerWizardClicked( String callbackKeyPath ) {
+		PathWizardPage1 aPage = PathWizardPage1.create( context(), myApplication() );
+		aPage.setCallbackKeypath( callbackKeyPath );
+		aPage.setCallbackPage( this );
+		aPage.setShowFiles( true );
+		return aPage;
+	}
 
-    public WOComponent pathPickerWizardClicked() {
-        return _pathPickerWizardClicked("myInstance.path");
-    }
+	public WOComponent pathPickerWizardClicked() {
+		return _pathPickerWizardClicked( "myInstance.path" );
+	}
 
-    public WOComponent pathPickerWizardClickedOutput() {
-        return _pathPickerWizardClicked("myInstance.outputPath");
-    }
+	public WOComponent pathPickerWizardClickedOutput() {
+		return _pathPickerWizardClicked( "myInstance.outputPath" );
+	}
 
-    public Integer port() {
-        return myInstance().port();
-    }
+	public Integer port() {
+		return myInstance().port();
+	}
 
-    public void setPort(Integer value) {
-        if (value == null)
-            return;
-        if (!value.equals(myInstance().port())) {
-            if (myInstance().state != MObject.DEAD) {
-                mySession().addErrorIfAbsent("This instance is still running; unable to change port");
-                return;
-            }
-            if (!myInstance().host().isPortInUse(value)) {
-                myInstance().setPort(value);
-            } else {
-                mySession().addErrorIfAbsent("This port is in use");
-            }
-        }
-    }
+	public void setPort( Integer value ) {
+		if( value == null )
+			return;
+		if( !value.equals( myInstance().port() ) ) {
+			if( myInstance().state != MObject.DEAD ) {
+				mySession().addErrorIfAbsent( "This instance is still running; unable to change port" );
+				return;
+			}
+			if( !myInstance().host().isPortInUse( value ) ) {
+				myInstance().setPort( value );
+			}
+			else {
+				mySession().addErrorIfAbsent( "This port is in use" );
+			}
+		}
+	}
 
-    public Integer id() {
-        return myInstance().id();
-    }
-    
-    public String displayName() {
-        return myInstance().displayName();
-    }
-    
-    public void setDisplayName(Object foo) {
-    	// ak: should switch to non-sync
-    }
+	public Integer id() {
+		return myInstance().id();
+	}
 
-    public void setId(Integer value) {
-        if (value == null)
-            return;
-        if (!value.equals(myInstance().id())) {
-            if (!myInstance().application().isIDInUse(value)) {
-                myInstance().setId(value);
-            } else {
-                mySession().addErrorIfAbsent("This ID is in use");
-            }
-        }
-    }
+	public String displayName() {
+		return myInstance().displayName();
+	}
 
-    public WOComponent startupUpdateClicked() {
-        handler().startReading();
-        try {
-            handler().sendUpdateInstancesToWotaskds(new NSArray(myInstance()), allHosts());
-        } finally {
-            handler().endReading();
-        }
-        return null;
-    }
+	public void setDisplayName( Object foo ) {
+		// ak: should switch to non-sync
+	}
 
-    /* ******* */
+	public void setId( Integer value ) {
+		if( value == null )
+			return;
+		if( !value.equals( myInstance().id() ) ) {
+			if( !myInstance().application().isIDInUse( value ) ) {
+				myInstance().setId( value );
+			}
+			else {
+				mySession().addErrorIfAbsent( "This ID is in use" );
+			}
+		}
+	}
 
-    /* ******** Adaptor Settings Section ********* */
-    public WOComponent adaptorSettingsUpdateClicked() {
-        handler().startReading();
-        try {
-            handler().sendUpdateInstancesToWotaskds(new NSArray(myInstance()), allHosts());
-        } finally {
-            handler().endReading();
-        }
+	public WOComponent startupUpdateClicked() {
+		handler().startReading();
+		try {
+			handler().sendUpdateInstancesToWotaskds( new NSArray( myInstance() ), allHosts() );
+		}
+		finally {
+			handler().endReading();
+		}
+		return null;
+	}
 
-        return null;
-    }
+	/* ******* */
 
-    /* ******* */
+	/* ******** Adaptor Settings Section ********* */
+	public WOComponent adaptorSettingsUpdateClicked() {
+		handler().startReading();
+		try {
+			handler().sendUpdateInstancesToWotaskds( new NSArray( myInstance() ), allHosts() );
+		}
+		finally {
+			handler().endReading();
+		}
 
-    /* ******** Diff returns ********* */
-    private static String _diffString = "<span class=\"Warning\">**</span>";
+		return null;
+	}
 
-    private static String _emptyString = "";
+	/* ******* */
 
-    private boolean safeEquals(Object a, Object b) {
-        if ((a == null) && (b == null)) {
-            return true;
-        } else if ((a != null) && (b != null)) {
-            return a.equals(b);
-        }
-        // only 1 of the 2 is null
-        if ((a instanceof String) || (b instanceof String)) {
-            if ( (a == null && b != null && ((String) b).length() == 0) || (b == null && a != null && ((String) a).length() == 0) ) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/* ******** Diff returns ********* */
+	private static String _diffString = "<span class=\"Warning\">**</span>";
 
-    public String pathDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        MHost myHost = myInstance.host();
-        String appPath = null;
+	private static String _emptyString = "";
 
-        if (myHost.osType().equals("UNIX")) {
-            appPath = myApplication.unixPath();
-        } else if (myHost.osType().equals("WINDOWS")) {
-            appPath = myApplication.winPath();
-        } else if (myHost.osType().equals("MACOSX")) {
-            appPath = myApplication.macPath();
-        }
+	private boolean safeEquals( Object a, Object b ) {
+		if( (a == null) && (b == null) ) {
+			return true;
+		}
+		else if( (a != null) && (b != null) ) {
+			return a.equals( b );
+		}
+		// only 1 of the 2 is null
+		if( (a instanceof String) || (b instanceof String) ) {
+			if( (a == null && b != null && ((String)b).length() == 0) || (b == null && a != null && ((String)a).length() == 0) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-        if (!safeEquals(myInstance.path(), appPath)) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+	public String pathDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		MHost myHost = myInstance.host();
+		String appPath = null;
 
-    public String minDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        if (!safeEquals(myInstance.minimumActiveSessionsCount(), myApplication.minimumActiveSessionsCount())) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+		if( myHost.osType().equals( "UNIX" ) ) {
+			appPath = myApplication.unixPath();
+		}
+		else if( myHost.osType().equals( "WINDOWS" ) ) {
+			appPath = myApplication.winPath();
+		}
+		else if( myHost.osType().equals( "MACOSX" ) ) {
+			appPath = myApplication.macPath();
+		}
 
-    public String cachingDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        if (!safeEquals(myInstance.cachingEnabled(), myApplication.cachingEnabled())) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+		if( !safeEquals( myInstance.path(), appPath ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-    public String outputDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        MHost myHost = myInstance.host();
-        String appOutputPath = null;
+	public String minDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		if( !safeEquals( myInstance.minimumActiveSessionsCount(), myApplication.minimumActiveSessionsCount() ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-        if (myHost.osType().equals("UNIX")) {
-            appOutputPath = myInstance.generateOutputPath(myApplication.unixOutputPath());
-        } else if (myHost.osType().equals("WINDOWS")) {
-            appOutputPath = myInstance.generateOutputPath(myApplication.winOutputPath());
-        } else if (myHost.osType().equals("MACOSX")) {
-            appOutputPath = myInstance.generateOutputPath(myApplication.macOutputPath());
-        }
+	public String cachingDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		if( !safeEquals( myInstance.cachingEnabled(), myApplication.cachingEnabled() ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-        if (!safeEquals(myInstance.outputPath(), appOutputPath)) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+	public String outputDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		MHost myHost = myInstance.host();
+		String appOutputPath = null;
 
-    public String browserDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        if (!safeEquals(myInstance.autoOpenInBrowser(), myApplication.autoOpenInBrowser())) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+		if( myHost.osType().equals( "UNIX" ) ) {
+			appOutputPath = myInstance.generateOutputPath( myApplication.unixOutputPath() );
+		}
+		else if( myHost.osType().equals( "WINDOWS" ) ) {
+			appOutputPath = myInstance.generateOutputPath( myApplication.winOutputPath() );
+		}
+		else if( myHost.osType().equals( "MACOSX" ) ) {
+			appOutputPath = myInstance.generateOutputPath( myApplication.macOutputPath() );
+		}
 
-    public String debugDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        if (!safeEquals(myInstance.debuggingEnabled(), myApplication.debuggingEnabled())) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+		if( !safeEquals( myInstance.outputPath(), appOutputPath ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-    public String lifebeatDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        if (!safeEquals(myInstance.lifebeatInterval(), myApplication.lifebeatInterval())) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+	public String browserDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		if( !safeEquals( myInstance.autoOpenInBrowser(), myApplication.autoOpenInBrowser() ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-    public String argsDiff() {
-        MInstance myInstance = myInstance();
-        MApplication myApplication = myInstance.application();
-        if (!safeEquals(myInstance.additionalArgs(), myApplication.additionalArgs())) {
-            return _diffString;
-        }
-        return _emptyString;
-    }
+	public String debugDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		if( !safeEquals( myInstance.debuggingEnabled(), myApplication.debuggingEnabled() ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-    /* ******* */
+	public String lifebeatDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		if( !safeEquals( myInstance.lifebeatInterval(), myApplication.lifebeatInterval() ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-    /* ******** Force Quit support ********* */
-    public WOComponent forceQuitClicked() {
-        handler().sendQuitInstancesToWotaskds(new NSArray(myInstance()), new NSArray(myInstance().host()));
-        return null;
-    }
+	public String argsDiff() {
+		MInstance myInstance = myInstance();
+		MApplication myApplication = myInstance.application();
+		if( !safeEquals( myInstance.additionalArgs(), myApplication.additionalArgs() ) ) {
+			return _diffString;
+		}
+		return _emptyString;
+	}
 
-    public String instanceLifebeatInterval() {
-        return myInstance().lifebeatInterval().toString();
-    }
-    /*
-     * @param instance TODO ******* */
+	/* ******* */
 
-	public static InstConfigurePage create(WOContext context, MInstance instance) {
-		InstConfigurePage page = (InstConfigurePage) context.page().pageWithName(InstConfigurePage.class.getName());
-		page.setMyInstance(instance);
+	/* ******** Force Quit support ********* */
+	public WOComponent forceQuitClicked() {
+		handler().sendQuitInstancesToWotaskds( new NSArray( myInstance() ), new NSArray( myInstance().host() ) );
+		return null;
+	}
+
+	public String instanceLifebeatInterval() {
+		return myInstance().lifebeatInterval().toString();
+	}
+	/*
+	 * @param instance TODO ******* */
+
+	public static InstConfigurePage create( WOContext context, MInstance instance ) {
+		InstConfigurePage page = (InstConfigurePage)context.page().pageWithName( InstConfigurePage.class.getName() );
+		page.setMyInstance( instance );
 		return page;
 	}
 

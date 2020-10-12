@@ -29,109 +29,112 @@ import com.webobjects.foundation.NSData;
 
 @Deprecated
 public class MigrationPage extends MonitorComponent {
-    /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = -1317986389844426074L;
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -1317986389844426074L;
 
-    public String host;
+	public String host;
 
-    public String username;
+	public String username;
 
-    // for SSH identity file upload
-    public NSData sshIdentityContent;
+	// for SSH identity file upload
+	public NSData sshIdentityContent;
 
-    public String sshIdentityFilepath;
+	public String sshIdentityFilepath;
 
-    public String remoteFilepath;
+	public String remoteFilepath;
 
-    public Boolean shouldRestartApache;
+	public Boolean shouldRestartApache;
 
-    // for UI
-    public String migrationStackTrace = null;
+	// for UI
+	public String migrationStackTrace = null;
 
-    // internal use
-    public String adaptorConfigContent;
+	// internal use
+	public String adaptorConfigContent;
 
-    public String adaptorConfigLocalFilepath;// =
-                                                // "/tmp/http-webobjects.conf";
+	public String adaptorConfigLocalFilepath;// =
+												// "/tmp/http-webobjects.conf";
 
-    public MigrationPage(WOContext aWocontext) {
-        super(aWocontext);
-    }
+	public MigrationPage( WOContext aWocontext ) {
+		super( aWocontext );
+	}
 
-    public String adaptorConfigContent() {
-        @SuppressWarnings("unused")
-				final Application app = (Application) WOApplication.application();
-        adaptorConfigContent = siteConfig().generateHttpWebObjectsConfig().toString();
-        return adaptorConfigContent;
-    }
+	public String adaptorConfigContent() {
+		@SuppressWarnings("unused")
+		final Application app = (Application)WOApplication.application();
+		adaptorConfigContent = siteConfig().generateHttpWebObjectsConfig().toString();
+		return adaptorConfigContent;
+	}
 
-    public WOComponent migrate() {
+	public WOComponent migrate() {
 
-        FileOutputStream adaptorConfigFileOutputStream = null;
-//        FileOutputStream sshIdentityFileOutputStream = null;
-        try {
-            // write the ssh identity file to local disk for scp later
-            // sshIdentityFileOutputStream = new FileOutputStream(new
-            // File(sshIdentityFilepath));
-            // sshIdentityContent.writeToStream(sshIdentityFileOutputStream);
-            // sshIdentityFileOutputStream.close();
-            // FIXME: Any security concern? SSH identify file saving to local
-            // disk
+		FileOutputStream adaptorConfigFileOutputStream = null;
+		//        FileOutputStream sshIdentityFileOutputStream = null;
+		try {
+			// write the ssh identity file to local disk for scp later
+			// sshIdentityFileOutputStream = new FileOutputStream(new
+			// File(sshIdentityFilepath));
+			// sshIdentityContent.writeToStream(sshIdentityFileOutputStream);
+			// sshIdentityFileOutputStream.close();
+			// FIXME: Any security concern? SSH identify file saving to local
+			// disk
 
-            // write the http-webobjects.conf file to /tmp 1st
-            adaptorConfigFileOutputStream = new FileOutputStream(new File("/tmp/http-webobjects.conf"));
-            FileChannel fc = adaptorConfigFileOutputStream.getChannel();
-            ByteBuffer buffer = ByteBuffer.allocate(adaptorConfigContent().length());
-            buffer.put(adaptorConfigContent.getBytes());
-            buffer.flip();
-            while (buffer.hasRemaining()) {
-                fc.write(buffer);
-            }
+			// write the http-webobjects.conf file to /tmp 1st
+			adaptorConfigFileOutputStream = new FileOutputStream( new File( "/tmp/http-webobjects.conf" ) );
+			FileChannel fc = adaptorConfigFileOutputStream.getChannel();
+			ByteBuffer buffer = ByteBuffer.allocate( adaptorConfigContent().length() );
+			buffer.put( adaptorConfigContent.getBytes() );
+			buffer.flip();
+			while( buffer.hasRemaining() ) {
+				fc.write( buffer );
+			}
 
-            // String command = "scp -i " + sshIdentityFilepath + " " +
-            // adaptorConfigLocalFilepath + " " + username + "@" + host + ":" +
-            // remoteFilepath;
-            // Runtime rt = Runtime.getRuntime();
-            // rt.exec(command); //FIXME: security
-            if (shouldRestartApache.booleanValue()) {
-                // rt.exec("ssh -i " + sshIdentityFilepath + " apachectl
-                // graceful"); //FIXME: double-check with Security team on this
-                // before turning this on. --Mankit 7.10.2006
-            }
-            migrationStackTrace = ""; // signify successsful migration
-        } catch (Exception e) {
-            migrationStackTrace = e.getMessage();
-        } finally {
-            try {
-                if (adaptorConfigFileOutputStream != null) {
-                    adaptorConfigFileOutputStream.close();
-                }
-//                sshIdentityFileOutputStream has not been initialized
-//                at this point, not point in checking
-//                
-//                if (sshIdentityFileOutputStream != null) {
-//                    sshIdentityFileOutputStream.close();
-//                }
-            } catch (Exception e) {
-                migrationStackTrace = migrationStackTrace + "\n" + e.getMessage();
-            }
-        }
-        return null; // reload same page.
-    }
+			// String command = "scp -i " + sshIdentityFilepath + " " +
+			// adaptorConfigLocalFilepath + " " + username + "@" + host + ":" +
+			// remoteFilepath;
+			// Runtime rt = Runtime.getRuntime();
+			// rt.exec(command); //FIXME: security
+			if( shouldRestartApache.booleanValue() ) {
+				// rt.exec("ssh -i " + sshIdentityFilepath + " apachectl
+				// graceful"); //FIXME: double-check with Security team on this
+				// before turning this on. --Mankit 7.10.2006
+			}
+			migrationStackTrace = ""; // signify successsful migration
+		}
+		catch( Exception e ) {
+			migrationStackTrace = e.getMessage();
+		}
+		finally {
+			try {
+				if( adaptorConfigFileOutputStream != null ) {
+					adaptorConfigFileOutputStream.close();
+				}
+				//                sshIdentityFileOutputStream has not been initialized
+				//                at this point, not point in checking
+				//                
+				//                if (sshIdentityFileOutputStream != null) {
+				//                    sshIdentityFileOutputStream.close();
+				//                }
+			}
+			catch( Exception e ) {
+				migrationStackTrace = migrationStackTrace + "\n" + e.getMessage();
+			}
+		}
+		return null; // reload same page.
+	}
 
-    public boolean getIsMigrationCompleted() {
-        if (migrationStackTrace != null && migrationStackTrace.length() == 0)
-            return true;
-        return false;
-    }
+	public boolean getIsMigrationCompleted() {
+		if( migrationStackTrace != null && migrationStackTrace.length() == 0 )
+			return true;
+		return false;
+	}
 
-    public String getMigrationStackTrace() {
-        return migrationStackTrace;
-    }
+	public String getMigrationStackTrace() {
+		return migrationStackTrace;
+	}
 
-    public boolean getIsFailed() {
-        return (migrationStackTrace != null && migrationStackTrace.length() > 0);
-    }
+	public boolean getIsFailed() {
+		return (migrationStackTrace != null && migrationStackTrace.length() > 0);
+	}
 }

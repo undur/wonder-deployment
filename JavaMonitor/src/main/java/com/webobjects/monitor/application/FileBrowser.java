@@ -23,116 +23,117 @@ import com.webobjects.monitor._private.MonitorException;
 
 public class FileBrowser extends MonitorComponent {
 
-    public FileBrowser(WOContext aWocontext) {
-        super(aWocontext);
-    }
+	public FileBrowser( WOContext aWocontext ) {
+		super( aWocontext );
+	}
 
-    private static final long serialVersionUID = 7523872426979817711L;
+	private static final long serialVersionUID = 7523872426979817711L;
 
-    public String startingPath; // passed in
+	public String startingPath; // passed in
 
-    public String callbackUpdateAction; // passed in
+	public String callbackUpdateAction; // passed in
 
-    public String callbackSelectionAction; // passed in
+	public String callbackSelectionAction; // passed in
 
-    public MHost host; // passed in
+	public MHost host; // passed in
 
-    public boolean showFiles = true;
+	public boolean showFiles = true;
 
-    public boolean isRoots = false;
+	public boolean isRoots = false;
 
-    public String errorMsg;
+	public String errorMsg;
 
-    boolean hasErrorMsg() {
-        return errorMsg != null && errorMsg.length() > 0;
-    }
+	boolean hasErrorMsg() {
+		return errorMsg != null && errorMsg.length() > 0;
+	}
 
-    public NSDictionary aCurrentFile;
+	public NSDictionary aCurrentFile;
 
-    public NSArray _fileList = null;
+	public NSArray _fileList = null;
 
-    public NSArray fileList() {
-        if (_fileList == null)
-            retrieveFileList();
-        return _fileList;
-    }
+	public NSArray fileList() {
+		if( _fileList == null )
+			retrieveFileList();
+		return _fileList;
+	}
 
-    private String retrieveFileList() {
-        try {
-            NSDictionary aDict = RemoteBrowseClient.fileListForStartingPathHost(startingPath, host, showFiles);
-            _fileList = (NSArray) aDict.valueForKey("fileArray");
-            isRoots = (aDict.valueForKey("isRoots") != null) ? true : false;
-            startingPath = (String) aDict.valueForKey("filepath");
-            errorMsg = null;
-        } catch (MonitorException me) {
-            if (isRoots)
-                startingPath = null;
-            NSLog.err.appendln("Path Wizard Error: " + me.getMessage());
-            me.printStackTrace();
-            errorMsg = me.getMessage();
-        }
-        return errorMsg;
-    }
+	private String retrieveFileList() {
+		try {
+			NSDictionary aDict = RemoteBrowseClient.fileListForStartingPathHost( startingPath, host, showFiles );
+			_fileList = (NSArray)aDict.valueForKey( "fileArray" );
+			isRoots = (aDict.valueForKey( "isRoots" ) != null) ? true : false;
+			startingPath = (String)aDict.valueForKey( "filepath" );
+			errorMsg = null;
+		}
+		catch( MonitorException me ) {
+			if( isRoots )
+				startingPath = null;
+			NSLog.err.appendln( "Path Wizard Error: " + me.getMessage() );
+			me.printStackTrace();
+			errorMsg = me.getMessage();
+		}
+		return errorMsg;
+	}
 
-    @Override
-    public void appendToResponse(WOResponse response, WOContext context) {
-        fileList(); // init variable
-        super.appendToResponse(response, context);
-    }
+	@Override
+	public void appendToResponse( WOResponse response, WOContext context ) {
+		fileList(); // init variable
+		super.appendToResponse( response, context );
+	}
 
-    public boolean isCurrentFileDirectory() {
-        String aString = (String) aCurrentFile.valueForKey("fileType");
-        if (aString.equals("NSFileTypeDirectory")) {
-            return true;
-        }
-        return false;
-    }
+	public boolean isCurrentFileDirectory() {
+		String aString = (String)aCurrentFile.valueForKey( "fileType" );
+		if( aString.equals( "NSFileTypeDirectory" ) ) {
+			return true;
+		}
+		return false;
+	}
 
-    public Object backClicked() {
-        String originalPath = startingPath;
-        startingPath = NSPathUtilities.stringByDeletingLastPathComponent(startingPath);
-        startingPath = NSPathUtilities._standardizedPath(startingPath);
-        if (startingPath.equals("") || (originalPath.equals(startingPath))) {
-            startingPath = null;
-        }
-        if (retrieveFileList() != null) {
-            startingPath = originalPath;
-        }
-        return performParentAction(callbackUpdateAction);
-    }
+	public Object backClicked() {
+		String originalPath = startingPath;
+		startingPath = NSPathUtilities.stringByDeletingLastPathComponent( startingPath );
+		startingPath = NSPathUtilities._standardizedPath( startingPath );
+		if( startingPath.equals( "" ) || (originalPath.equals( startingPath )) ) {
+			startingPath = null;
+		}
+		if( retrieveFileList() != null ) {
+			startingPath = originalPath;
+		}
+		return performParentAction( callbackUpdateAction );
+	}
 
-    public Object directoryClicked() {
-        String originalPath = startingPath;
-        String aFile = (String) aCurrentFile.valueForKey("file");
-        startingPath = NSPathUtilities.stringByAppendingPathComponent(startingPath, aFile);
-        startingPath = NSPathUtilities._standardizedPath(startingPath);
-        retrieveFileList();
-        if (retrieveFileList() != null) {
-            startingPath = originalPath;
-        }
-        return performParentAction(callbackUpdateAction);
-    }
+	public Object directoryClicked() {
+		String originalPath = startingPath;
+		String aFile = (String)aCurrentFile.valueForKey( "file" );
+		startingPath = NSPathUtilities.stringByAppendingPathComponent( startingPath, aFile );
+		startingPath = NSPathUtilities._standardizedPath( startingPath );
+		retrieveFileList();
+		if( retrieveFileList() != null ) {
+			startingPath = originalPath;
+		}
+		return performParentAction( callbackUpdateAction );
+	}
 
-    public Object jumpToClicked() {
-        String originalPath = startingPath;
-        startingPath = NSPathUtilities._standardizedPath(startingPath);
-        retrieveFileList();
-        if (retrieveFileList() != null) {
-            startingPath = originalPath;
-        }
-        return performParentAction(callbackUpdateAction);
-    }
+	public Object jumpToClicked() {
+		String originalPath = startingPath;
+		startingPath = NSPathUtilities._standardizedPath( startingPath );
+		retrieveFileList();
+		if( retrieveFileList() != null ) {
+			startingPath = originalPath;
+		}
+		return performParentAction( callbackUpdateAction );
+	}
 
-    public Object selectClicked() {
-        String aFile = (String) aCurrentFile.valueForKey("file");
-        startingPath = NSPathUtilities.stringByAppendingPathComponent(startingPath, aFile);
-        startingPath = NSPathUtilities._standardizedPath(startingPath);
-        return performParentAction(callbackSelectionAction);
-    }
+	public Object selectClicked() {
+		String aFile = (String)aCurrentFile.valueForKey( "file" );
+		startingPath = NSPathUtilities.stringByAppendingPathComponent( startingPath, aFile );
+		startingPath = NSPathUtilities._standardizedPath( startingPath );
+		return performParentAction( callbackSelectionAction );
+	}
 
-    public Object selectCurrentDirClicked() {
-        startingPath = NSPathUtilities._standardizedPath(startingPath);
-        return performParentAction(callbackSelectionAction);
-    }
+	public Object selectCurrentDirClicked() {
+		startingPath = NSPathUtilities._standardizedPath( startingPath );
+		return performParentAction( callbackSelectionAction );
+	}
 
 }
