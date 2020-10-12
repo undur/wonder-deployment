@@ -59,10 +59,12 @@
 		<dependency>
 			<groupId>org.apache.sshd</groupId>
 			<artifactId>sshd-core</artifactId>
+			<version>0.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.sshd</groupId>
 			<artifactId>sshd-pam</artifactId>
+			<version>0.7.0</version>
 		</dependency>
 	</dependencies>
 </project>
