@@ -8,7 +8,7 @@
 	<name>JavaMonitor Framework</name>
 	<properties>
 		<wonder.version>7.2-SNAPSHOT</wonder.version>
-		<webobjects.version>7.2-SNAPSHOT</webobjects.version>
+		<webobjects.version>5.4.3</webobjects.version>
 	</properties>
 	<dependencies>
 		<dependency>
