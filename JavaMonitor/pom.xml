@@ -1,10 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>wonder.applications</groupId>
-		<artifactId>applications</artifactId>
-		<version>7.2-SNAPSHOT</version>
-	</parent>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>wonder.applications</groupId>
 	<artifactId>JavaMonitor</artifactId>
@@ -12,28 +8,31 @@
 	<packaging>woapplication</packaging>
 
 	<properties>
-		<skip.apple.frameworks>false</skip.apple.frameworks>
+		<wonder.version>7.2-SNAPSHOT</wonder.version>
+		<webobjects.version>5.4.3</webobjects.version>
+		<tambourine.version>8.0.0-SNAPSHOT</tambourine.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>wonder.core</groupId>
 			<artifactId>ERExtensions</artifactId>
+			<version>${wonder.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>wonder.ajax</groupId>
 			<artifactId>Ajax</artifactId>
+			<version>${wonder.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>wonder.misc</groupId>
 			<artifactId>JavaMonitorFramework</artifactId>
+			<version>${tambourine.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>wonder.eof</groupId>
 			<artifactId>ERRest</artifactId>
+			<version>${wonder.version}</version>
 		</dependency>
 	</dependencies>
-	<build>
-		<sourceDirectory>Sources</sourceDirectory>
-	</build>
 </project>
