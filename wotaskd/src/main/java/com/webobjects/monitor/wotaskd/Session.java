@@ -14,15 +14,14 @@ SUCH DAMAGE.
 
 import er.extensions.appserver.ERXSession;
 
-public class Session extends ERXSession  {
-    /**
+public class Session extends ERXSession {
+	/**
 	 * serialVersionUID
 	 */
-	private static final long	serialVersionUID	= -1971330882910793648L;
+	private static final long serialVersionUID = -1971330882910793648L;
 
 	public Session() {
-        setTimeOut(10);
-    }
-
+		setTimeOut( 10 );
+	}
 
 }

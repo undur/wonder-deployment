@@ -27,123 +27,128 @@ import com.webobjects.foundation.NSPathUtilities;
 
 import er.extensions.appserver.ERXResponse;
 
-public class RemoteBrowse extends WODirectAction  {
-    private Object[] fileKeys = new Object[]{"file" , "fileType" , "fileSize"};
-    private File[] roots;
-    private String[] rootStrings;
-    private boolean singleRoot = false;
-    private String xmlRoots;
-    
-    public RemoteBrowse(WORequest aRequest) {
-        super(aRequest);
+public class RemoteBrowse extends WODirectAction {
+	private Object[] fileKeys = new Object[] { "file", "fileType", "fileSize" };
+	private File[] roots;
+	private String[] rootStrings;
+	private boolean singleRoot = false;
+	private String xmlRoots;
 
-        File[] roots = File.listRoots();
-        if (roots.length <= 1) {
-            singleRoot = true;
-        }
-        rootStrings = new String[roots.length];
-        for (int i=0; i<roots.length; i++) {
-            rootStrings[i] = NSPathUtilities._standardizedPath(roots[i].getAbsolutePath());
-        }
+	public RemoteBrowse( WORequest aRequest ) {
+		super( aRequest );
 
-        int anArrayCount = rootStrings.length;
-        NSMutableArray rootArray = new NSMutableArray(anArrayCount);
-        for (int i = 0; i < anArrayCount; i++) {
-            NSDictionary aFileDict = new NSDictionary(new Object[]{rootStrings[i] , "NSFileTypeDirectory" , Long.valueOf(0)}, fileKeys);
-            rootArray.addObject(aFileDict);
-        }
+		File[] roots = File.listRoots();
+		if( roots.length <= 1 ) {
+			singleRoot = true;
+		}
+		rootStrings = new String[roots.length];
+		for( int i = 0; i < roots.length; i++ ) {
+			rootStrings[i] = NSPathUtilities._standardizedPath( roots[i].getAbsolutePath() );
+		}
 
-        xmlRoots = ((new _JavaMonitorCoder()).encodeRootObjectForKey(rootArray, "pathArray")) + " \r\n";
-    }
+		int anArrayCount = rootStrings.length;
+		NSMutableArray rootArray = new NSMutableArray( anArrayCount );
+		for( int i = 0; i < anArrayCount; i++ ) {
+			NSDictionary aFileDict = new NSDictionary( new Object[] { rootStrings[i], "NSFileTypeDirectory", Long.valueOf( 0 ) }, fileKeys );
+			rootArray.addObject( aFileDict );
+		}
 
-    public NSArray fileListForStartingPath(String aStartingPath, boolean showFiles) {
-        File startingPathAsFile = new File(aStartingPath);
-        NSMutableArray aDirectoryArray = new NSMutableArray();
-        NSMutableArray aFileArray = new NSMutableArray();
-        NSArray tempArray = null;
-        Object[] contentsOfStartingPath = null;
+		xmlRoots = ((new _JavaMonitorCoder()).encodeRootObjectForKey( rootArray, "pathArray" )) + " \r\n";
+	}
 
-        if ( !(startingPathAsFile.exists()) ) {
-            return null;
-        }
+	public NSArray fileListForStartingPath( String aStartingPath, boolean showFiles ) {
+		File startingPathAsFile = new File( aStartingPath );
+		NSMutableArray aDirectoryArray = new NSMutableArray();
+		NSMutableArray aFileArray = new NSMutableArray();
+		NSArray tempArray = null;
+		Object[] contentsOfStartingPath = null;
 
-        contentsOfStartingPath = startingPathAsFile.list();
-        tempArray = new NSArray(contentsOfStartingPath);
+		if( !(startingPathAsFile.exists()) ) {
+			return null;
+		}
 
-        try {
-            tempArray = tempArray.sortedArrayUsingComparator(NSComparator.AscendingStringComparator);
-            contentsOfStartingPath = tempArray.objects();
-        } catch (NSComparator.ComparisonException e) {
-            // do nothing
-        }
+		contentsOfStartingPath = startingPathAsFile.list();
+		tempArray = new NSArray( contentsOfStartingPath );
 
-        int anArrayCount = contentsOfStartingPath.length;
+		try {
+			tempArray = tempArray.sortedArrayUsingComparator( NSComparator.AscendingStringComparator );
+			contentsOfStartingPath = tempArray.objects();
+		}
+		catch( NSComparator.ComparisonException e ) {
+			// do nothing
+		}
 
-        for (int i = 0; i < anArrayCount; i++) {
-            String aFile = (String)contentsOfStartingPath[i];
-            String aFileType;
-            Long aFileSize;
-            Object aFileDict;
+		int anArrayCount = contentsOfStartingPath.length;
 
-            String fullPath = NSPathUtilities.stringByAppendingPathComponent(aStartingPath, aFile);
-            fullPath = NSPathUtilities._standardizedPath(fullPath);
-            File subfile = new File(fullPath);
+		for( int i = 0; i < anArrayCount; i++ ) {
+			String aFile = (String)contentsOfStartingPath[i];
+			String aFileType;
+			Long aFileSize;
+			Object aFileDict;
 
-            if (subfile.isDirectory()) {
-                aFileType = "NSFileTypeDirectory";
-                aFileSize = Long.valueOf(0);
-            } else {
-                aFileType = "NSFileTypeRegular";
-                aFileSize = Long.valueOf(subfile.length());
-            }
+			String fullPath = NSPathUtilities.stringByAppendingPathComponent( aStartingPath, aFile );
+			fullPath = NSPathUtilities._standardizedPath( fullPath );
+			File subfile = new File( fullPath );
 
-            aFileDict = new NSDictionary(new Object[]{aFile , aFileType , aFileSize}, fileKeys);
+			if( subfile.isDirectory() ) {
+				aFileType = "NSFileTypeDirectory";
+				aFileSize = Long.valueOf( 0 );
+			}
+			else {
+				aFileType = "NSFileTypeRegular";
+				aFileSize = Long.valueOf( subfile.length() );
+			}
 
-            if (aFileType.equals("NSFileTypeDirectory")) {
-                aDirectoryArray.addObject(aFileDict);
-            } else {
-                aFileArray.addObject(aFileDict);
-            }
-        }
-        if (showFiles) {
-            aDirectoryArray.addObjectsFromArray(aFileArray);
-        }
-        return aDirectoryArray;
-    }
+			aFileDict = new NSDictionary( new Object[] { aFile, aFileType, aFileSize }, fileKeys );
 
+			if( aFileType.equals( "NSFileTypeDirectory" ) ) {
+				aDirectoryArray.addObject( aFileDict );
+			}
+			else {
+				aFileArray.addObject( aFileDict );
+			}
+		}
+		if( showFiles ) {
+			aDirectoryArray.addObjectsFromArray( aFileArray );
+		}
+		return aDirectoryArray;
+	}
 
-    public WOResponse getPathAction() {
-        WORequest aRequest = request();
-        ERXResponse aResponse = new ERXResponse();
+	public WOResponse getPathAction() {
+		WORequest aRequest = request();
+		ERXResponse aResponse = new ERXResponse();
 
-        if (aRequest.isUsingWebServer())  {
-            aResponse.setStatus(WOMessage.HTTP_STATUS_FORBIDDEN);
-            aResponse.appendContentString("Access Denied");
-            return aResponse;
-        }
-        String aPath = aRequest.headerForKey("filepath");
-        boolean showFiles = (aRequest.headerForKey("showFiles") != null) ? true : false;
+		if( aRequest.isUsingWebServer() ) {
+			aResponse.setStatus( WOMessage.HTTP_STATUS_FORBIDDEN );
+			aResponse.appendContentString( "Access Denied" );
+			return aResponse;
+		}
+		String aPath = aRequest.headerForKey( "filepath" );
+		boolean showFiles = (aRequest.headerForKey( "showFiles" ) != null) ? true : false;
 
-        // looking for roots, or root listing of only 1 root
-        if (aPath == null && !singleRoot) {
-            aResponse.appendContentString(xmlRoots);
-            aResponse.setHeader("YES", "isRoots");
-        } else {
-            if (aPath == null) aPath = rootStrings[0];
-            NSArray anArray = fileListForStartingPath(aPath, showFiles);
+		// looking for roots, or root listing of only 1 root
+		if( aPath == null && !singleRoot ) {
+			aResponse.appendContentString( xmlRoots );
+			aResponse.setHeader( "YES", "isRoots" );
+		}
+		else {
+			if( aPath == null )
+				aPath = rootStrings[0];
+			NSArray anArray = fileListForStartingPath( aPath, showFiles );
 
-            if (anArray == null) {
-                aResponse.appendContentString("ERROR");
-            } else {
-                _JavaMonitorCoder aCoder = new _JavaMonitorCoder();
-                String anXMLString = null;
-                anXMLString = aCoder.encodeRootObjectForKey(anArray, "pathArray");
-                anXMLString = (anXMLString) + " \r\n";
-                aResponse.appendContentString(anXMLString);
-                aResponse.setHeader(aPath, "filepath");
-            }
-        }
-        return aResponse;
-    }
+			if( anArray == null ) {
+				aResponse.appendContentString( "ERROR" );
+			}
+			else {
+				_JavaMonitorCoder aCoder = new _JavaMonitorCoder();
+				String anXMLString = null;
+				anXMLString = aCoder.encodeRootObjectForKey( anArray, "pathArray" );
+				anXMLString = (anXMLString) + " \r\n";
+				aResponse.appendContentString( anXMLString );
+				aResponse.setHeader( aPath, "filepath" );
+			}
+		}
+		return aResponse;
+	}
 
 }

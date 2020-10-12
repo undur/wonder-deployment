@@ -10,16 +10,16 @@ import er.rest.routes.ERXDefaultRouteController;
 
 public class JavaMonitorController extends ERXDefaultRouteController {
 
-	public JavaMonitorController(WORequest request) {
-		super(request);
+	public JavaMonitorController( WORequest request ) {
+		super( request );
 	}
-		
+
 	protected MSiteConfig siteConfig() {
 		return application().siteConfig();
 	}
-	
+
 	public Application application() {
-	  return (Application )WOApplication.application();
+		return (Application)WOApplication.application();
 	}
 
 	@Override
@@ -57,12 +57,12 @@ public class JavaMonitorController extends ERXDefaultRouteController {
 		// TODO Auto-generated method stub
 		return null;
 	}
-    
+
 	protected void checkPassword() throws SecurityException {
-        String pw = context().request().stringFormValueForKey("pw");
-        if(!siteConfig().compareStringWithPassword(pw)) {
-			throw new SecurityException("Invalid password");
-        }
+		String pw = context().request().stringFormValueForKey( "pw" );
+		if( !siteConfig().compareStringWithPassword( pw ) ) {
+			throw new SecurityException( "Invalid password" );
+		}
 	}
-	  
+
 }

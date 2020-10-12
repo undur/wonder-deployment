@@ -20,27 +20,28 @@ public class SiteConfig implements SiteConfigMBean {
 	//    Instance Variables
 	//=================================================
 	private static SiteConfig _instance = null;
-	
+
 	//=================================================
 	//    Constructors
 	//=================================================
 	public static SiteConfig getInstance() {
-		if (_instance == null) {
+		if( _instance == null ) {
 			_instance = new SiteConfig();
 		}
 		return _instance;
 	}
-	
+
 	//=================================================
 	//    Mbean actions
 	//=================================================
 	public void readSiteConfigXML() {
 		try {
-			Application theApplication = (Application )WOApplication.application();
+			Application theApplication = (Application)WOApplication.application();
 			theApplication.readSiteConfigXML();
-		} catch (Exception ex) {
-			NSLog.err.appendln("ERROR: Problems reading the site config");
+		}
+		catch( Exception ex ) {
+			NSLog.err.appendln( "ERROR: Problems reading the site config" );
 			//ex.printStackTrace();			
 		}
-	}	
+	}
 }
