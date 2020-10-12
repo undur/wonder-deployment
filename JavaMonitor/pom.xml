@@ -46,7 +46,7 @@
 			<version>${wonder.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>wonder.misc</groupId>
+			<groupId>io.tambourine</groupId>
 			<artifactId>JavaMonitorFramework</artifactId>
 			<version>${tambourine.version}</version>
 		</dependency>
