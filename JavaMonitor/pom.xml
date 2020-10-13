@@ -9,6 +9,7 @@
 	<packaging>woapplication</packaging>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.wocommunity</groupId>
