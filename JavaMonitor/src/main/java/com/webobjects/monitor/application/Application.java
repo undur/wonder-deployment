@@ -17,14 +17,11 @@ import com.webobjects.appserver._private.WODirectActionRequestHandler;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableDictionary;
+import com.webobjects.foundation._NSUtilities;
+import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MSiteConfig;
-import com.webobjects.monitor.rest.MApplicationController;
-import com.webobjects.monitor.rest.MHostController;
-import com.webobjects.monitor.rest.MSiteConfigController;
 
 import er.extensions.appserver.ERXApplication;
-import er.rest.routes.ERXRoute;
-import er.rest.routes.ERXRouteRequestHandler;
 
 public class Application extends ERXApplication {
 
@@ -34,6 +31,8 @@ public class Application extends ERXApplication {
 
 	public Application() {
 		super();
+		_NSUtilities.setClassForName( MApplication.class, "MApplication" );
+
 		String dd = System.getProperties().getProperty( "_DeploymentDebugging" );
 		if( dd != null ) {
 			NSLog.debug.setIsVerbose( true );
@@ -52,6 +51,8 @@ public class Application extends ERXApplication {
 
 		}, "admin" );
 		setAllowsConcurrentRequestHandling( true );
+		/*
+		 * Disabled all the rest stuff
 		ERXRouteRequestHandler restHandler = new ERXRouteRequestHandler();
 		restHandler.addDefaultRoutes( "MApplication", false, MApplicationController.class );
 		// Old code. The two lines below are replaced by the following line.  The addInstanceOnAllHosts action throws an exception if the host is not localhost. 
@@ -65,6 +66,7 @@ public class Application extends ERXApplication {
 		restHandler.insertRoute( new ERXRoute( "MSiteConfig", "/mSiteConfig", ERXRoute.Method.Put, MSiteConfigController.class, "update" ) );
 
 		ERXRouteRequestHandler.register( restHandler );
+		*/
 	}
 
 	@Override
