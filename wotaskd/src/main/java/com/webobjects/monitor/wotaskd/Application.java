@@ -54,14 +54,9 @@ import com.webobjects.foundation._NSCollectionReaderWriterLock;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.String_Extensions;
-import com.webobjects.monitor.wotaskd.rest.controllers.MApplicationController;
-import com.webobjects.monitor.wotaskd.rest.controllers.MHostController;
-import com.webobjects.monitor.wotaskd.rest.controllers.MSiteConfigController;
 
 import er.extensions.appserver.ERXApplication;
 import er.extensions.foundation.ERXProperties;
-import er.rest.routes.ERXRoute;
-import er.rest.routes.ERXRouteRequestHandler;
 
 public class Application extends ERXApplication {
 	private LocalMonitor _localMonitor;
@@ -226,6 +221,7 @@ public class Application extends ERXApplication {
 		// Set up multicast listen thread
 		createRequestListenerThread();
 
+		/*
 		ERXRouteRequestHandler restHandler = new ERXRouteRequestHandler();
 		restHandler.addDefaultRoutes( "MApplication", false, MApplicationController.class );
 		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/addInstance", ERXRoute.Method.Get, MApplicationController.class, "addInstance" ) );
@@ -247,6 +243,7 @@ public class Application extends ERXApplication {
 		restHandler.insertRoute( new ERXRoute( "MSiteConfig", "/mSiteConfig", ERXRoute.Method.Put, MSiteConfigController.class, "update" ) );
 
 		ERXRouteRequestHandler.register( restHandler );
+		*/
 
 		boolean isSSHServerEnabled = ERXProperties.booleanForKeyWithDefault( "er.wotaskd.sshd.enabled", false );
 
