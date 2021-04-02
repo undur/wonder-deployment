@@ -28,15 +28,10 @@ import com.webobjects.foundation.NSTimeZone;
 import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation.NSTimestampFormatter;
 
-import er.extensions.eof.ERXKey;
-
 public class MInstance extends MObject {
 	static NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%m/%d/%Y %H:%M:%S %Z" );
 
 	static NSTimestampFormatter shutdownFormatter = new NSTimestampFormatter( "%a @ %H:00" );
-
-	public static final ERXKey<MHost> HOST = new ERXKey<>( "host" );
-	public static final ERXKey<String> HOST_NAME = new ERXKey<>( "hostName" );
 
 	/*
 	 * String hostName; Integer id; Integer port; String applicationName;
