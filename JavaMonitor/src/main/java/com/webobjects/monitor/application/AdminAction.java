@@ -17,6 +17,7 @@ import com.webobjects.monitor._private.MSiteConfig;
 
 import er.extensions.appserver.ERXHttpStatusCodes;
 import er.extensions.appserver.ERXResponse;
+import x.FIXMEException;
 
 /**
  * <p>
@@ -563,6 +564,8 @@ public class AdminAction extends WODirectAction {
 	}
 
 	protected void prepareApplicationsOnHosts( NSArray<String> appNames, NSArray<String> hostNames ) {
+		throw new FIXMEException( "Missing ERXKey, look into this" );
+		/*
 		if( appNames == null )
 			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
 		for( Enumeration enumeration = appNames.objectEnumerator(); enumeration.hasMoreElements(); ) {
@@ -575,7 +578,7 @@ public class AdminAction extends WODirectAction {
 			else
 				throw new DirectActionException( "Unknown application " + s, 404 );
 		}
-
+		*/
 	}
 
 	protected void prepareInstances( NSArray<String> appNamesAndNumbers ) {

@@ -6,6 +6,8 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 
+import x.FIXMEException;
+
 /**
  * Bounces an application using a rolling shutdown. 
  * 
@@ -86,6 +88,8 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 
 	protected NSArray<MInstance> instancesToStart( NSArray<MInstance> inactiveInstances, NSArray<MHost> activeHosts,
 			int numInstancesToStartPerHost ) {
+		throw new FIXMEException( "Missing ERXKey, look into this" );
+		/*
 		NSMutableArray<MInstance> startingInstances = new NSMutableArray<>();
 		for( int i = 0; i < numInstancesToStartPerHost; i++ ) {
 			for( MHost host : activeHosts ) {
@@ -101,6 +105,7 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 			}
 		}
 		return startingInstances.immutableClone();
+		*/
 	}
 
 	protected boolean doAllRunningInstancesUseScheduling( NSArray<MInstance> runningInstances ) {
