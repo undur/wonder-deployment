@@ -200,7 +200,7 @@ public class ModProxyPage extends MonitorComponent {
 	 * Removes a substring only if it is at the end of a source string,
      * otherwise returns the source string.
      * 
-	 * Shamelessly ripped from Apache commons StringUtils.
+	 * CHECKME: Shamelessly ripped from Apache commons StringUtils as a temporary measure.
 	 */
 	private static String removeEnd(final String str, final String remove) {
         if (isEmpty(str) || isEmpty(remove)) {
@@ -213,7 +213,7 @@ public class ModProxyPage extends MonitorComponent {
     }
 	
 	/**
-	 * Shamelessly ripped from Apache commons StringUtils.
+	 * CHECKME: Shamelessly ripped from Apache commons StringUtils as a temporary measure.
 	 */
 	private static boolean isEmpty(final CharSequence cs) {
         return cs == null || cs.length() == 0;
