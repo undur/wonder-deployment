@@ -203,14 +203,7 @@ public class HostsPage extends MonitorComponent {
 	}
 
 	private boolean hostMeetsMinimumVersion( InetAddress anAddress ) {
-		byte[] versionRequest;
-
-		try {
-			versionRequest = ("womp://queryVersion").getBytes( StandardCharsets.UTF_8 );
-		}
-		catch( UnsupportedEncodingException uee ) {
-			versionRequest = ("womp://queryVersion").getBytes();
-		}
+		byte[] versionRequest = ("womp://queryVersion").getBytes( StandardCharsets.UTF_8 );
 		DatagramPacket outgoingPacket = new DatagramPacket( versionRequest, versionRequest.length, anAddress,
 				WOApplication.application().lifebeatDestinationPort() );
 
