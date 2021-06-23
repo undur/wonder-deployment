@@ -19,6 +19,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -32,7 +33,6 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.server.Command;
@@ -555,18 +555,11 @@ public class Application extends ERXApplication {
 				byte[] multicastReply;
 				byte[] versionRequest;
 				byte[] versionReply;
-				try {
-					multicastRequest = ("GET CONFIG-URL").getBytes( CharEncoding.UTF_8 );
-					multicastReply = ("http://" + myName + '\0').getBytes( CharEncoding.UTF_8 );
-					versionRequest = ("womp://queryVersion").getBytes( CharEncoding.UTF_8 );
-					versionReply = ("womp://replyVersion/" + myName + ":webObjects5.0" + '\0').getBytes( CharEncoding.UTF_8 );
-				}
-				catch( UnsupportedEncodingException uee ) {
-					multicastRequest = ("GET CONFIG-URL").getBytes();
-					multicastReply = ("http://" + myName + '\0').getBytes();
-					versionRequest = ("womp://queryVersion").getBytes();
-					versionReply = ("womp://replyVersion/" + myName + ":webObjects5.0" + '\0').getBytes();
-				}
+
+				multicastRequest = ("GET CONFIG-URL").getBytes( StandardCharsets.UTF_8 );
+				multicastReply = ("http://" + myName + '\0').getBytes( StandardCharsets.UTF_8 );
+				versionRequest = ("womp://queryVersion").getBytes( StandardCharsets.UTF_8 );
+				versionReply = ("womp://replyVersion/" + myName + ":webObjects5.0" + '\0').getBytes( StandardCharsets.UTF_8 );
 
 				int multicastRequestLength = multicastRequest.length;
 				int multicast_reply_len = multicastReply.length;
