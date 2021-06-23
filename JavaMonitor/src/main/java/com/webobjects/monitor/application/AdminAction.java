@@ -15,7 +15,6 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 
-import er.extensions.appserver.ERXHttpStatusCodes;
 import er.extensions.appserver.ERXResponse;
 import x.FIXMEException;
 
@@ -425,7 +424,7 @@ public class AdminAction extends WODirectAction {
 		}
 		if( (numberOfInstancesRequested == -1 && instancesAlive < instances.count()) || instancesAlive < numberOfInstancesRequested ) {
 			woresponse.setContent( "NO" );
-			woresponse.setStatus( ERXHttpStatusCodes.EXPECTATION_FAILED );
+			woresponse.setStatus( 417 );
 		}
 		return woresponse;
 	}
@@ -437,7 +436,7 @@ public class AdminAction extends WODirectAction {
 			if( minstance.state == MObject.DEAD )
 				continue;
 			woresponse.setContent( "NO" );
-			woresponse.setStatus( ERXHttpStatusCodes.EXPECTATION_FAILED );
+			woresponse.setStatus( 417 );
 			break;
 		}
 		return woresponse;
@@ -467,7 +466,7 @@ public class AdminAction extends WODirectAction {
 		}
 		else {
 			woresponse.setContent( "Unknown bouncetype" );
-			woresponse.setStatus( ERXHttpStatusCodes.NOT_ACCEPTABLE );
+			woresponse.setStatus( 406 );
 		}
 		return woresponse;
 	}
@@ -663,13 +662,13 @@ public class AdminAction extends WODirectAction {
 				woresponse.setContent( s + " action failed: " + directactionexception.getMessage() );
 			}
 			catch( Exception throwable ) {
-				woresponse.setStatus( ERXHttpStatusCodes.INTERNAL_ERROR );
+				woresponse.setStatus( 500 );
 				woresponse.setContent( s + " action failed: " + throwable.getMessage() + ". See Monitor's log for a stack trace." );
 				throwable.printStackTrace();
 			}
 		}
 		else {
-			woresponse.setStatus( ERXHttpStatusCodes.FORBIDDEN );
+			woresponse.setStatus( 403 );
 			woresponse.setContent( "Monitor is password protected - password missing or incorrect." );
 		}
 		return woresponse;
