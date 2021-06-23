@@ -920,7 +920,8 @@ public class MSiteConfig extends MObject {
 			}
 			if( compress ) {
 				sc = new File( sc.getParentFile(), sc.getName() + ".gz" );
-				ERXFileUtilities.stringToGZippedFile( value, sc );
+				throw new IOException( "Removed gzip capabilities from ERXFileUtilities" );
+//				ERXFileUtilities.stringToGZippedFile( value, sc );
 			}
 			else {
 				_NSStringUtilities.writeToFile( sc, value );
