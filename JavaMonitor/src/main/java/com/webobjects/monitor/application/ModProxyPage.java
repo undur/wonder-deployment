@@ -2,8 +2,6 @@ package com.webobjects.monitor.application;
 
 import java.util.Enumeration;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
@@ -57,7 +55,7 @@ public class ModProxyPage extends MonitorComponent {
 			anApp.extractAdaptorValuesFromSiteConfig();
 
 			String tmpAdaptor = siteConfig().woAdaptor();
-			tmpAdaptor = StringUtils.removeEnd( tmpAdaptor, "/" );
+			tmpAdaptor = removeEnd( tmpAdaptor, "/" );
 
 			NSArray<String> tmpPath = NSArray.componentsSeparatedByString( tmpAdaptor, "/" );
 
@@ -172,7 +170,7 @@ public class ModProxyPage extends MonitorComponent {
 			anApp.extractAdaptorValuesFromSiteConfig();
 
 			String tmpAdaptor = siteConfig().woAdaptor();
-			tmpAdaptor = StringUtils.removeEnd( tmpAdaptor, "/" );
+			tmpAdaptor = removeEnd( tmpAdaptor, "/" );
 
 			NSArray<String> tmpPath = NSArray.componentsSeparatedByString( tmpAdaptor, "/" );
 
@@ -197,4 +195,27 @@ public class ModProxyPage extends MonitorComponent {
 		result.append( '\n' );
 		return result.toString();
 	}
+
+	/**
+	 * Removes a substring only if it is at the end of a source string,
+     * otherwise returns the source string.
+     * 
+	 * Shamelessly ripped from Apache commons StringUtils.
+	 */
+	private static String removeEnd(final String str, final String remove) {
+        if (isEmpty(str) || isEmpty(remove)) {
+            return str;
+        }
+        if (str.endsWith(remove)) {
+            return str.substring(0, str.length() - remove.length());
+        }
+        return str;
+    }
+	
+	/**
+	 * Shamelessly ripped from Apache commons StringUtils.
+	 */
+	private static boolean isEmpty(final CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
 }
