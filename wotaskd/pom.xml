@@ -4,12 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>undur</groupId>
 	<artifactId>wotaskd</artifactId>
-	<version>8.0.0-SNAPSHOT</version>
+	<version>8.0.0.slim-SNAPSHOT</version>
 	<name>wotaskd</name>
 	<packaging>woapplication</packaging>
 	<properties>
-		<undur.version>8.0.0-SNAPSHOT</undur.version>
+		<webobjects.group>com.webobjects</webobjects.group>
 		<webobjects.version>5.4.3</webobjects.version>
+
+		<wonder.core.group>wonder.core</wonder.core.group>
+		<wonder.version>8.0.0.slim-SNAPSHOT</wonder.version>
 	</properties>
 	<build>
 		<plugins>
@@ -31,22 +34,22 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>undur</groupId>
+			<groupId>${wonder.core.group}</groupId>
 			<artifactId>ERExtensions</artifactId>
-			<version>${undur.version}</version>
+			<version>${wonder.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>undur</groupId>
 			<artifactId>JavaMonitorFramework</artifactId>
-			<version>${undur.version}</version>
+			<version>${wonder.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.webobjects</groupId>
+			<groupId>${webobjects.group}</groupId>
 			<artifactId>JavaFoundation</artifactId>
 			<version>${webobjects.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.webobjects</groupId>
+			<groupId>${webobjects.group}</groupId>
 			<artifactId>JavaWebObjects</artifactId>
 			<version>${webobjects.version}</version>
 		</dependency>
