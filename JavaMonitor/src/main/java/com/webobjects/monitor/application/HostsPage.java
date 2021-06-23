@@ -19,8 +19,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-
-import org.apache.commons.lang3.CharEncoding;
+import java.nio.charset.StandardCharsets;
 
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOComponent;
@@ -207,7 +206,7 @@ public class HostsPage extends MonitorComponent {
 		byte[] versionRequest;
 
 		try {
-			versionRequest = ("womp://queryVersion").getBytes( CharEncoding.UTF_8 );
+			versionRequest = ("womp://queryVersion").getBytes( StandardCharsets.UTF_8 );
 		}
 		catch( UnsupportedEncodingException uee ) {
 			versionRequest = ("womp://queryVersion").getBytes();
