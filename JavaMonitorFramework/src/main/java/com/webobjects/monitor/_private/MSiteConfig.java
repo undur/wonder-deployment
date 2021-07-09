@@ -49,7 +49,6 @@ import com.webobjects.foundation._NSThreadsafeMutableArray;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 
 import er.extensions.appserver.ERXRequest;
-import er.extensions.foundation.ERXFileUtilities;
 
 public class MSiteConfig extends MObject {
 	private static final Logger log = LoggerFactory.getLogger( MSiteConfig.class );
@@ -321,7 +320,7 @@ public class MSiteConfig extends MObject {
 
 	public void removeHost_M( MHost aHost ) {
 		backup( "removeHost-" + aHost.name() );
-		NSArray tempArray = new NSArray( aHost._instanceArray );
+		final NSArray tempArray = new NSArray( aHost._instanceArray );
 		for( int i = 0; i < tempArray.count(); i++ ) {
 			removeInstance_M( (MInstance)tempArray.objectAtIndex( i ), false );
 		}
@@ -329,7 +328,7 @@ public class MSiteConfig extends MObject {
 	}
 
 	public void removeHost_W( MHost aHost ) {
-		NSArray tempArray = new NSArray( aHost._instanceArray );
+		final NSArray tempArray = new NSArray( aHost._instanceArray );
 		for( int i = 0; i < tempArray.count(); i++ ) {
 			removeInstance_W( (MInstance)tempArray.objectAtIndex( i ) );
 		}
@@ -357,7 +356,7 @@ public class MSiteConfig extends MObject {
 
 	public void removeApplication_M( MApplication anApplication ) {
 		backup( "removeApplication-" + anApplication.name() );
-		NSArray tempArray = new NSArray( anApplication._instanceArray );
+		final NSArray tempArray = new NSArray( anApplication._instanceArray );
 		for( int i = 0; i < tempArray.count(); i++ ) {
 			removeInstance_M( (MInstance)tempArray.objectAtIndex( i ), false );
 		}
@@ -365,7 +364,7 @@ public class MSiteConfig extends MObject {
 	}
 
 	public void removeApplication_W( MApplication anApplication ) {
-		NSArray tempArray = new NSArray( anApplication._instanceArray );
+		final NSArray tempArray = new NSArray( anApplication._instanceArray );
 		for( int i = 0; i < tempArray.count(); i++ ) {
 			removeInstance_W( (MInstance)tempArray.objectAtIndex( i ) );
 		}
@@ -381,11 +380,11 @@ public class MSiteConfig extends MObject {
 
 	public NSMutableArray<MInstance> addInstances_M( MHost selectedHost, MApplication myApplication, int numberToAdd ) {
 		backup( "addInstances-" + myApplication.name() + "-" + selectedHost.name() + "-" + numberToAdd );
-		NSMutableArray newInstanceArray = new NSMutableArray( numberToAdd );
+		final NSMutableArray newInstanceArray = new NSMutableArray( numberToAdd );
 
 		for( int i = 0; i < numberToAdd; i++ ) {
-			Integer aUniqueID = myApplication.nextID();
-			MInstance newInstance = new MInstance( selectedHost, myApplication, aUniqueID, this );
+			final Integer aUniqueID = myApplication.nextID();
+			final MInstance newInstance = new MInstance( selectedHost, myApplication, aUniqueID, this );
 			addInstance_M( newInstance );
 			newInstanceArray.addObject( newInstance );
 		}
@@ -415,7 +414,7 @@ public class MSiteConfig extends MObject {
 
 	public void removeInstances_M( MApplication application, NSArray<MInstance> instances ) {
 		backup( "removeInstances-" + application + "-" + instances.count() );
-		for( MInstance instance : instances ) {
+		for( final MInstance instance : instances ) {
 			removeInstance_M( instance, false );
 		}
 	}
@@ -429,11 +428,11 @@ public class MSiteConfig extends MObject {
 
 	public void removeInstance_W( MInstance anInstance ) {
 		if( (anInstance._host == _localHost) && anInstance.isRunning_W() ) {
-			ProtoLocalMonitor plMonitor = (ProtoLocalMonitor)WOApplication.application().valueForKey( "localMonitor" );
+			final ProtoLocalMonitor plMonitor = (ProtoLocalMonitor)WOApplication.application().valueForKey( "localMonitor" );
 			try {
 				plMonitor.stopInstance( anInstance );
 			}
-			catch( MonitorException me ) {
+			catch( final MonitorException me ) {
 				log.error( "Can't remove", me );
 			}
 		}
@@ -453,13 +452,13 @@ public class MSiteConfig extends MObject {
 
 	public String encryptStringWithKey( String to_be_encrypted, String aKey ) {
 		String encrypted_value = "";
-		char xdigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		final char xdigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		MessageDigest messageDigest;
 
 		try {
 			messageDigest = MessageDigest.getInstance( "MD5" );
 		}
-		catch( NoSuchAlgorithmException exc ) {
+		catch( final NoSuchAlgorithmException exc ) {
 			globalErrorDictionary.takeValueForKey( ("Security package does not contain appropriate algorithm"), ("Security package does not contain appropriate algorithm") );
 			log.error( "Security package does not contain appropriate algorithm" );
 			return encrypted_value;
@@ -470,7 +469,7 @@ public class MSiteConfig extends MObject {
 			try {
 				fudge_constant = ("X#@!").getBytes( "UTF8" );
 			}
-			catch( UnsupportedEncodingException uee ) {
+			catch( final UnsupportedEncodingException uee ) {
 				fudge_constant = ("X#@!").getBytes();
 			}
 			byte fudgetoo_part[] = {
@@ -485,7 +484,7 @@ public class MSiteConfig extends MObject {
 				try {
 					fudgetoo_part = aKey.getBytes( "UTF8" );
 				}
-				catch( UnsupportedEncodingException uee ) {
+				catch( final UnsupportedEncodingException uee ) {
 					fudgetoo_part = aKey.getBytes();
 				}
 			}
@@ -493,7 +492,7 @@ public class MSiteConfig extends MObject {
 			try {
 				messageDigest.update( to_be_encrypted.getBytes( "UTF8" ) );
 			}
-			catch( UnsupportedEncodingException uee ) {
+			catch( final UnsupportedEncodingException uee ) {
 				messageDigest.update( to_be_encrypted.getBytes() );
 			}
 			messageDigest.update( fudgetoo_part );
@@ -501,7 +500,7 @@ public class MSiteConfig extends MObject {
 			encrypted_value = new String( fudgetoo_part );
 			for( i = 0; i < digest.length; i++ ) {
 				int mashed;
-				char temp[] = new char[2];
+				final char temp[] = new char[2];
 				if( digest[i] < 0 ) {
 					mashed = 127 + (-1 * digest[i]);
 				}
@@ -548,7 +547,7 @@ public class MSiteConfig extends MObject {
 	}
 
 	public boolean compareStringWithPassword( String aString ) {
-		String _encryptedPassword = password();
+		final String _encryptedPassword = password();
 
 		if( aString == null && _encryptedPassword == null ) {
 			// if both are null, match
@@ -559,10 +558,10 @@ public class MSiteConfig extends MObject {
 			return false;
 		}
 		else { // do all the calculations
-			// extract random portion of the encrypted password
-			String fudgetoo_part = _encryptedPassword.substring( 0, 4 );
+				// extract random portion of the encrypted password
+			final String fudgetoo_part = _encryptedPassword.substring( 0, 4 );
 			// encrypt the new string using the random bit from the old string
-			String encrypted_string = encryptStringWithKey( aString, fudgetoo_part );
+			final String encrypted_string = encryptStringWithKey( aString, fudgetoo_part );
 			// compare keys and return
 			return encrypted_string.equals( _encryptedPassword );
 		}
@@ -570,7 +569,7 @@ public class MSiteConfig extends MObject {
 
 	// The argument is always the tested. _encryptedPassword is the "correct" one.
 	public boolean comparePasswordWithPassword( String aString ) {
-		String _encryptedPassword = password();
+		final String _encryptedPassword = password();
 
 		if( (_encryptedPassword == null) || (_encryptedPassword.length() == 0) ) {
 			// if _encryptedPassword is null or blank, match
@@ -593,7 +592,7 @@ public class MSiteConfig extends MObject {
 			_passwordDictionary = new NSMutableDictionary<String, NSMutableArray<String>>();
 			_passwordDictionary.setObjectForKey( new NSMutableArray<String>( "" ), "password" );
 		}
-		String aPassword = password();
+		final String aPassword = password();
 		if( _oldPasswordSet ) {
 			if( _oldPassword != null ) {
 				_passwordDictionary.takeValueForKey( new NSMutableArray<String>( _oldPassword ), "password" );
@@ -616,21 +615,21 @@ public class MSiteConfig extends MObject {
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelInformational, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "!@#$!@#$ getSiteConfigFromHostAndPort creates a WOHTTPConnection" );
 		}
-		NSDictionary<String, String> monitorRequest = new NSDictionary<>( "SITE", "queryWotaskd" );
-		NSData content = new NSData( (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
+		final NSDictionary<String, String> monitorRequest = new NSDictionary<>( "SITE", "queryWotaskd" );
+		final NSData content = new NSData( (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
 
-		WORequest aRequest = new ERXRequest( MObject._POST, MObject.directActionString, MObject._HTTP1, NSDictionary.EmptyDictionary, content, null );
+		final WORequest aRequest = new ERXRequest( MObject._POST, MObject.directActionString, MObject._HTTP1, NSDictionary.EmptyDictionary, content, null );
 		WOResponse aResponse = null;
 
 		try {
-			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( configHostName, aPort );
+			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( configHostName, aPort );
 			anHTTPConnection.setReceiveTimeout( 5000 );
 
 			if( anHTTPConnection.sendRequest( aRequest ) ) {
 				aResponse = anHTTPConnection.readResponse();
 			}
 		}
-		catch( Exception localException ) {
+		catch( final Exception localException ) {
 			log.error( "Failed to connect to Host: {} and Port: {}", configHostName, aPort );
 			throw new MonitorException( "Failed to connect to Host: " + configHostName + " and Port: " + aPort );
 		}
@@ -640,13 +639,13 @@ public class MSiteConfig extends MObject {
 			try {
 				xmlDict = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( aResponse.content() );
 			}
-			catch( WOXMLException wxe ) {
+			catch( final WOXMLException wxe ) {
 				log.error( "Got non-parsable data from Host: {} + and Port: {}. Data received was: {}. It is possible that the Wotaskd on the remote host is of the wrong version", configHostName, aPort, aResponse.contentString() );
 				throw new MonitorException( "Got non-parsable data from Host: " + configHostName + " + and Port: " + aPort + ". Data received was: " + aResponse.contentString() + ". It is possible that the Wotaskd on the remote host is of the wrong version" );
 			}
 		}
 
-		NSArray errorResponse = (NSArray)xmlDict.valueForKey( "errorResponse" );
+		final NSArray errorResponse = (NSArray)xmlDict.valueForKey( "errorResponse" );
 		if( errorResponse != null ) {
 			String errorString = "";
 			for( int i = 0; i < errorResponse.count(); i++ ) {
@@ -655,7 +654,7 @@ public class MSiteConfig extends MObject {
 			throw new MonitorException( errorString );
 		}
 
-		NSDictionary queryWotaskdResponse = (NSDictionary)xmlDict.valueForKey( "queryWotaskdResponse" );
+		final NSDictionary queryWotaskdResponse = (NSDictionary)xmlDict.valueForKey( "queryWotaskdResponse" );
 		if( queryWotaskdResponse != null ) {
 			return new MSiteConfig( (NSDictionary)queryWotaskdResponse.valueForKey( "SiteConfig" ) );
 		}
@@ -673,7 +672,7 @@ public class MSiteConfig extends MObject {
 			setViewRefreshRate( Integer.valueOf( 60 ) );
 		}
 		else {
-			NSDictionary siteDict = (NSDictionary)xmlDict.valueForKey( "site" );
+			final NSDictionary siteDict = (NSDictionary)xmlDict.valueForKey( "site" );
 			if( siteDict == null ) {
 				// rdar://3935864 - Seed: "Null Pointer Exception" for WO Application Instances
 				// It seems this should not be necessary, but there is no other place for default values to get fed in. -rrk
@@ -685,25 +684,25 @@ public class MSiteConfig extends MObject {
 				values = new NSMutableDictionary( siteDict );
 			}
 
-			NSArray hostArray = (NSArray)xmlDict.valueForKey( "hostArray" );
+			final NSArray hostArray = (NSArray)xmlDict.valueForKey( "hostArray" );
 			_initHostsWithArray( hostArray );
 
-			NSArray applicationArray = (NSArray)xmlDict.valueForKey( "applicationArray" );
+			final NSArray applicationArray = (NSArray)xmlDict.valueForKey( "applicationArray" );
 			_initApplicationsWithArray( applicationArray );
 
-			NSArray instanceArray = (NSArray)xmlDict.valueForKey( "instanceArray" );
+			final NSArray instanceArray = (NSArray)xmlDict.valueForKey( "instanceArray" );
 			_initInstancesWithArray( instanceArray );
 		}
 
 		// setting the multiplier for assuming an application is dead
 		_appIsDeadMultiplier = 2 * 1000;
-		String WOAssumeAppIsDeadMultiplier = System.getProperties().getProperty( "WOAssumeApplicationIsDeadMultiplier" );
+		final String WOAssumeAppIsDeadMultiplier = System.getProperties().getProperty( "WOAssumeApplicationIsDeadMultiplier" );
 		if( WOAssumeAppIsDeadMultiplier != null ) {
 			try {
-				Integer tempInt = Integer.valueOf( WOAssumeAppIsDeadMultiplier );
+				final Integer tempInt = Integer.valueOf( WOAssumeAppIsDeadMultiplier );
 				_appIsDeadMultiplier = tempInt.intValue() * 1000;
 			}
-			catch( NumberFormatException e ) {
+			catch( final NumberFormatException e ) {
 				// go with the default
 				NSLog._conditionallyLogPrivateException( e );
 			}
@@ -716,7 +715,7 @@ public class MSiteConfig extends MObject {
 			return;
 		}
 		for( int i = 0; i < anArray.count(); i++ ) {
-			MHost aHost = new MHost( (NSDictionary)anArray.objectAtIndex( i ), this );
+			final MHost aHost = new MHost( (NSDictionary)anArray.objectAtIndex( i ), this );
 			_addHost( aHost );
 		}
 	}
@@ -726,7 +725,7 @@ public class MSiteConfig extends MObject {
 			return;
 		}
 		for( int i = 0; i < anArray.count(); i++ ) {
-			MApplication anApplication = new MApplication( (NSDictionary)anArray.objectAtIndex( i ), this );
+			final MApplication anApplication = new MApplication( (NSDictionary)anArray.objectAtIndex( i ), this );
 			_addApplication( anApplication );
 		}
 	}
@@ -736,7 +735,7 @@ public class MSiteConfig extends MObject {
 			return;
 		}
 		for( int i = 0; i < anArray.count(); i++ ) {
-			MInstance anInstance = new MInstance( (NSDictionary)anArray.objectAtIndex( i ), this );
+			final MInstance anInstance = new MInstance( (NSDictionary)anArray.objectAtIndex( i ), this );
 			_addInstance( anInstance );
 		}
 	}
@@ -752,7 +751,7 @@ public class MSiteConfig extends MObject {
 
 	public static String configDirectoryPath() {
 
-		String _fS = File.separator;
+		final String _fS = File.separator;
 
 		if( _configDirectoryPath == null ) {
 			_configDirectoryPath = System.getProperty( "WODeploymentConfigurationDirectory" );
@@ -787,7 +786,7 @@ public class MSiteConfig extends MObject {
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "configDirectoryPath = " + _configDirectoryPath );
 			}
-			File configDir = new File( _configDirectoryPath );
+			final File configDir = new File( _configDirectoryPath );
 
 			if( !configDir.exists() ) {
 				if( !configDir.mkdirs() ) {
@@ -862,13 +861,13 @@ public class MSiteConfig extends MObject {
 		if( fileForSiteConfig().exists() ) {
 			if( fileForSiteConfig().canRead() ) {
 				try {
-					NSDictionary siteDict = (NSDictionary)(new _JavaMonitorDecoder().decodeRootObject( pathForSiteConfig() ));
+					final NSDictionary siteDict = (NSDictionary)(new _JavaMonitorDecoder().decodeRootObject( pathForSiteConfig() ));
 					aConfig = new MSiteConfig( siteDict );
 					if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 						NSLog.debug.appendln( "the SiteConfig is \n" + aConfig.generateSiteConfigXML() );
 					}
 				}
-				catch( Throwable ex ) {
+				catch( final Throwable ex ) {
 					if( isWotaskd ) {
 						log.error( "Failed to parse {}. Backing up original SiteConfig and continuing as if empty.", pathForSiteConfig() );
 						backupSiteConfig();
@@ -894,14 +893,14 @@ public class MSiteConfig extends MObject {
 
 	private static void backupSiteConfig() {
 		try {
-			File sc = fileForSiteConfig();
+			final File sc = fileForSiteConfig();
 			if( sc.exists() ) {
-				NSTimestampFormatter formatter = new NSTimestampFormatter( "%Y%m%d%H%M%S%F" );
-				File renamedFile = new File( pathForSiteConfig() + "." + formatter.format( new NSTimestamp() ) );
+				final NSTimestampFormatter formatter = new NSTimestampFormatter( "%Y%m%d%H%M%S%F" );
+				final File renamedFile = new File( pathForSiteConfig() + "." + formatter.format( new NSTimestamp() ) );
 				sc.renameTo( renamedFile );
 			}
 		}
-		catch( NSForwardException ne ) {
+		catch( final NSForwardException ne ) {
 			log.error( "Cannot backup file {}. Possible Permissions Problem.", pathForSiteConfig() );
 		}
 	}
@@ -914,48 +913,48 @@ public class MSiteConfig extends MObject {
 		try {
 			if( sc.exists() && !sc.canWrite() ) {
 				log.error( "Don't have permission to write to file {} as this user, please change the permissions.", sc.getAbsolutePath() );
-				String pre = WOApplication.application().name() + " - " + localHostName;
+				final String pre = WOApplication.application().name() + " - " + localHostName;
 				globalErrorDictionary.takeValueForKey( pre + " Don't have permission to write to file " + sc.getAbsolutePath() + " as this user, please change the permissions.", "archiveSiteConfig" );
 				return;
 			}
 			if( compress ) {
 				sc = new File( sc.getParentFile(), sc.getName() + ".gz" );
 				throw new IOException( "Removed gzip capabilities from ERXFileUtilities" );
-//				ERXFileUtilities.stringToGZippedFile( value, sc );
+				//				ERXFileUtilities.stringToGZippedFile( value, sc );
 			}
 			else {
 				_NSStringUtilities.writeToFile( sc, value );
 			}
 			globalErrorDictionary.takeValueForKey( null, "archiveSiteConfig" );
 		}
-		catch( IOException e ) {
-			String message = "Cannot write to file " + sc.getAbsolutePath() + ". IOException: " + e.getLocalizedMessage();
+		catch( final IOException e ) {
+			final String message = "Cannot write to file " + sc.getAbsolutePath() + ". IOException: " + e.getLocalizedMessage();
 			log.error( message );
-			String pre = WOApplication.application().name() + " - " + localHostName;
+			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + message, "archiveSiteConfig" );
 		}
-		catch( NSForwardException ne ) {
+		catch( final NSForwardException ne ) {
 			log.error( "Cannot write to file {}. Possible Permissions Problem.", sc.getAbsolutePath() );
-			String pre = WOApplication.application().name() + " - " + localHostName;
+			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + " Cannot write to file " + sc.getAbsolutePath() + ". Possible Permissions Problem.", "archiveSiteConfig" );
 		}
 	}
 
 	public void archiveAdaptorConfig() {
 		try {
-			File ac = fileForAdaptorConfig();
+			final File ac = fileForAdaptorConfig();
 			if( ac.exists() && !ac.canWrite() ) {
 				log.error( "Don't have permission to write to file {} as this user, please change the permissions.", fileForAdaptorConfig() );
-				String pre = WOApplication.application().name() + " - " + localHostName;
+				final String pre = WOApplication.application().name() + " - " + localHostName;
 				globalErrorDictionary.takeValueForKey( pre + " Don't have permission to write to file " + fileForAdaptorConfig() + "as this user, please change the permissions.", "archiveSiteConfig" );
 				return;
 			}
 			_NSStringUtilities.writeToFile( fileForAdaptorConfig(), generateAdaptorConfigXML( false, false ) );
 			globalErrorDictionary.takeValueForKey( null, "archiveAdaptorConfig" );
 		}
-		catch( NSForwardException ne ) {
+		catch( final NSForwardException ne ) {
 			log.error( "Cannot write to file {}. Possible Permissions Problem.", pathForAdaptorConfig() );
-			String pre = WOApplication.application().name() + " - " + localHostName;
+			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + " Cannot write to file " + pathForAdaptorConfig() + ". Possible Permissions Problem.", "archiveAdaptorConfig" );
 		}
 	}
@@ -968,11 +967,11 @@ public class MSiteConfig extends MObject {
 	 */
 	@Deprecated
 	public String generateHttpWebObjectsConfig() {
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append( "ProxyRequests On\nProxyMaxForwards 10000\nProxyVia Full\n" );
 
-		for( Enumeration e = applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
-			MApplication anApp = (MApplication)e.nextElement();
+		for( final Enumeration e = applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
+			final MApplication anApp = (MApplication)e.nextElement();
 
 			//            if (!(onlyIncludeRunningInstances && !anApp.isRunning_W())) {
 
@@ -1013,16 +1012,16 @@ public class MSiteConfig extends MObject {
 			//                }
 			//                sb.append("\">\n");
 
-			for( Enumeration e2 = anApp.instanceArray().objectEnumerator(); e2.hasMoreElements(); ) {
-				MInstance anInst = (MInstance)e2.nextElement();
+			for( final Enumeration e2 = anApp.instanceArray().objectEnumerator(); e2.hasMoreElements(); ) {
+				final MInstance anInst = (MInstance)e2.nextElement();
 
 				//                    if (!(onlyIncludeRunningInstances && !anInst.isRunning_W())) {
 
 				anInst.extractAdaptorValuesFromApplication();
 
-				Integer id = (Integer)anInst.values.valueForKey( "id" );
-				Integer port = (Integer)anInst.values.valueForKey( "port" );
-				String host = (String)anInst.values.valueForKey( "hostName" );
+				final Integer id = (Integer)anInst.values.valueForKey( "id" );
+				final Integer port = (Integer)anInst.values.valueForKey( "port" );
+				final String host = (String)anInst.values.valueForKey( "hostName" );
 				//                        Integer sendTimeout = (Integer) anInst.adaptorValues.valueForKey("sendTimeout");
 				//                        Integer recvTimeout = (Integer) anInst.adaptorValues.valueForKey("recvTimeout");
 				//                        Integer cnctTimeout = (Integer) anInst.adaptorValues.valueForKey("cnctTimeout");
@@ -1073,7 +1072,7 @@ public class MSiteConfig extends MObject {
 				result.append( route );
 				result.append( '\n' );
 			} // end if (!(onlyIncludeRunningInstances && !anInst.isRunning()));
-			//                }
+				//                }
 
 			result.append( "</Proxy>\n" );
 			result.append( "ProxyPass /cgi-bin/WebObjects/" );
@@ -1102,21 +1101,21 @@ public class MSiteConfig extends MObject {
 	/********** Archiving Support **********/
 	// KH - speed this up by uniquing the strings
 	public String generateAdaptorConfigXML( boolean onlyIncludeRunningInstances, boolean shouldIncludeUnregisteredInstances ) {
-		StringBuilder sb = new StringBuilder( "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<adaptor>\n" );
+		final StringBuilder sb = new StringBuilder( "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<adaptor>\n" );
 
-		for( Enumeration e = applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
-			MApplication anApp = (MApplication)e.nextElement();
+		for( final Enumeration e = applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
+			final MApplication anApp = (MApplication)e.nextElement();
 
 			if( !(onlyIncludeRunningInstances && !anApp.isRunning_W()) ) {
 
 				anApp.extractAdaptorValuesFromSiteConfig();
 
-				Integer retries = (Integer)anApp.adaptorValues.valueForKey( "retries" );
-				String scheduler = (String)anApp.adaptorValues.valueForKey( "scheduler" );
-				Integer dormant = (Integer)anApp.adaptorValues.valueForKey( "dormant" );
-				String redir = (String)anApp.adaptorValues.valueForKey( "redir" );
-				Integer poolsize = (Integer)anApp.adaptorValues.valueForKey( "poolsize" );
-				Integer urlVersion = (Integer)anApp.adaptorValues.valueForKey( "urlVersion" );
+				final Integer retries = (Integer)anApp.adaptorValues.valueForKey( "retries" );
+				final String scheduler = (String)anApp.adaptorValues.valueForKey( "scheduler" );
+				final Integer dormant = (Integer)anApp.adaptorValues.valueForKey( "dormant" );
+				final String redir = (String)anApp.adaptorValues.valueForKey( "redir" );
+				final Integer poolsize = (Integer)anApp.adaptorValues.valueForKey( "poolsize" );
+				final Integer urlVersion = (Integer)anApp.adaptorValues.valueForKey( "urlVersion" );
 
 				sb.append( "  <application name=\"" );
 				sb.append( anApp.name() );
@@ -1147,21 +1146,21 @@ public class MSiteConfig extends MObject {
 				}
 				sb.append( "\">\n" );
 
-				for( Enumeration e2 = anApp.instanceArray().objectEnumerator(); e2.hasMoreElements(); ) {
-					MInstance anInst = (MInstance)e2.nextElement();
+				for( final Enumeration e2 = anApp.instanceArray().objectEnumerator(); e2.hasMoreElements(); ) {
+					final MInstance anInst = (MInstance)e2.nextElement();
 
 					if( !(onlyIncludeRunningInstances && !anInst.isRunning_W()) ) {
 
 						anInst.extractAdaptorValuesFromApplication();
 
-						Integer id = (Integer)anInst.values.valueForKey( "id" );
-						Integer port = (Integer)anInst.values.valueForKey( "port" );
-						String host = (String)anInst.values.valueForKey( "hostName" );
-						Integer sendTimeout = (Integer)anInst.adaptorValues.valueForKey( "sendTimeout" );
-						Integer recvTimeout = (Integer)anInst.adaptorValues.valueForKey( "recvTimeout" );
-						Integer cnctTimeout = (Integer)anInst.adaptorValues.valueForKey( "cnctTimeout" );
-						Integer sendBufSize = (Integer)anInst.adaptorValues.valueForKey( "sendBufSize" );
-						Integer recvBufSize = (Integer)anInst.adaptorValues.valueForKey( "recvBufSize" );
+						final Integer id = (Integer)anInst.values.valueForKey( "id" );
+						final Integer port = (Integer)anInst.values.valueForKey( "port" );
+						final String host = (String)anInst.values.valueForKey( "hostName" );
+						final Integer sendTimeout = (Integer)anInst.adaptorValues.valueForKey( "sendTimeout" );
+						final Integer recvTimeout = (Integer)anInst.adaptorValues.valueForKey( "recvTimeout" );
+						final Integer cnctTimeout = (Integer)anInst.adaptorValues.valueForKey( "cnctTimeout" );
+						final Integer sendBufSize = (Integer)anInst.adaptorValues.valueForKey( "sendBufSize" );
+						final Integer recvBufSize = (Integer)anInst.adaptorValues.valueForKey( "recvBufSize" );
 
 						sb.append( "    <instance" );
 
@@ -1207,9 +1206,9 @@ public class MSiteConfig extends MObject {
 
 		if( shouldIncludeUnregisteredInstances ) {
 			// For unknown/unregistered instances
-			ProtoLocalMonitor plMonitor = (ProtoLocalMonitor)WOApplication.application().valueForKey( "localMonitor" );
+			final ProtoLocalMonitor plMonitor = (ProtoLocalMonitor)WOApplication.application().valueForKey( "localMonitor" );
 			if( plMonitor != null ) {
-				StringBuffer unknownSB = plMonitor.generateAdaptorConfigXML();
+				final StringBuffer unknownSB = plMonitor.generateAdaptorConfigXML();
 				if( unknownSB.length() > 0 ) {
 					sb.append( unknownSB );
 				}
@@ -1228,9 +1227,9 @@ public class MSiteConfig extends MObject {
 
 	public void backup( String action ) {
 		if( Boolean.getBoolean( "WODeploymentBackups" ) ) {
-			String currentSiteConfig = generateSiteConfigXML();
+			final String currentSiteConfig = generateSiteConfigXML();
 			if( !_lastConfig.equals( generateSiteConfigXML() ) ) {
-				String date = new SimpleDateFormat( "yyyy-MM-dd-hh_mm_ss" ).format( new Date() );
+				final String date = new SimpleDateFormat( "yyyy-MM-dd-hh_mm_ss" ).format( new Date() );
 				saveSiteConfig( new File( fileForSiteConfig().getParentFile(), "SiteConfigBackup.xml." + date + "." + action ), _lastConfig, true );
 				_lastConfig = currentSiteConfig;
 			}
@@ -1239,32 +1238,32 @@ public class MSiteConfig extends MObject {
 
 	public void forceBackup( String reason ) {
 		reason = reason != null ? "." + reason : "";
-		String date = new SimpleDateFormat( "yyyy-MM-dd-hh_mm_ss" ).format( new Date() );
+		final String date = new SimpleDateFormat( "yyyy-MM-dd-hh_mm_ss" ).format( new Date() );
 		saveSiteConfig( new File( fileForSiteConfig().getParentFile(), "SiteConfigBackup.xml." + date + reason ), generateSiteConfigXML(), true );
 	}
 
 	public NSDictionary dictionaryForArchive() {
-		int hostArrayCount = _hostArray.count();
-		int applicationArrayCount = _applicationArray.count();
-		int instanceArrayCount = _instanceArray.count();
+		final int hostArrayCount = _hostArray.count();
+		final int applicationArrayCount = _applicationArray.count();
+		final int instanceArrayCount = _instanceArray.count();
 
-		NSMutableDictionary SiteConfig = new NSMutableDictionary( 4 );
+		final NSMutableDictionary SiteConfig = new NSMutableDictionary( 4 );
 
-		NSMutableDictionary Site = values;
+		final NSMutableDictionary Site = values;
 
-		NSMutableArray HostArray = new NSMutableArray( hostArrayCount );
+		final NSMutableArray HostArray = new NSMutableArray( hostArrayCount );
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			MObject anMobject = (MObject)_hostArray.objectAtIndex( i );
+			final MObject anMobject = (MObject)_hostArray.objectAtIndex( i );
 			HostArray.addObject( anMobject.values );
 		}
-		NSMutableArray ApplicationArray = new NSMutableArray( applicationArrayCount );
+		final NSMutableArray ApplicationArray = new NSMutableArray( applicationArrayCount );
 		for( int i = 0; i < applicationArrayCount; i++ ) {
-			MObject anMobject = (MObject)_applicationArray.objectAtIndex( i );
+			final MObject anMobject = (MObject)_applicationArray.objectAtIndex( i );
 			ApplicationArray.addObject( anMobject.values );
 		}
-		NSMutableArray InstanceArray = new NSMutableArray( instanceArrayCount );
+		final NSMutableArray InstanceArray = new NSMutableArray( instanceArrayCount );
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MObject anMobject = (MObject)_instanceArray.objectAtIndex( i );
+			final MObject anMobject = (MObject)_instanceArray.objectAtIndex( i );
 			InstanceArray.addObject( anMobject.values );
 		}
 
@@ -1287,13 +1286,13 @@ public class MSiteConfig extends MObject {
 
 	// KH - all these should be cached!
 	public long autoRecoverInterval() {
-		int instanceArrayCount = _instanceArray.count();
+		final int instanceArrayCount = _instanceArray.count();
 		int smallestInterval = 0;
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInst = (MInstance)_instanceArray.objectAtIndex( i );
-			Integer Interval = anInst.lifebeatInterval();
+			final MInstance anInst = (MInstance)_instanceArray.objectAtIndex( i );
+			final Integer Interval = anInst.lifebeatInterval();
 			if( Interval != null ) {
-				int interval = Interval.intValue();
+				final int interval = Interval.intValue();
 				if( interval < smallestInterval ) {
 					smallestInterval = interval;
 				}
@@ -1310,9 +1309,9 @@ public class MSiteConfig extends MObject {
 			return null;
 		}
 
-		int applicationArrayCount = _applicationArray.count();
+		final int applicationArrayCount = _applicationArray.count();
 		for( int i = 0; i < applicationArrayCount; i++ ) {
-			MApplication anApp = (MApplication)_applicationArray.objectAtIndex( i );
+			final MApplication anApp = (MApplication)_applicationArray.objectAtIndex( i );
 			if( anApp.name().equals( anAppName ) ) {
 				return anApp;
 			}
@@ -1329,9 +1328,9 @@ public class MSiteConfig extends MObject {
 			return localHost();
 		}
 
-		int hostArrayCount = _hostArray.count();
+		final int hostArrayCount = _hostArray.count();
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			MHost aHost = (MHost)_hostArray.objectAtIndex( i );
+			final MHost aHost = (MHost)_hostArray.objectAtIndex( i );
 			if( aHost.name().equals( aHostName ) ) {
 				return aHost;
 			}
@@ -1340,11 +1339,11 @@ public class MSiteConfig extends MObject {
 	}
 
 	public boolean localhostOrLoopbackHostExists() {
-		String localhost = "localhost";
-		String loopback = "127.0.0.1";
-		int hostArrayCount = _hostArray.count();
+		final String localhost = "localhost";
+		final String loopback = "127.0.0.1";
+		final int hostArrayCount = _hostArray.count();
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			MHost aHost = (MHost)_hostArray.objectAtIndex( i );
+			final MHost aHost = (MHost)_hostArray.objectAtIndex( i );
 			if( (aHost.name().equals( localhost )) || (aHost.name().equals( loopback )) ) {
 				return true;
 			}
@@ -1361,9 +1360,9 @@ public class MSiteConfig extends MObject {
 			return _localHost;
 		}
 
-		int hostArrayCount = _hostArray.count();
+		final int hostArrayCount = _hostArray.count();
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			MHost aHost = (MHost)_hostArray.objectAtIndex( i );
+			final MHost aHost = (MHost)_hostArray.objectAtIndex( i );
 			if( anAddress.equals( aHost.address() ) ) {
 				return aHost;
 			}
@@ -1376,9 +1375,9 @@ public class MSiteConfig extends MObject {
 			return null;
 		}
 
-		int instanceArrayCount = _instanceArray.count();
+		final int instanceArrayCount = _instanceArray.count();
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+			final MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
 			if( anInstance.displayName().equals( anInstanceName ) ) {
 				return anInstance;
 			}
@@ -1387,24 +1386,24 @@ public class MSiteConfig extends MObject {
 	}
 
 	public MInstance instanceWithHostnameAndPort( String hostAndPort ) {
-		NSArray hostPortArray = NSArray.componentsSeparatedByString( hostAndPort, "\n" );
+		final NSArray hostPortArray = NSArray.componentsSeparatedByString( hostAndPort, "\n" );
 		return instanceWithHostnameAndPort( (String)hostPortArray.objectAtIndex( 0 ),
 				Integer.valueOf( (String)hostPortArray.objectAtIndex( 2 ) ) );
 	}
 
 	public MInstance instanceWithHostnameAndPort( String hostName, String port ) {
 		try {
-			Integer anIntPort = Integer.valueOf( port );
+			final Integer anIntPort = Integer.valueOf( port );
 			return instanceWithHostnameAndPort( hostName, anIntPort );
 		}
-		catch( Exception e ) {
+		catch( final Exception e ) {
 			log.error( "Exception getting instance: {}:{}", hostName, port, e );
 		}
 		return null;
 	}
 
 	public MInstance instanceWithHostnameAndPort( String hostName, Integer port ) {
-		MHost aHost = hostWithName( hostName );
+		final MHost aHost = hostWithName( hostName );
 		if( aHost == null ) {
 			return null;
 		}
@@ -1413,19 +1412,19 @@ public class MSiteConfig extends MObject {
 
 	public MInstance instanceWithHostAndPort( String name, InetAddress host, String port ) {
 		try {
-			Integer anIntPort = Integer.valueOf( port );
-			MHost aHost = hostWithAddress( host );
+			final Integer anIntPort = Integer.valueOf( port );
+			final MHost aHost = hostWithAddress( host );
 			if( aHost == null ) {
 				return null;
 			}
-			MInstance anInstance = aHost.instanceWithPort( anIntPort );
+			final MInstance anInstance = aHost.instanceWithPort( anIntPort );
 			if( anInstance != null ) {
 				if( anInstance.applicationName().equals( name ) ) {
 					return anInstance;
 				}
 			}
 		}
-		catch( Exception e ) {
+		catch( final Exception e ) {
 			log.error( "Exception getting instance: {}:{}", host, port, e );
 		}
 		return null;
@@ -1433,13 +1432,13 @@ public class MSiteConfig extends MObject {
 
 	public NSArray instancesWithHostName( String host ) {
 		try {
-			MHost aHost = hostWithName( host );
+			final MHost aHost = hostWithName( host );
 			if( aHost == null ) {
 				return null;
 			}
 			return aHost.instanceArray();
 		}
-		catch( Exception e ) {
+		catch( final Exception e ) {
 			log.error( "Exception getting instances for host: {}", host, e );
 		}
 		return null;
