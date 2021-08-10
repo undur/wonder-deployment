@@ -25,10 +25,6 @@ public class String_Extensions {
 				aString.equalsIgnoreCase( "1" ));
 	}
 
-	public static String booleanAsYNString( boolean aBOOL ) {
-		return (aBOOL) ? "YES" : "NO";
-	}
-
 	public static String booleanAsYNString( Boolean aBOOL ) {
 		return (aBOOL != null && aBOOL.booleanValue()) ? "YES" : "NO";
 	}
