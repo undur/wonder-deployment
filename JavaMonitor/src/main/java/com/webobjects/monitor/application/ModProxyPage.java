@@ -1,6 +1,7 @@
 package com.webobjects.monitor.application;
 
 import java.util.Enumeration;
+import java.util.List;
 
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
@@ -12,7 +13,7 @@ import com.webobjects.monitor._private.MInstance;
 public class ModProxyPage extends MonitorComponent {
 	private static final long serialVersionUID = 1L;
 
-	public NSArray<String> loadBalencers = new NSArray<>( "byrequests", "bytraffic", "bybusyness" );
+	public NSArray<String> loadBalencers = new NSArray<>( List.of( "byrequests", "bytraffic", "bybusyness" ) );
 	public String loadBalancerItem;
 	public String loadBalancer = "byrequests";
 
