@@ -16,8 +16,7 @@ import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
-
-import er.extensions.foundation.ERXStringUtilities;
+import com.webobjects.monitor.util.Util;
 
 public class PathWizardPage2 extends MonitorComponent {
 	/**
@@ -48,7 +47,7 @@ public class PathWizardPage2 extends MonitorComponent {
 	public void setCallbackKeypath( String aValue ) {
 		callbackKeypath = aValue;
 		if( myApplication() != null ) {
-			String key = ERXStringUtilities.lastPropertyKeyInKeyPath( callbackKeypath );
+			String key = Util.lastPropertyKeyInKeyPath( callbackKeypath );
 			aPath = (String)myApplication().valueForKey( key );
 		}
 	}

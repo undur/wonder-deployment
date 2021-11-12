@@ -21,8 +21,7 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.String_Extensions;
-
-import er.extensions.foundation.ERXStringUtilities;
+import com.webobjects.monitor.util.Util;
 
 public class WOTaskdHandler {
 
@@ -92,7 +91,7 @@ public class WOTaskdHandler {
 		MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
 		startReading();
 		try {
-			aName = ERXStringUtilities.lastPropertyKeyInKeyPath( aName );
+			aName = Util.lastPropertyKeyInKeyPath( aName );
 			if( siteConfig.hostArray().count() != 0 ) {
 				if( ApplicationsPage.class.getName().endsWith( aName ) && (siteConfig.applicationArray().count() != 0) ) {
 
