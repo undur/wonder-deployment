@@ -86,9 +86,8 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 		return numToStartPerHost;
 	}
 
-	protected NSArray<MInstance> instancesToStart( NSArray<MInstance> inactiveInstances, NSArray<MHost> activeHosts,
-			int numInstancesToStartPerHost ) {
-		throw new FIXMEException( "Missing ERXKey, look into this" );
+	protected NSArray<MInstance> instancesToStart( NSArray<MInstance> inactiveInstances, NSArray<MHost> activeHosts, int numInstancesToStartPerHost ) {
+		throw new RuntimeException( "Missing ERXKey, look into this" ); // FIXME Hugi 2021-11-13
 		/*
 		NSMutableArray<MInstance> startingInstances = new NSMutableArray<>();
 		for( int i = 0; i < numInstancesToStartPerHost; i++ ) {

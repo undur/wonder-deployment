@@ -563,7 +563,7 @@ public class AdminAction extends WODirectAction {
 	}
 
 	protected void prepareApplicationsOnHosts( NSArray<String> appNames, NSArray<String> hostNames ) {
-		throw new FIXMEException( "Missing ERXKey, look into this" );
+		throw new RuntimeException( "Missing ERXKey, look into this" ); // FIXME Hugi 2021-11-13
 		/*
 		if( appNames == null )
 			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
