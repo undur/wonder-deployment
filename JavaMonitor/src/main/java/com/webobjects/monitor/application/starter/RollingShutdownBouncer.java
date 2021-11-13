@@ -6,8 +6,6 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 
-import x.FIXMEException;
-
 /**
  * Bounces an application using a rolling shutdown. 
  * 

@@ -15,7 +15,6 @@ package com.webobjects.monitor.application;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 
 public class AppDeathPage extends MonitorComponent {

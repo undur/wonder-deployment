@@ -16,7 +16,6 @@ import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 
 import er.extensions.appserver.ERXResponse;
-import x.FIXMEException;
 
 /**
  * <p>

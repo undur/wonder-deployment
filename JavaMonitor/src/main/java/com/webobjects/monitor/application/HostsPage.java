@@ -13,7 +13,6 @@ package com.webobjects.monitor.application;
  SUCH DAMAGE.
  */
 import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
