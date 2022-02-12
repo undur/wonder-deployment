@@ -810,6 +810,7 @@ public class MSiteConfig extends MObject {
 				}
 			}
 		}
+
 		return _configDirectoryPath;
 	}
 
@@ -844,21 +845,17 @@ public class MSiteConfig extends MObject {
 	public static MSiteConfig unarchiveSiteConfig( boolean isWotaskd ) {
 		MSiteConfig aConfig = null;
 
-		// the file may not exist, but we can create it.
-		//
 		if( !fileForSiteConfig().exists() ) {
+
+			// The file may not exist, but we can create it.
 			// It is awkward to do the file creation here, in this way, but this stuff needs to be factored properly.
-			//
-			// This may throw an exception when it tries to create the file. Go to the utility method to see
-			// the exception being dropped.
-			//
-			_NSStringUtilities.writeToFile(
-					fileForSiteConfig(),
-					(new _JavaMonitorCoder()).encodeRootObjectForKey( NSDictionary.EmptyDictionary, "SiteConfig" ) );
+			// This may throw an exception when it tries to create the file. Go to the utility method to see the exception being dropped.
+
+			_NSStringUtilities.writeToFile( fileForSiteConfig(), new _JavaMonitorCoder().encodeRootObjectForKey( NSDictionary.EmptyDictionary, "SiteConfig" ) );
 		}
 
 		// now, the file should exist, or we have an error.
-		//
+
 		if( fileForSiteConfig().exists() ) {
 			if( fileForSiteConfig().canRead() ) {
 				try {
