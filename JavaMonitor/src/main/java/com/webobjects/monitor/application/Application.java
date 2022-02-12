@@ -30,18 +30,11 @@ public class Application extends ERXApplication {
 	}
 
 	public Application() {
-		super();
 		_NSUtilities.setClassForName( MApplication.class, "MApplication" );
+		initLoggingForDeploymentDebugging();
 
-		String dd = System.getProperties().getProperty( "_DeploymentDebugging" );
-		if( dd != null ) {
-			NSLog.debug.setIsVerbose( true );
-			NSLog.out.setIsVerbose( true );
-			NSLog.err.setIsVerbose( true );
-			NSLog.allowDebugLoggingForGroups( NSLog.DebugGroupDeployment );
-			NSLog.debug.setAllowedDebugLevel( NSLog.DebugLevelDetailed );
-		}
 		WOTaskdHandler.createSiteConfig();
+
 		registerRequestHandler( new WODirectActionRequestHandler() {
 			@Override
 			public NSArray getRequestHandlerPathForRequest( WORequest worequest ) {
@@ -50,16 +43,29 @@ public class Application extends ERXApplication {
 			}
 
 		}, "admin" );
+
 		setAllowsConcurrentRequestHandling( true );
+	}
+
+	public MSiteConfig _siteConfig() {
+		return WOTaskdHandler.siteConfig();
+	}
+
+	private void initLoggingForDeploymentDebugging() {
+		String dd = System.getProperties().getProperty( "_DeploymentDebugging" );
+
+		if( dd != null ) {
+			NSLog.debug.setIsVerbose( true );
+			NSLog.out.setIsVerbose( true );
+			NSLog.err.setIsVerbose( true );
+			NSLog.allowDebugLoggingForGroups( NSLog.DebugGroupDeployment );
+			NSLog.debug.setAllowedDebugLevel( NSLog.DebugLevelDetailed );
+		}
 	}
 
 	@Override
 	public NSMutableDictionary handleMalformedCookieString( RuntimeException arg0, String arg1, NSMutableDictionary arg2 ) {
 		NSLog.err.appendln( "Malformed cookies: " + arg1 );
 		return arg2 == null ? new NSMutableDictionary() : arg2;
-	}
-
-	public MSiteConfig _siteConfig() {
-		return WOTaskdHandler.siteConfig();
 	}
 }
