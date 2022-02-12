@@ -18,7 +18,7 @@ import com.webobjects.eocontrol.EOSortOrdering;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class ApplicationsPage extends MonitorComponent {
@@ -56,7 +56,7 @@ public class ApplicationsPage extends MonitorComponent {
 	}
 
 	public WOComponent addApplicationClicked() {
-		if( String_Extensions.isValidXMLString( newApplicationName ) ) {
+		if( StringExtensions.isValidXMLString( newApplicationName ) ) {
 			handler().startReading();
 			try {
 				if( siteConfig().applicationWithName( newApplicationName ) == null ) {

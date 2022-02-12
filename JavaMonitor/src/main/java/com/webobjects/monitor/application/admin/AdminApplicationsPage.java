@@ -14,7 +14,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.components.AppDetailPage;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 
@@ -383,7 +383,7 @@ public class AdminApplicationsPage extends ApplicationsPage {
 	public WOComponent addApplicationClicked() {
 		String s = null;
 		WOComponent result = null;
-		if( !String_Extensions.isValidXMLString( newApplicationName ) )
+		if( !StringExtensions.isValidXMLString( newApplicationName ) )
 			s = "\"" + newApplicationName
 					+ "\" is an invalid application name.";
 		if( siteConfig().applicationWithName( newApplicationName ) != null )

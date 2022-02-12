@@ -23,7 +23,7 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.components.AppDetailPage;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 import com.webobjects.monitor.application.components.HostsPage;
@@ -101,7 +101,7 @@ public class WOTaskdHandler {
 		MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
 		startReading();
 		try {
-			aName = String_Extensions.lastPropertyKeyInKeyPath( aName );
+			aName = StringExtensions.lastPropertyKeyInKeyPath( aName );
 			if( siteConfig.hostArray().count() != 0 ) {
 				if( ApplicationsPage.class.getName().endsWith( aName ) && (siteConfig.applicationArray().count() != 0) ) {
 
@@ -578,7 +578,7 @@ public class WOTaskdHandler {
 										break;
 									}
 								}
-								anInstance.setRefusingNewSessions( String_Extensions.boolValue( refusingNewSessions ) );
+								anInstance.setRefusingNewSessions( StringExtensions.boolValue( refusingNewSessions ) );
 								anInstance.setStatistics( statistics );
 								anInstance.setDeaths( new NSMutableArray( deaths ) );
 								anInstance.setNextScheduledShutdownString_M( nextShutdown );

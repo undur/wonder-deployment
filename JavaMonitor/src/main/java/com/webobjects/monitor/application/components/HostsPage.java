@@ -31,7 +31,7 @@ import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class HostsPage extends MonitorComponent {
@@ -49,7 +49,7 @@ public class HostsPage extends MonitorComponent {
 	public WOComponent addHostClicked() {
 		String nullOrError = null;
 
-		if( newHostName != null && (newHostName.length() > 0) && (String_Extensions.isValidXMLString( newHostName )) ) {
+		if( newHostName != null && (newHostName.length() > 0) && (StringExtensions.isValidXMLString( newHostName )) ) {
 			try {
 				InetAddress anAddress = InetAddress.getByName( newHostName );
 

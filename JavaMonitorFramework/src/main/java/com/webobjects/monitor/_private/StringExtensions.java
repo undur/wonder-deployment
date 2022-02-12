@@ -14,7 +14,7 @@ package com.webobjects.monitor._private;
 
 import com.webobjects.foundation.NSKeyValueCodingAdditions;
 
-public class String_Extensions {
+public class StringExtensions {
 
 	public static boolean boolValue( String aString ) {
 		if( aString == null ) {

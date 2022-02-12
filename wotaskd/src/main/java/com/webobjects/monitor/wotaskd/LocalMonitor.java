@@ -43,7 +43,7 @@ import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.MonitorException;
 import com.webobjects.monitor._private.ProtoLocalMonitor;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 
 import er.extensions.foundation.ERXProperties;
 
@@ -66,7 +66,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		if( System.getProperties().getProperty( "os.name" ).toLowerCase().startsWith( "win" ) ) {
 			_isOnWindows = true;
 		}
-		_shouldUseSpawn = String_Extensions.boolValue( System.getProperty( "WOShouldUseSpawn" ) );
+		_shouldUseSpawn = StringExtensions.boolValue( System.getProperty( "WOShouldUseSpawn" ) );
 		if( _shouldUseSpawn ) {
 			String appDir = System.getProperties().getProperty( "user.dir" );
 			appDir = NSPathUtilities.stringByAppendingPathComponent( appDir, "Contents" );

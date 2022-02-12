@@ -52,7 +52,7 @@ import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation._NSCollectionReaderWriterLock;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 
 import er.extensions.appserver.ERXApplication;
 import er.extensions.foundation.ERXProperties;
@@ -185,7 +185,7 @@ public class Application extends ERXApplication {
 		// checking to see if we should save WOConfig.xml to disk for the adaptors.
 		String WOSavesAdaptorConfig = System.getProperties().getProperty( "WOSavesAdaptorConfiguration" );
 		if( WOSavesAdaptorConfig != null ) {
-			_shouldWriteAdaptorConfig = String_Extensions.boolValue( WOSavesAdaptorConfig );
+			_shouldWriteAdaptorConfig = StringExtensions.boolValue( WOSavesAdaptorConfig );
 			if( _shouldWriteAdaptorConfig ) {
 				_siteConfig.archiveAdaptorConfig();
 			}
@@ -198,7 +198,7 @@ public class Application extends ERXApplication {
 		// we will always respond to non-multicast UDP packets
 		String shouldMC = System.getProperties().getProperty( "WORespondsToMulticastQuery" );
 		if( shouldMC != null ) {
-			if( !String_Extensions.boolValue( shouldMC ) ) {
+			if( !StringExtensions.boolValue( shouldMC ) ) {
 				_shouldRespondToMulticast = false;
 				NSLog.debug.appendln( "Multicast Response Disabled" );
 			}

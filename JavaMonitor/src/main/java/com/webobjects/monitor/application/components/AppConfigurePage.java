@@ -19,7 +19,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class AppConfigurePage extends MonitorComponent {
@@ -496,7 +496,7 @@ public class AppConfigurePage extends MonitorComponent {
 			}
 			else if( i == (loadSchedulerList.count() - 1) ) {
 				newValue = customSchedulerName;
-				if( !String_Extensions.isValidXMLString( newValue ) ) {
+				if( !StringExtensions.isValidXMLString( newValue ) ) {
 					newValue = null;
 				}
 			}

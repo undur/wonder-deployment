@@ -17,7 +17,7 @@ import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MObject;
-import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
 
 import er.extensions.appserver.ERXRedirect;
@@ -93,7 +93,7 @@ public class ConfigurePage extends MonitorComponent {
 		}
 		else if( i == (loadSchedulerList.count() - 1) ) {
 			newValue = customSchedulerName;
-			if( !String_Extensions.isValidXMLString( newValue ) ) {
+			if( !StringExtensions.isValidXMLString( newValue ) ) {
 				newValue = null;
 			}
 		}
