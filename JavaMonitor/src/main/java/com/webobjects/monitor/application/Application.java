@@ -38,6 +38,11 @@ public class Application extends ERXApplication {
 		_NSUtilities.setClassForName( MApplication.class, "MApplication" );
 		initLoggingForDeploymentDebugging();
 
+		// FIXME: I know.
+		if( "hugi".equals( System.getProperty( "user.name" ) ) ) {
+			System.setProperty( "WODeploymentConfigurationDirectory", "/Users/hugi/Desktop/woconfig" );
+		}
+
 		WOTaskdHandler.createSiteConfig();
 
 		registerRequestHandler( new WODirectActionRequestHandler() {
