@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application.components;
+package com.webobjects.monitor.application;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -27,8 +27,6 @@ import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MonitorException;
-import com.webobjects.monitor.application.Application;
-import com.webobjects.monitor.application.WOTaskdHandler;
 
 public class RemoteBrowseClient {
 

@@ -21,6 +21,7 @@ import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MonitorException;
 import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.RemoteBrowseClient;
 
 public class FileBrowser extends MonitorComponent {
 
