@@ -27,12 +27,10 @@ import com.webobjects.monitor.application.components.Main;
 import er.extensions.appserver.ERXSession;
 
 public class Session extends ERXSession implements ErrorCollector {
-	private static final long serialVersionUID = 8067267944038698356L;
 
 	public boolean _isLoggedIn;
 
 	public Session() {
-		super();
 		_isLoggedIn = false;
 		return;
 	}
