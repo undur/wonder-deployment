@@ -32,7 +32,6 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.StatsUtilities;
 import com.webobjects.monitor.application.MonitorComponent;
-import com.webobjects.monitor.application.components.ConfirmationPage.Delegate;
 import com.webobjects.monitor.application.starter.ApplicationStarter;
 import com.webobjects.monitor.application.starter.GracefulBouncer;
 import com.webobjects.monitor.application.starter.RollingShutdownBouncer;

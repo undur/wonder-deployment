@@ -20,7 +20,6 @@ import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.String_Extensions;
 import com.webobjects.monitor.application.MonitorComponent;
-import com.webobjects.monitor.application.components.ConfirmationPage.Delegate;
 
 public class ApplicationsPage extends MonitorComponent {
 
