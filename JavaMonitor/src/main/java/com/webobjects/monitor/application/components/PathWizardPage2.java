@@ -17,7 +17,7 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor.application.MonitorComponent;
-import com.webobjects.monitor.util.Util;
+import com.webobjects.monitor.application.Util;
 
 public class PathWizardPage2 extends MonitorComponent {
 	/**

@@ -1,4 +1,4 @@
-package com.webobjects.monitor.util;
+package com.webobjects.monitor.application;
 
 import com.webobjects.foundation.NSKeyValueCodingAdditions;
 

@@ -24,7 +24,6 @@ import com.webobjects.monitor._private.String_Extensions;
 import com.webobjects.monitor.application.components.AppDetailPage;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 import com.webobjects.monitor.application.components.HostsPage;
-import com.webobjects.monitor.util.Util;
 
 public class WOTaskdHandler {
 
