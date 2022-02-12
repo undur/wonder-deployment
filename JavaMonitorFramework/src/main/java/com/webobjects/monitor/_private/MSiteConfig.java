@@ -763,30 +763,31 @@ public class MSiteConfig extends MObject {
 			if( (_configDirectoryPath == null) || (_configDirectoryPath.length() == 0) ) {
 
 				String localRoot = System.getProperty( "WOLocalRootDirectory" ); // should reference WO_HOME variable, someday
+
 				if( (localRoot != null) && (!localRoot.equals( "" )) ) {
 					NSLog.debug.appendln( "WOLocalRootDirectory set to non-default: " + localRoot );
 				}
 
 				if( localRoot == null ) {
 					if( System.getProperties().getProperty( "os.name" ).toLowerCase().startsWith( "win" ) ) {
-						logger.error( "WOLocalRootDirectory was not set and the os.name returned something that started "
-								+ "with 'win' or 'WIN' - guessing that path should be 'C:/Apple/Local'" );
+						logger.error( "WOLocalRootDirectory was not set and the os.name returned something that started " + "with 'win' or 'WIN' - guessing that path should be 'C:/Apple/Local'" );
 						localRoot = "C:" + _fS + "Apple" + _fS + "Local";
 					}
 					else {
 						localRoot = "";
 					}
 				}
-				_configDirectoryPath = NSPathUtilities.stringByAppendingPathComponent( localRoot,
-						_fS + "Library" + _fS + "WebObjects" + _fS + "Configuration" );
+				_configDirectoryPath = NSPathUtilities.stringByAppendingPathComponent( localRoot, _fS + "Library" + _fS + "WebObjects" + _fS + "Configuration" );
 			}
 
 			if( !_configDirectoryPath.endsWith( _fS ) ) {
 				_configDirectoryPath = _configDirectoryPath + _fS;
 			}
+
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "configDirectoryPath = " + _configDirectoryPath );
 			}
+
 			final File configDir = new File( _configDirectoryPath );
 
 			if( !configDir.exists() ) {
