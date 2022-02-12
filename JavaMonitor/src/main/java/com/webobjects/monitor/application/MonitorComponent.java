@@ -24,7 +24,7 @@ import com.webobjects.monitor._private.MSiteConfig;
 
 import er.extensions.components.ERXComponent;
 
-public class MonitorComponent extends ERXComponent {
+public abstract class MonitorComponent extends ERXComponent {
 
 	public static final boolean isClickToOpenEnabled = Boolean.parseBoolean( System.getProperty( "er.component.clickToOpen", "false" ) );
 
