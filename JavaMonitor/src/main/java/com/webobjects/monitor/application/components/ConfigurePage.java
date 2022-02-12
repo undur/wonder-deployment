@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  (c) Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -18,6 +18,7 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor.application.MonitorComponent;
 
 import er.extensions.appserver.ERXRedirect;
 

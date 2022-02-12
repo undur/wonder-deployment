@@ -14,6 +14,8 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
+import com.webobjects.monitor.application.components.AdminApplicationsPage;
+import com.webobjects.monitor.application.components.AppDetailPage;
 
 /**
  * <p>

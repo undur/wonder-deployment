@@ -22,6 +22,7 @@ import com.webobjects.foundation._NSThreadsafeMutableArray;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
+import com.webobjects.monitor.application.components.Main;
 
 import er.extensions.appserver.ERXSession;
 
@@ -44,7 +45,7 @@ public class Session extends ERXSession implements ErrorCollector {
 		_isLoggedIn = aBOOL;
 	}
 
-	protected MSiteConfig siteConfig() {
+	public MSiteConfig siteConfig() {
 		return WOTaskdHandler.siteConfig();
 	}
 

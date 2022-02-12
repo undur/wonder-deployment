@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -15,66 +15,12 @@ package com.webobjects.monitor.application;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 
-public class PrefsPage extends MonitorComponent {
-	/*
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 2870539362435793509L;
+public class WotaskdInfoPage extends WOComponent {
+	private static final long serialVersionUID = 8612062376203913798L;
 
-	public String adminPassword1;
+	public String wotaskdText;
 
-	public String adminPassword2;
-
-	public PrefsPage( WOContext aWocontext ) {
-		super( aWocontext );
+	public WotaskdInfoPage( WOContext context ) {
+		super( context );
 	}
-
-	/* ******** Monitor Section ********* */
-	public WOComponent passwordChangeClicked() {
-		PrefsPage aPage = PrefsPage.create( context() );
-
-		if( (adminPassword1 != null && adminPassword2 != null) && (adminPassword1.equals( adminPassword2 )) ) {
-			siteConfig()._setOldPassword();
-			siteConfig().setPassword( adminPassword1 );
-			mySession().setIsLoggedIn( true );
-			mySession().addErrorIfAbsent( "Password has been updated" );
-
-			handler().sendUpdateSiteToWotaskds();
-
-			siteConfig()._resetOldPassword();
-		}
-		else {
-			mySession().addErrorIfAbsent( "Passwords did not match or were empty.  Password was NOT updated" );
-		}
-
-		return aPage;
-	}
-
-	public WOComponent passwordResetClicked() {
-		siteConfig()._setOldPassword();
-		siteConfig().resetPassword();
-		PrefsPage aPage = PrefsPage.create( context() );
-		mySession().addErrorIfAbsent( "Password has been updated" );
-
-		handler().sendUpdateSiteToWotaskds();
-
-		siteConfig()._resetOldPassword();
-		return aPage;
-	}
-
-	/* ******* */
-
-	/* ******** Detail View Section ********* */
-	public WOComponent detailViewUpdateClicked() {
-		handler().sendUpdateSiteToWotaskds();
-
-		PrefsPage aPage = PrefsPage.create( context() );
-		return aPage;
-	}
-	/* ******* */
-
-	public static PrefsPage create( WOContext context ) {
-		return (PrefsPage)context.page().pageWithName( PrefsPage.class.getName() );
-	}
-
 }

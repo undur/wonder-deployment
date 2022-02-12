@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -15,6 +15,7 @@ package com.webobjects.monitor.application;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOResponse;
+import com.webobjects.monitor.application.MonitorComponent;
 
 import er.ajax.AjaxUtils;
 import er.extensions.foundation.ERXProperties;

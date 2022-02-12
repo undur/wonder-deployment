@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -19,6 +19,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
+import com.webobjects.monitor.application.MonitorComponent;
 
 public class InstConfigurePage extends MonitorComponent {
 

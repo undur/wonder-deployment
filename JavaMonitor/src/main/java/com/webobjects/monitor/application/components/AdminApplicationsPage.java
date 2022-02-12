@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

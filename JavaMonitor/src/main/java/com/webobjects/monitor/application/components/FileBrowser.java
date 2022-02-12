@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -20,6 +20,7 @@ import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MonitorException;
+import com.webobjects.monitor.application.MonitorComponent;
 
 public class FileBrowser extends MonitorComponent {
 

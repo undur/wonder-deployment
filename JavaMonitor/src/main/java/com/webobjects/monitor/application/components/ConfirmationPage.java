@@ -1,7 +1,8 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
+import com.webobjects.monitor.application.MonitorComponent;
 
 public class ConfirmationPage extends MonitorComponent {
 

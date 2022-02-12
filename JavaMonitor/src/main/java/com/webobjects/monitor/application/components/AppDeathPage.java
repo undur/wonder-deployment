@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -15,70 +15,38 @@ package com.webobjects.monitor.application;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.monitor._private.MHost;
-import com.webobjects.monitor._private.MObject;
+import com.webobjects.monitor._private.MInstance;
+import com.webobjects.monitor.application.MonitorComponent;
 
-public class HostConfigurePage extends MonitorComponent {
+public class AppDeathPage extends MonitorComponent {
+	private static final long serialVersionUID = -2462045617649768062L;
 
-	public HostConfigurePage( WOContext aWocontext ) {
+	public Object aDeath;
+
+	public int anIndex;
+
+	public AppDeathPage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
 
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = -2948616033564158515L;
+	public WOComponent clearDeathsClicked() {
+		handler().sendClearDeathsToWotaskds( new NSArray<>( myInstance() ),
+				new NSArray<>( myInstance().host() ) );
 
-	private String _hostTypeSelection;
-
-	public NSArray hostTypeList = MObject.hostTypeArray;
-
-	public String hostTypeSelection() {
-		if( _hostTypeSelection == null ) {
-			String type = myHost().osType();
-			for( int i = hostTypeList.count() - 1; i >= 0; i-- ) {
-				String myHostTypeSelection = (String)hostTypeList.objectAtIndex( i );
-				if( type.equalsIgnoreCase( myHostTypeSelection ) ) {
-					_hostTypeSelection = myHostTypeSelection;
-				}
-			}
-		}
-		return _hostTypeSelection;
+		return AppDetailPage.create( context(), myApplication() );
 	}
 
-	public void setHostTypeSelection( String newType ) {
-		_hostTypeSelection = newType;
+	public WOComponent returnClicked() {
+		return AppDetailPage.create( context(), myApplication() );
 	}
 
-	public WOComponent configureHostClicked() {
-		handler().startWriting();
-		try {
-			MHost host = myHost();
-
-			if( (_hostTypeSelection != null) && (!(_hostTypeSelection.toUpperCase().equals( host.osType() ))) ) {
-				host.setOsType( _hostTypeSelection.toUpperCase() );
-				handler().sendUpdateHostToWotaskds( host, siteConfig().hostArray() );
-			}
-		}
-		finally {
-			handler().endWriting();
-		}
-
-		return HostConfigurePage.create( context(), myHost() );
+	public int anIndexPlusOne() {
+		return (anIndex + 1);
 	}
 
-	public WOComponent syncHostClicked() {
-		MHost host = myHost();
-		siteConfig().hostErrorArray.addObjectIfAbsent( host );
-		handler().sendUpdateHostToWotaskds( host, new NSArray( host ) );
-
-		return HostConfigurePage.create( context(), myHost() );
-	}
-
-	public static HostConfigurePage create( WOContext context, MHost host ) {
-		HostConfigurePage page = (HostConfigurePage)context.page().pageWithName( HostConfigurePage.class.getName() );
-		page.setMyHost( host );
+	public static AppDeathPage create( WOContext context, MInstance instance ) {
+		AppDeathPage page = (AppDeathPage)context.page().pageWithName( AppDeathPage.class.getName() );
+		page.setMyInstance( instance );
 		return page;
 	}
-
 }

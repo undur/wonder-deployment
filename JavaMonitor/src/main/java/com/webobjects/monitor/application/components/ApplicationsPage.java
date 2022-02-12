@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -19,6 +19,8 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.components.ConfirmationPage.Delegate;
 
 public class ApplicationsPage extends MonitorComponent {
 

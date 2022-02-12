@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  (c) Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -20,6 +20,7 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor.application.MonitorComponent;
 
 public class AppConfigurePage extends MonitorComponent {
 	/**

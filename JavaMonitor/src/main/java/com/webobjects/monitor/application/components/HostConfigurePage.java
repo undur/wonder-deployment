@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -14,74 +14,72 @@ package com.webobjects.monitor.application;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.monitor._private.MApplication;
+import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MHost;
-import com.webobjects.monitor.util.Util;
+import com.webobjects.monitor._private.MObject;
+import com.webobjects.monitor.application.MonitorComponent;
 
-public class PathWizardPage2 extends MonitorComponent {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 4910748680027936695L;
+public class HostConfigurePage extends MonitorComponent {
 
-	public MHost host;
-
-	public String callbackKeypath;
-
-	public String callbackExpand;
-
-	public WOComponent callbackPage;
-
-	public String aPath = null;
-
-	public boolean showFiles = true;
-
-	public PathWizardPage2( WOContext aWocontext ) {
+	public HostConfigurePage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
 
-	public void setHost( MHost aHost ) {
-		host = aHost;
-	}
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -2948616033564158515L;
 
-	public void setCallbackKeypath( String aValue ) {
-		callbackKeypath = aValue;
-		if( myApplication() != null ) {
-			String key = Util.lastPropertyKeyInKeyPath( callbackKeypath );
-			aPath = (String)myApplication().valueForKey( key );
+	private String _hostTypeSelection;
+
+	public NSArray hostTypeList = MObject.hostTypeArray;
+
+	public String hostTypeSelection() {
+		if( _hostTypeSelection == null ) {
+			String type = myHost().osType();
+			for( int i = hostTypeList.count() - 1; i >= 0; i-- ) {
+				String myHostTypeSelection = (String)hostTypeList.objectAtIndex( i );
+				if( type.equalsIgnoreCase( myHostTypeSelection ) ) {
+					_hostTypeSelection = myHostTypeSelection;
+				}
+			}
 		}
+		return _hostTypeSelection;
 	}
 
-	public void setCallbackExpand( String aValue ) {
-		callbackExpand = aValue;
+	public void setHostTypeSelection( String newType ) {
+		_hostTypeSelection = newType;
 	}
 
-	public void setCallbackPage( WOComponent aValue ) {
-		callbackPage = aValue;
-	}
+	public WOComponent configureHostClicked() {
+		handler().startWriting();
+		try {
+			MHost host = myHost();
 
-	public void setShowFiles( boolean aValue ) {
-		showFiles = aValue;
-	}
-
-	public WOComponent updateClicked() {
-		return this;
-	}
-
-	public WOComponent selectionClicked() {
-		// May have to do explicit update here!
-		WOComponent aPage = callbackPage;
-		aPage.takeValueForKeyPath( aPath, callbackKeypath );
-
-		if( callbackExpand != null ) {
-			aPage.takeValueForKey( Boolean.TRUE, callbackExpand );
+			if( (_hostTypeSelection != null) && (!(_hostTypeSelection.toUpperCase().equals( host.osType() ))) ) {
+				host.setOsType( _hostTypeSelection.toUpperCase() );
+				handler().sendUpdateHostToWotaskds( host, siteConfig().hostArray() );
+			}
 		}
-		return aPage;
+		finally {
+			handler().endWriting();
+		}
+
+		return HostConfigurePage.create( context(), myHost() );
 	}
 
-	public static PathWizardPage2 create( WOContext context, MApplication application ) {
-		PathWizardPage2 aPage = (PathWizardPage2)context.page().pageWithName( PathWizardPage2.class.getName() );
-		aPage.setMyApplication( application );
-		return aPage;
+	public WOComponent syncHostClicked() {
+		MHost host = myHost();
+		siteConfig().hostErrorArray.addObjectIfAbsent( host );
+		handler().sendUpdateHostToWotaskds( host, new NSArray( host ) );
+
+		return HostConfigurePage.create( context(), myHost() );
 	}
+
+	public static HostConfigurePage create( WOContext context, MHost host ) {
+		HostConfigurePage page = (HostConfigurePage)context.page().pageWithName( HostConfigurePage.class.getName() );
+		page.setMyHost( host );
+		return page;
+	}
+
 }

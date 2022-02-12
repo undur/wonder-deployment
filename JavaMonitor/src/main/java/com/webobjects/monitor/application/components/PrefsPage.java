@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -14,101 +14,68 @@ package com.webobjects.monitor.application;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.monitor._private.MApplication;
-import com.webobjects.monitor._private.MHost;
+import com.webobjects.monitor.application.MonitorComponent;
 
-public class PathWizardPage1 extends MonitorComponent {
-	/**
+public class PrefsPage extends MonitorComponent {
+	/*
 	 * serialVersionUID
 	 */
-	private static final long serialVersionUID = -6797982622070654127L;
+	private static final long serialVersionUID = 2870539362435793509L;
 
-	public MHost aCurrentHost;
+	public String adminPassword1;
 
-	public String callbackKeypath;
+	public String adminPassword2;
 
-	public String callbackExpand;
-
-	public WOComponent callbackPage;
-
-	public boolean showFiles = true;
-
-	public PathWizardPage1( WOContext aWocontext ) {
+	public PrefsPage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
 
-	public void setCallbackKeypath( String aValue ) {
-		callbackKeypath = aValue;
-	}
+	/* ******** Monitor Section ********* */
+	public WOComponent passwordChangeClicked() {
+		PrefsPage aPage = PrefsPage.create( context() );
 
-	public void setCallbackExpand( String aValue ) {
-		callbackExpand = aValue;
-	}
+		if( (adminPassword1 != null && adminPassword2 != null) && (adminPassword1.equals( adminPassword2 )) ) {
+			siteConfig()._setOldPassword();
+			siteConfig().setPassword( adminPassword1 );
+			mySession().setIsLoggedIn( true );
+			mySession().addErrorIfAbsent( "Password has been updated" );
 
-	public void setCallbackPage( WOComponent aValue ) {
-		callbackPage = aValue;
-	}
+			handler().sendUpdateSiteToWotaskds();
 
-	public void setShowFiles( boolean aValue ) {
-		showFiles = aValue;
-	}
+			siteConfig()._resetOldPassword();
+		}
+		else {
+			mySession().addErrorIfAbsent( "Passwords did not match or were empty.  Password was NOT updated" );
+		}
 
-	public NSArray hostList() {
-		NSArray aHostArray = siteConfig().hostArray();
-		return aHostArray;
-	}
-
-	public WOComponent hostClicked() {
-		PathWizardPage2 aPage = PathWizardPage2.create( context(), myApplication() );
-		aPage.setHost( aCurrentHost );
-		aPage.setCallbackKeypath( callbackKeypath );
-		aPage.setCallbackExpand( callbackExpand );
-		aPage.setCallbackPage( callbackPage );
-		aPage.setShowFiles( showFiles );
 		return aPage;
 	}
 
-	public boolean onlyOneHost() {
-		NSArray aHostList = hostList();
+	public WOComponent passwordResetClicked() {
+		siteConfig()._setOldPassword();
+		siteConfig().resetPassword();
+		PrefsPage aPage = PrefsPage.create( context() );
+		mySession().addErrorIfAbsent( "Password has been updated" );
 
-		if( aHostList != null && (aHostList.count() == 1) ) {
-			return true;
-		}
-		return false;
-	}
+		handler().sendUpdateSiteToWotaskds();
 
-	public boolean multipleHosts() {
-		NSArray aHostList = hostList();
-
-		if( aHostList != null && (aHostList.count() > 1) ) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean noHosts() {
-		NSArray aHostList = hostList();
-
-		if( aHostList == null || (aHostList.count() == 0) ) {
-			return true;
-		}
-		return false;
-	}
-
-	public WOComponent onlyHostClicked() {
-		PathWizardPage2 aPage = PathWizardPage2.create( context(), myApplication() );
-		aPage.setHost( (MHost)hostList().objectAtIndex( 0 ) );
-		aPage.setCallbackKeypath( callbackKeypath );
-		aPage.setCallbackExpand( callbackExpand );
-		aPage.setCallbackPage( callbackPage );
-		aPage.setShowFiles( showFiles );
+		siteConfig()._resetOldPassword();
 		return aPage;
 	}
 
-	public static PathWizardPage1 create( WOContext context, MApplication appliation ) {
-		PathWizardPage1 aPage = (PathWizardPage1)context.page().pageWithName( PathWizardPage1.class.getName() );
-		aPage.setMyApplication( appliation );
+	/* ******* */
+
+	/* ******** Detail View Section ********* */
+	public WOComponent detailViewUpdateClicked() {
+		handler().sendUpdateSiteToWotaskds();
+
+		PrefsPage aPage = PrefsPage.create( context() );
 		return aPage;
 	}
+	/* ******* */
+
+	public static PrefsPage create( WOContext context ) {
+		return (PrefsPage)context.page().pageWithName( PrefsPage.class.getName() );
+	}
+
 }

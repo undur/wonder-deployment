@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.application.components;
 
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
@@ -22,6 +22,8 @@ import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSData;
+import com.webobjects.monitor.application.Application;
+import com.webobjects.monitor.application.MonitorComponent;
 
 /*
  * This page should be removed, because it looks like an experiment which never get finished.

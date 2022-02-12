@@ -21,6 +21,9 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor.application.components.AppDetailPage;
+import com.webobjects.monitor.application.components.ApplicationsPage;
+import com.webobjects.monitor.application.components.HostsPage;
 import com.webobjects.monitor.util.Util;
 
 public class WOTaskdHandler {
@@ -202,7 +205,7 @@ public class WOTaskdHandler {
 		getUpdateErrors( responseDicts, "remove", false, true, false, false );
 	}
 
-	protected void sendRemoveHostToWotaskds( MHost exHost, NSArray wotaskdArray ) {
+	public void sendRemoveHostToWotaskds( MHost exHost, NSArray wotaskdArray ) {
 		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, exHost, null, null, "remove" ),
 				wotaskdArray, true );
 		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
@@ -237,7 +240,7 @@ public class WOTaskdHandler {
 		getUpdateErrors( responseDicts, "configure", false, true, true, false );
 	}
 
-	protected void sendUpdateHostToWotaskds( MHost changedHost, NSArray wotaskdArray ) {
+	public void sendUpdateHostToWotaskds( MHost changedHost, NSArray wotaskdArray ) {
 		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, changedHost, null, null, "configure" ),
 				wotaskdArray, true );
 		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
@@ -315,7 +318,7 @@ public class WOTaskdHandler {
 		}
 	}
 
-	protected void sendCommandInstancesToWotaskds( String command, NSArray<MInstance> instanceArray,
+	public void sendCommandInstancesToWotaskds( String command, NSArray<MInstance> instanceArray,
 			NSArray<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( command, instanceArray, wotaskdArray, this );
 	}

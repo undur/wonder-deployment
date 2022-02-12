@@ -26,6 +26,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
+import com.webobjects.monitor.application.components.Main;
 
 public class DirectAction extends WODirectAction {
 
