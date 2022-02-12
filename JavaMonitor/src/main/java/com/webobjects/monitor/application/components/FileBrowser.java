@@ -1,5 +1,6 @@
 package com.webobjects.monitor.application.components;
 
+import com.webobjects.appserver.WOApplication;
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -13,15 +14,24 @@ package com.webobjects.monitor.application.components;
  SUCH DAMAGE.
  */
 import com.webobjects.appserver.WOContext;
+import com.webobjects.appserver.WOHTTPConnection;
+import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
+import com.webobjects.appserver.xml.WOXMLException;
+import com.webobjects.appserver.xml._JavaMonitorDecoder;
 import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSLog;
+import com.webobjects.foundation.NSMutableArray;
+import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.monitor._private.MHost;
+import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MonitorException;
+import com.webobjects.monitor.application.Application;
 import com.webobjects.monitor.application.MonitorComponent;
-import com.webobjects.monitor.application.RemoteBrowseClient;
+import com.webobjects.monitor.application.WOTaskdHandler;
 
 public class FileBrowser extends MonitorComponent {
 
@@ -138,4 +148,116 @@ public class FileBrowser extends MonitorComponent {
 		return performParentAction( callbackSelectionAction );
 	}
 
+	private static class RemoteBrowseClient {
+
+		private static byte[] evilHack = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>".getBytes();
+
+		private static NSDictionary _getFileListOutOfResponse( WOResponse aResponse, String thePath ) throws MonitorException {
+			NSData responseContent = aResponse.content();
+			NSArray anArray = NSArray.EmptyArray;
+			if( responseContent != null ) {
+				byte[] responseContentBytes = responseContent.bytes();
+				String responseContentString = new String( responseContentBytes );
+
+				if( responseContentString.startsWith( "ERROR" ) ) {
+					throw new MonitorException( "Path " + thePath + " does not exist" );
+				}
+
+				_JavaMonitorDecoder aDecoder = new _JavaMonitorDecoder();
+				try {
+					byte[] evilHackCombined = new byte[responseContentBytes.length + evilHack.length];
+					// System.arraycopy(src, src_pos, dst, dst_pos, length);
+					System.arraycopy( evilHack, 0, evilHackCombined, 0, evilHack.length );
+					System.arraycopy( responseContentBytes, 0, evilHackCombined, evilHack.length,
+							responseContentBytes.length );
+					anArray = (NSArray)aDecoder.decodeRootObject( new NSData( evilHackCombined ) );
+				}
+				catch( WOXMLException wxe ) {
+					NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding response: "
+							+ responseContentString );
+					throw new MonitorException( "Host returned bad response for path " + thePath );
+				}
+
+			}
+			else {
+				NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding null response" );
+				throw new MonitorException( "Host returned null response for path " + thePath );
+			}
+
+			String isRoots = aResponse.headerForKey( "isRoots" );
+			String filepath = aResponse.headerForKey( "filepath" );
+
+			NSMutableDictionary aDict = new NSMutableDictionary();
+			aDict.takeValueForKey( isRoots, "isRoots" );
+			aDict.takeValueForKey( filepath, "filepath" );
+			aDict.takeValueForKey( anArray, "fileArray" );
+
+			return aDict;
+		}
+
+		private static String getPathString = "/cgi-bin/WebObjects/wotaskd.woa/wa/RemoteBrowse/getPath";
+
+		public static NSDictionary fileListForStartingPathHost( String aString, MHost aHost, boolean showFiles ) throws MonitorException {
+
+			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
+				NSLog.debug.appendln( "!@#$!@#$ fileListForStartingPathHost creates a WOHTTPConnection" );
+			}
+
+			NSDictionary aFileListDictionary = null;
+
+			try {
+				Application theApplication = (Application)WOApplication.application();
+				WOHTTPConnection anHTTPConnection = new WOHTTPConnection( aHost.name(), theApplication.lifebeatDestinationPort() );
+				@SuppressWarnings("cast")
+				NSMutableDictionary<String, NSMutableArray<String>> aHeadersDict = (NSMutableDictionary<String, NSMutableArray<String>>)WOTaskdHandler.siteConfig().passwordDictionary().mutableClone();
+				WORequest aRequest = null;
+				WOResponse aResponse = null;
+				boolean requestSucceeded = false;
+				if( aString != null && aString.length() > 0 ) {
+					aHeadersDict.setObjectForKey( new NSMutableArray<>( aString ), "filepath" );
+				}
+				if( showFiles ) {
+					aHeadersDict.setObjectForKey( new NSMutableArray<>( "YES" ), "showFiles" );
+				}
+
+				aRequest = new WORequest( MObject._GET, RemoteBrowseClient.getPathString, MObject._HTTP1, aHeadersDict,
+						null, null );
+				anHTTPConnection.setReceiveTimeout( 5000 );
+
+				requestSucceeded = anHTTPConnection.sendRequest( aRequest );
+
+				if( requestSucceeded ) {
+					aResponse = anHTTPConnection.readResponse();
+				}
+
+				if( (aResponse == null) || (!requestSucceeded) || (aResponse.status() != 200) ) {
+					throw new MonitorException( "Error requesting directory listing for " + aString + " from " + aHost.name() );
+				}
+
+				try {
+					aFileListDictionary = _getFileListOutOfResponse( aResponse, aString );
+				}
+				catch( MonitorException me ) {
+					if( NSLog
+							.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelCritical, NSLog.DebugGroupDeployment ) )
+						NSLog.debug.appendln( "caught exception: " + me );
+					throw me;
+				}
+
+				aHost.isAvailable = true;
+			}
+			catch( MonitorException me ) {
+				aHost.isAvailable = true;
+				throw me;
+			}
+			catch( Exception localException ) {
+				aHost.isAvailable = false;
+				NSLog.err.appendln( "Exception requesting directory listing: " );
+				localException.printStackTrace();
+				throw new MonitorException( "Exception requesting directory listing for " + aString + " from "
+						+ aHost.name() + ": " + localException.toString() );
+			}
+			return aFileListDictionary;
+		}
+	}
 }
