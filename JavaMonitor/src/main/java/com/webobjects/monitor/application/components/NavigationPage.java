@@ -62,11 +62,6 @@ public class NavigationPage extends MonitorComponent {
 		return pageWithName( HelpPage.class );
 	}
 
-	@Deprecated
-	public WOComponent MigrationPageClicked() {
-		return pageWithName( MigrationPage.class );
-	}
-
 	public WOComponent ModProxyPageClicked() {
 		return pageWithName( ModProxyPage.class );
 	}
