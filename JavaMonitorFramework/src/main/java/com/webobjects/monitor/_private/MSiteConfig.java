@@ -51,7 +51,8 @@ import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 import er.extensions.appserver.ERXRequest;
 
 public class MSiteConfig extends MObject {
-	private static final Logger log = LoggerFactory.getLogger( MSiteConfig.class );
+
+	private static final Logger logger = LoggerFactory.getLogger( MSiteConfig.class );
 
 	/*
 	// Site
@@ -433,7 +434,7 @@ public class MSiteConfig extends MObject {
 				plMonitor.stopInstance( anInstance );
 			}
 			catch( final MonitorException me ) {
-				log.error( "Can't remove", me );
+				logger.error( "Can't remove", me );
 			}
 		}
 		_removeInstance( anInstance );
@@ -460,7 +461,7 @@ public class MSiteConfig extends MObject {
 		}
 		catch( final NoSuchAlgorithmException exc ) {
 			globalErrorDictionary.takeValueForKey( ("Security package does not contain appropriate algorithm"), ("Security package does not contain appropriate algorithm") );
-			log.error( "Security package does not contain appropriate algorithm" );
+			logger.error( "Security package does not contain appropriate algorithm" );
 			return encrypted_value;
 		}
 		if( to_be_encrypted != null ) {
@@ -630,7 +631,7 @@ public class MSiteConfig extends MObject {
 			}
 		}
 		catch( final Exception localException ) {
-			log.error( "Failed to connect to Host: {} and Port: {}", configHostName, aPort );
+			logger.error( "Failed to connect to Host: {} and Port: {}", configHostName, aPort );
 			throw new MonitorException( "Failed to connect to Host: " + configHostName + " and Port: " + aPort );
 		}
 
@@ -640,7 +641,7 @@ public class MSiteConfig extends MObject {
 				xmlDict = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( aResponse.content() );
 			}
 			catch( final WOXMLException wxe ) {
-				log.error( "Got non-parsable data from Host: {} + and Port: {}. Data received was: {}. It is possible that the Wotaskd on the remote host is of the wrong version", configHostName, aPort, aResponse.contentString() );
+				logger.error( "Got non-parsable data from Host: {} + and Port: {}. Data received was: {}. It is possible that the Wotaskd on the remote host is of the wrong version", configHostName, aPort, aResponse.contentString() );
 				throw new MonitorException( "Got non-parsable data from Host: " + configHostName + " + and Port: " + aPort + ". Data received was: " + aResponse.contentString() + ". It is possible that the Wotaskd on the remote host is of the wrong version" );
 			}
 		}
@@ -768,7 +769,7 @@ public class MSiteConfig extends MObject {
 
 				if( localRoot == null ) {
 					if( System.getProperties().getProperty( "os.name" ).toLowerCase().startsWith( "win" ) ) {
-						log.error( "WOLocalRootDirectory was not set and the os.name returned something that started "
+						logger.error( "WOLocalRootDirectory was not set and the os.name returned something that started "
 								+ "with 'win' or 'WIN' - guessing that path should be 'C:/Apple/Local'" );
 						localRoot = "C:" + _fS + "Apple" + _fS + "Local";
 					}
@@ -790,21 +791,21 @@ public class MSiteConfig extends MObject {
 
 			if( !configDir.exists() ) {
 				if( !configDir.mkdirs() ) {
-					log.error( "Configuration Directory {} does not exist, and cannot be created.", _configDirectoryPath );
+					logger.error( "Configuration Directory {} does not exist, and cannot be created.", _configDirectoryPath );
 					System.exit( 1 );
 				}
 			}
 			else {
 				if( !configDir.isDirectory() ) {
-					log.error( "Configuration Directory {} is not actually a directory.", _configDirectoryPath );
+					logger.error( "Configuration Directory {} is not actually a directory.", _configDirectoryPath );
 					System.exit( 1 );
 				}
 				if( !configDir.canRead() ) {
-					log.error( "Don't have permission to read from Configuration Directory {} as this user, please change the permissions or restart {} as another user.", _configDirectoryPath, WOApplication.application().name() );
+					logger.error( "Don't have permission to read from Configuration Directory {} as this user, please change the permissions or restart {} as another user.", _configDirectoryPath, WOApplication.application().name() );
 					System.exit( 1 );
 				}
 				if( (WOApplication.application().name().equals( "wotaskd" )) && (!configDir.canWrite()) ) {
-					log.error( "Don't have permission to write to Configuration Directory {} as this user; please change the permissions.", _configDirectoryPath );
+					logger.error( "Don't have permission to write to Configuration Directory {} as this user; please change the permissions.", _configDirectoryPath );
 					System.exit( 1 );
 				}
 			}
@@ -869,21 +870,21 @@ public class MSiteConfig extends MObject {
 				}
 				catch( final Throwable ex ) {
 					if( isWotaskd ) {
-						log.error( "Failed to parse {}. Backing up original SiteConfig and continuing as if empty.", pathForSiteConfig() );
+						logger.error( "Failed to parse {}. Backing up original SiteConfig and continuing as if empty.", pathForSiteConfig() );
 						backupSiteConfig();
 					}
 					else {
-						log.error( "Failed to parse {}. Continuing as if empty.", pathForSiteConfig() );
+						logger.error( "Failed to parse {}. Continuing as if empty.", pathForSiteConfig() );
 					}
 				}
 			}
 			else {
-				log.error( "Cannot read from SiteConfig file {}. Possible Permissions Problem.", pathForSiteConfig() );
+				logger.error( "Cannot read from SiteConfig file {}. Possible Permissions Problem.", pathForSiteConfig() );
 				System.exit( 1 );
 			}
 		}
 		else {
-			log.error( "SiteConfig file {} doesn't exist. Continuing as if empty.", pathForSiteConfig() );
+			logger.error( "SiteConfig file {} doesn't exist. Continuing as if empty.", pathForSiteConfig() );
 		}
 		if( aConfig == null ) {
 			aConfig = new MSiteConfig( null );
@@ -901,7 +902,7 @@ public class MSiteConfig extends MObject {
 			}
 		}
 		catch( final NSForwardException ne ) {
-			log.error( "Cannot backup file {}. Possible Permissions Problem.", pathForSiteConfig() );
+			logger.error( "Cannot backup file {}. Possible Permissions Problem.", pathForSiteConfig() );
 		}
 	}
 
@@ -912,7 +913,7 @@ public class MSiteConfig extends MObject {
 	public void saveSiteConfig( File sc, String value, boolean compress ) {
 		try {
 			if( sc.exists() && !sc.canWrite() ) {
-				log.error( "Don't have permission to write to file {} as this user, please change the permissions.", sc.getAbsolutePath() );
+				logger.error( "Don't have permission to write to file {} as this user, please change the permissions.", sc.getAbsolutePath() );
 				final String pre = WOApplication.application().name() + " - " + localHostName;
 				globalErrorDictionary.takeValueForKey( pre + " Don't have permission to write to file " + sc.getAbsolutePath() + " as this user, please change the permissions.", "archiveSiteConfig" );
 				return;
@@ -929,12 +930,12 @@ public class MSiteConfig extends MObject {
 		}
 		catch( final IOException e ) {
 			final String message = "Cannot write to file " + sc.getAbsolutePath() + ". IOException: " + e.getLocalizedMessage();
-			log.error( message );
+			logger.error( message );
 			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + message, "archiveSiteConfig" );
 		}
 		catch( final NSForwardException ne ) {
-			log.error( "Cannot write to file {}. Possible Permissions Problem.", sc.getAbsolutePath() );
+			logger.error( "Cannot write to file {}. Possible Permissions Problem.", sc.getAbsolutePath() );
 			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + " Cannot write to file " + sc.getAbsolutePath() + ". Possible Permissions Problem.", "archiveSiteConfig" );
 		}
@@ -944,7 +945,7 @@ public class MSiteConfig extends MObject {
 		try {
 			final File ac = fileForAdaptorConfig();
 			if( ac.exists() && !ac.canWrite() ) {
-				log.error( "Don't have permission to write to file {} as this user, please change the permissions.", fileForAdaptorConfig() );
+				logger.error( "Don't have permission to write to file {} as this user, please change the permissions.", fileForAdaptorConfig() );
 				final String pre = WOApplication.application().name() + " - " + localHostName;
 				globalErrorDictionary.takeValueForKey( pre + " Don't have permission to write to file " + fileForAdaptorConfig() + "as this user, please change the permissions.", "archiveSiteConfig" );
 				return;
@@ -953,7 +954,7 @@ public class MSiteConfig extends MObject {
 			globalErrorDictionary.takeValueForKey( null, "archiveAdaptorConfig" );
 		}
 		catch( final NSForwardException ne ) {
-			log.error( "Cannot write to file {}. Possible Permissions Problem.", pathForAdaptorConfig() );
+			logger.error( "Cannot write to file {}. Possible Permissions Problem.", pathForAdaptorConfig() );
 			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + " Cannot write to file " + pathForAdaptorConfig() + ". Possible Permissions Problem.", "archiveAdaptorConfig" );
 		}
@@ -1397,7 +1398,7 @@ public class MSiteConfig extends MObject {
 			return instanceWithHostnameAndPort( hostName, anIntPort );
 		}
 		catch( final Exception e ) {
-			log.error( "Exception getting instance: {}:{}", hostName, port, e );
+			logger.error( "Exception getting instance: {}:{}", hostName, port, e );
 		}
 		return null;
 	}
@@ -1425,7 +1426,7 @@ public class MSiteConfig extends MObject {
 			}
 		}
 		catch( final Exception e ) {
-			log.error( "Exception getting instance: {}:{}", host, port, e );
+			logger.error( "Exception getting instance: {}:{}", host, port, e );
 		}
 		return null;
 	}
@@ -1439,7 +1440,7 @@ public class MSiteConfig extends MObject {
 			return aHost.instanceArray();
 		}
 		catch( final Exception e ) {
-			log.error( "Exception getting instances for host: {}", host, e );
+			logger.error( "Exception getting instances for host: {}", host, e );
 		}
 		return null;
 	}
