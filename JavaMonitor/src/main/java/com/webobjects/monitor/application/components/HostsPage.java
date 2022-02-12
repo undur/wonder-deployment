@@ -172,17 +172,19 @@ public class HostsPage extends MonitorComponent {
 	}
 
 	public WOComponent displayWotaskdInfoClicked() {
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "!@#$!@#$ displayWotaskdInfoClicked creates a WOHTTPConnection" );
-		WotaskdInfoPage aPage = (WotaskdInfoPage)pageWithName( "WotaskdInfoPage" );
-		WORequest aRequest = new WORequest( MObject._POST, "/", MObject._HTTP1, siteConfig().passwordDictionary(), null,
-				null );
+		}
+
+		final WotaskdInfoPage aPage = pageWithName( WotaskdInfoPage.class );
+
+		final WORequest aRequest = new WORequest( MObject._POST, "/", MObject._HTTP1, siteConfig().passwordDictionary(), null, null );
 
 		WOResponse aResponse = null;
 
 		try {
-			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( currentHost.name(), theApplication
-					.lifebeatDestinationPort() );
+			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( currentHost.name(), theApplication.lifebeatDestinationPort() );
 			anHTTPConnection.setReceiveTimeout( 10000 );
 
 			if( anHTTPConnection.sendRequest( aRequest ) ) {
@@ -192,13 +194,14 @@ public class HostsPage extends MonitorComponent {
 		catch( Throwable localException ) {
 			NSLog._conditionallyLogPrivateException( localException );
 		}
+
 		if( aResponse == null ) {
-			aPage.wotaskdText = "Failed to get response from wotaskd " + currentHost.name() + ": "
-					+ WOApplication.application().lifebeatDestinationPort();
+			aPage.wotaskdText = "Failed to get response from wotaskd " + currentHost.name() + ": " + WOApplication.application().lifebeatDestinationPort();
 		}
 		else {
 			aPage.wotaskdText = aResponse.contentString();
 		}
+
 		return aPage;
 	}
 
