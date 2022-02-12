@@ -23,10 +23,6 @@ import com.webobjects.monitor._private.String_Extensions;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class AppConfigurePage extends MonitorComponent {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private static MSiteConfig _sc = new MSiteConfig( null );
 

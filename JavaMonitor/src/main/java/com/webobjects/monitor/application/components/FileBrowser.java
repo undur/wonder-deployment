@@ -35,37 +35,29 @@ import com.webobjects.monitor.application.WOTaskdHandler;
 
 public class FileBrowser extends MonitorComponent {
 
+	public String startingPath; // passed in
+	public String callbackUpdateAction; // passed in
+	public String callbackSelectionAction; // passed in
+	public MHost host; // passed in
+	public boolean showFiles = true;
+	public boolean isRoots = false;
+	public String errorMsg;
+	public NSDictionary aCurrentFile;
+	public NSArray _fileList = null;
+
 	public FileBrowser( WOContext aWocontext ) {
 		super( aWocontext );
 	}
-
-	private static final long serialVersionUID = 7523872426979817711L;
-
-	public String startingPath; // passed in
-
-	public String callbackUpdateAction; // passed in
-
-	public String callbackSelectionAction; // passed in
-
-	public MHost host; // passed in
-
-	public boolean showFiles = true;
-
-	public boolean isRoots = false;
-
-	public String errorMsg;
 
 	boolean hasErrorMsg() {
 		return errorMsg != null && errorMsg.length() > 0;
 	}
 
-	public NSDictionary aCurrentFile;
-
-	public NSArray _fileList = null;
-
 	public NSArray fileList() {
-		if( _fileList == null )
+		if( _fileList == null ) {
 			retrieveFileList();
+		}
+
 		return _fileList;
 	}
 

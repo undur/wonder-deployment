@@ -19,10 +19,8 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class AppDeathPage extends MonitorComponent {
-	private static final long serialVersionUID = -2462045617649768062L;
 
 	public Object aDeath;
-
 	public int anIndex;
 
 	public AppDeathPage( WOContext aWocontext ) {
@@ -30,9 +28,7 @@ public class AppDeathPage extends MonitorComponent {
 	}
 
 	public WOComponent clearDeathsClicked() {
-		handler().sendClearDeathsToWotaskds( new NSArray<>( myInstance() ),
-				new NSArray<>( myInstance().host() ) );
-
+		handler().sendClearDeathsToWotaskds( new NSArray<>( myInstance() ), new NSArray<>( myInstance().host() ) );
 		return AppDetailPage.create( context(), myApplication() );
 	}
 
