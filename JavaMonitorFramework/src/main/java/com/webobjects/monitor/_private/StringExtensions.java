@@ -16,61 +16,68 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
 
 public class StringExtensions {
 
-	public static boolean boolValue( String aString ) {
-		if( aString == null ) {
+	public static boolean boolValue( final String s ) {
+
+		if( s == null ) {
 			return false;
 		}
-		return (aString.equalsIgnoreCase( "_YES" ) ||
-				aString.equalsIgnoreCase( "Y" ) ||
-				aString.equalsIgnoreCase( "YES" ) ||
-				aString.equalsIgnoreCase( "true" ) ||
-				aString.equalsIgnoreCase( "1" ));
+
+		return (s.equalsIgnoreCase( "_YES" ) ||
+				s.equalsIgnoreCase( "Y" ) ||
+				s.equalsIgnoreCase( "YES" ) ||
+				s.equalsIgnoreCase( "true" ) ||
+				s.equalsIgnoreCase( "1" ));
 	}
 
-	public static String booleanAsYNString( Boolean aBOOL ) {
-		return (aBOOL != null && aBOOL.booleanValue()) ? "YES" : "NO";
+	public static String booleanAsYNString( final Boolean b ) {
+		return (b != null && b.booleanValue()) ? "YES" : "NO";
 	}
 
-	public static boolean boolValue( Object anObject ) {
-		if( anObject == null ) {
+	public static boolean boolValue( final Object o ) {
+
+		if( o == null ) {
 			return false;
 		}
-		else if( anObject instanceof Boolean ) {
-			return ((Boolean)anObject).booleanValue();
+		else if( o instanceof Boolean ) {
+			return ((Boolean)o).booleanValue();
 		}
-		else if( anObject instanceof Number ) {
-			return ((Number)anObject).intValue() != 0;
+		else if( o instanceof Number ) {
+			return ((Number)o).intValue() != 0;
 		}
-		else if( anObject instanceof String ) {
-			return boolValue( (String)anObject );
+		else if( o instanceof String ) {
+			return boolValue( (String)o );
 		}
+
 		return false;
 	}
 
-	public static boolean isValidXMLString( String aValue ) {
-		if( (aValue == null) ||
-				(aValue.length() == 0) ) {
+	public static boolean isValidXMLString( final String s ) {
+
+		if( s == null || s.length() == 0 ) {
 			return false;
 		}
-		for( int i = 0; i < aValue.length(); i++ ) {
-			char aChar = aValue.charAt( i );
+
+		for( int i = 0; i < s.length(); i++ ) {
+			char aChar = s.charAt( i );
 			if( (!Character.isLetterOrDigit( aChar )) && (aChar != '-') && (aChar != '.') ) {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
-	// FIXME: Re-added from ERXStringUtilities since JavaMonitor turned out to be still using it.
-	@Deprecated
-	public static final String lastPropertyKeyInKeyPath(String keyPath) {
+	// Re-added from ERXStringUtilities since JavaMonitor turned out to be still using it.
+	public static final String lastPropertyKeyInKeyPath( String keyPath ) {
 		String part = null;
-		if (keyPath != null) {
-			int index = keyPath.lastIndexOf(NSKeyValueCodingAdditions.KeyPathSeparator);
-			if (index != -1)
-				part = keyPath.substring(index + 1);
-			else
+		if( keyPath != null ) {
+			int index = keyPath.lastIndexOf( NSKeyValueCodingAdditions.KeyPathSeparator );
+			if( index != -1 ) {
+				part = keyPath.substring( index + 1 );
+			}
+			else {
 				part = keyPath;
+			}
 		}
 		return part;
 	}
