@@ -59,16 +59,16 @@ public class NavigationPage extends MonitorComponent {
 	}
 
 	public WOComponent HelpPageClicked() {
-		return pageWithName( "HelpPage" );
+		return pageWithName( HelpPage.class );
 	}
 
 	@Deprecated
 	public WOComponent MigrationPageClicked() {
-		return pageWithName( "MigrationPage" );
+		return pageWithName( MigrationPage.class );
 	}
 
 	public WOComponent ModProxyPageClicked() {
-		return pageWithName( "ModProxyPage" );
+		return pageWithName( ModProxyPage.class );
 	}
 
 	public boolean logoutRequired() {
@@ -77,7 +77,7 @@ public class NavigationPage extends MonitorComponent {
 
 	public WOComponent logoutClicked() {
 		mySession().setIsLoggedIn( false );
-		return pageWithName( "Main" );
+		return pageWithName( Main.class );
 	}
 
 	@Deprecated
