@@ -16,14 +16,9 @@ import com.webobjects.appserver.WOApplication;
 import com.webobjects.foundation.NSLog;
 
 public class SiteConfig implements SiteConfigMBean {
-	//=================================================
-	//    Instance Variables
-	//=================================================
+
 	private static SiteConfig _instance = null;
 
-	//=================================================
-	//    Constructors
-	//=================================================
 	public static SiteConfig getInstance() {
 		if( _instance == null ) {
 			_instance = new SiteConfig();
@@ -31,9 +26,6 @@ public class SiteConfig implements SiteConfigMBean {
 		return _instance;
 	}
 
-	//=================================================
-	//    Mbean actions
-	//=================================================
 	public void readSiteConfigXML() {
 		try {
 			Application theApplication = (Application)WOApplication.application();
