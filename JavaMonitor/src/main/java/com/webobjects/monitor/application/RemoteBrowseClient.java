@@ -30,9 +30,9 @@ import com.webobjects.monitor._private.MonitorException;
 
 public class RemoteBrowseClient {
 
-	static private byte[] evilHack = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>".getBytes();
+	private static byte[] evilHack = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>".getBytes();
 
-	static public NSDictionary _getFileListOutOfResponse( WOResponse aResponse, String thePath ) throws MonitorException {
+	private static NSDictionary _getFileListOutOfResponse( WOResponse aResponse, String thePath ) throws MonitorException {
 		NSData responseContent = aResponse.content();
 		NSArray anArray = NSArray.EmptyArray;
 		if( responseContent != null ) {
@@ -77,11 +77,14 @@ public class RemoteBrowseClient {
 
 	private static String getPathString = "/cgi-bin/WebObjects/wotaskd.woa/wa/RemoteBrowse/getPath";
 
-	static public NSDictionary fileListForStartingPathHost( String aString, MHost aHost, boolean showFiles )
-			throws MonitorException {
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+	public static NSDictionary fileListForStartingPathHost( String aString, MHost aHost, boolean showFiles ) throws MonitorException {
+
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "!@#$!@#$ fileListForStartingPathHost creates a WOHTTPConnection" );
+		}
+
 		NSDictionary aFileListDictionary = null;
+
 		try {
 			Application theApplication = (Application)WOApplication.application();
 			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( aHost.name(), theApplication.lifebeatDestinationPort() );
