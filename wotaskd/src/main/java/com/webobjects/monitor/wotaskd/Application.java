@@ -13,7 +13,6 @@ IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL OR CONSE
 SUCH DAMAGE.
  */
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -220,30 +219,6 @@ public class Application extends ERXApplication {
 
 		// Set up multicast listen thread
 		createRequestListenerThread();
-
-		/*
-		ERXRouteRequestHandler restHandler = new ERXRouteRequestHandler();
-		restHandler.addDefaultRoutes( "MApplication", false, MApplicationController.class );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/addInstance", ERXRoute.Method.Get, MApplicationController.class, "addInstance" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/deleteInstance", ERXRoute.Method.Get, MApplicationController.class, "deleteInstance" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/info", ERXRoute.Method.Get, MApplicationController.class, "info" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/info", ERXRoute.Method.Get, MApplicationController.class, "info" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/isRunning", ERXRoute.Method.Get, MApplicationController.class, "isRunning" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/isRunning", ERXRoute.Method.Get, MApplicationController.class, "isRunning" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/isStopped", ERXRoute.Method.Get, MApplicationController.class, "isStopped" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/isStopped", ERXRoute.Method.Get, MApplicationController.class, "isStopped" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/start", ERXRoute.Method.Get, MApplicationController.class, "start" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/start", ERXRoute.Method.Get, MApplicationController.class, "start" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/stop", ERXRoute.Method.Get, MApplicationController.class, "stop" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/stop", ERXRoute.Method.Get, MApplicationController.class, "stop" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/forceQuit", ERXRoute.Method.Get, MApplicationController.class, "forceQuit" ) );
-		restHandler.insertRoute( new ERXRoute( "MApplication", "/mApplications/{name:MApplication}/forceQuit", ERXRoute.Method.Get, MApplicationController.class, "forceQuit" ) );
-		restHandler.addDefaultRoutes( "MHost", false, MHostController.class );
-		restHandler.addDefaultRoutes( "MSiteConfig", false, MSiteConfigController.class );
-		restHandler.insertRoute( new ERXRoute( "MSiteConfig", "/mSiteConfig", ERXRoute.Method.Put, MSiteConfigController.class, "update" ) );
-
-		ERXRouteRequestHandler.register( restHandler );
-		*/
 
 		boolean isSSHServerEnabled = ERXProperties.booleanForKeyWithDefault( "er.wotaskd.sshd.enabled", false );
 
