@@ -21,18 +21,12 @@ import com.webobjects.monitor.application.MonitorComponent;
 
 public class HostConfigurePage extends MonitorComponent {
 
+	private String _hostTypeSelection;
+	public NSArray hostTypeList = MObject.hostTypeArray;
+
 	public HostConfigurePage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = -2948616033564158515L;
-
-	private String _hostTypeSelection;
-
-	public NSArray hostTypeList = MObject.hostTypeArray;
 
 	public String hostTypeSelection() {
 		if( _hostTypeSelection == null ) {
@@ -81,5 +75,4 @@ public class HostConfigurePage extends MonitorComponent {
 		page.setMyHost( host );
 		return page;
 	}
-
 }

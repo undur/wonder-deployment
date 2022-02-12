@@ -23,19 +23,15 @@ import com.webobjects.monitor.application.MonitorComponent;
 
 public class ApplicationsPage extends MonitorComponent {
 
-	private static final long serialVersionUID = -2523319756655905750L;
-
 	private int _totalInstancesConfigured = 0;
 	private int _totalInstancesRunning = 0;
+	public MApplication currentApplication;
+	public String newApplicationName;
 
 	public ApplicationsPage( WOContext aWocontext ) {
 		super( aWocontext );
 		handler().updateForPage( name() );
 	}
-
-	public MApplication currentApplication;
-
-	public String newApplicationName;
 
 	public NSArray<MApplication> applications() {
 		NSMutableArray<MApplication> applications = new NSMutableArray<>();
@@ -190,5 +186,4 @@ public class ApplicationsPage extends MonitorComponent {
 	public void setTotalInstancesRunning( int totalInstancesRunning ) {
 		_totalInstancesRunning = totalInstancesRunning;
 	}
-
 }

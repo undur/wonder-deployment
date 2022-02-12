@@ -12,12 +12,10 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class ModProxyPage extends MonitorComponent {
-	private static final long serialVersionUID = 1L;
 
 	public NSArray<String> loadBalencers = new NSArray<>( List.of( "byrequests", "bytraffic", "bybusyness" ) );
 	public String loadBalancerItem;
 	public String loadBalancer = "byrequests";
-
 	public Integer timeout = Integer.valueOf( 0 );
 
 	public ModProxyPage( WOContext aWocontext ) {

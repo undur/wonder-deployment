@@ -39,6 +39,12 @@ import com.webobjects.monitor.application.starter.ShutdownBouncer;
 
 public class AppDetailPage extends MonitorComponent {
 
+	public MInstance currentInstance;
+	public boolean isClearDeathSectionVisible = false;
+	public boolean showDetailStatistics = false;
+	public WODisplayGroup displayGroup;
+	public String filterErrorMessage = null;
+
 	public AppDetailPage( WOContext aWocontext ) {
 		super( aWocontext );
 		handler().updateForPage( name() );
@@ -46,18 +52,6 @@ public class AppDetailPage extends MonitorComponent {
 		displayGroup = new WODisplayGroup();
 		displayGroup.setFetchesOnLoad( false );
 	}
-
-	private static final long serialVersionUID = 438829612215550387L;
-
-	public MInstance currentInstance;
-
-	public boolean isClearDeathSectionVisible = false;
-
-	public boolean showDetailStatistics = false;
-
-	public WODisplayGroup displayGroup;
-
-	public String filterErrorMessage = null;
 
 	public WOComponent showStatisticsClicked() {
 		showDetailStatistics = !showDetailStatistics;

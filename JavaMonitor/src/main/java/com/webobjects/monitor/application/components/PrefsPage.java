@@ -17,20 +17,14 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class PrefsPage extends MonitorComponent {
-	/*
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 2870539362435793509L;
 
 	public String adminPassword1;
-
 	public String adminPassword2;
 
 	public PrefsPage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
 
-	/* ******** Monitor Section ********* */
 	public WOComponent passwordChangeClicked() {
 		PrefsPage aPage = PrefsPage.create( context() );
 
@@ -63,19 +57,14 @@ public class PrefsPage extends MonitorComponent {
 		return aPage;
 	}
 
-	/* ******* */
-
-	/* ******** Detail View Section ********* */
 	public WOComponent detailViewUpdateClicked() {
 		handler().sendUpdateSiteToWotaskds();
 
 		PrefsPage aPage = PrefsPage.create( context() );
 		return aPage;
 	}
-	/* ******* */
 
 	public static PrefsPage create( WOContext context ) {
 		return (PrefsPage)context.page().pageWithName( PrefsPage.class.getName() );
 	}
-
 }

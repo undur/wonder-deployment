@@ -21,10 +21,8 @@ import er.ajax.AjaxUtils;
 import er.extensions.foundation.ERXProperties;
 
 public class NavigationPage extends MonitorComponent {
-	private static final long serialVersionUID = 338657623393333855L;
 
 	public int currentPage = APP_PAGE;
-
 	public String title;
 	public String pageId;
 

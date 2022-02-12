@@ -20,19 +20,11 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class PathWizardPage1 extends MonitorComponent {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = -6797982622070654127L;
 
 	public MHost aCurrentHost;
-
 	public String callbackKeypath;
-
 	public String callbackExpand;
-
 	public WOComponent callbackPage;
-
 	public boolean showFiles = true;
 
 	public PathWizardPage1( WOContext aWocontext ) {

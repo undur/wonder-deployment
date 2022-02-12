@@ -18,7 +18,6 @@ import com.webobjects.monitor.application.MonitorComponent;
 import com.webobjects.monitor.application.Session;
 
 public class Main extends MonitorComponent {
-	private static final long serialVersionUID = -6041828876924813157L;
 
 	private String _password;
 	private String _message;

@@ -23,56 +23,33 @@ import com.webobjects.monitor.application.MonitorComponent;
 import er.extensions.appserver.ERXRedirect;
 
 public class ConfigurePage extends MonitorComponent {
+
 	public String backupNote;
 	public boolean isAdaptorSettingsSectionVisible = false;
 	public boolean isEmailSectionVisible = false;
 	public boolean isBackupSectionVisible = false;
+	public String _loadSchedulerSelection = null;
+	public String loadSchedulerItem;
+	public NSArray loadSchedulerList = MObject.loadSchedulerArray;
+	public Integer urlVersionItem;
+	public NSArray urlVersionList = MObject.urlVersionArray;
+	public String customSchedulerName;
+	public String adaptorInfoUsername;
+	public String adaptorInfoPassword;
 
 	public ConfigurePage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
 
-	/*
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = -3447899695208425947L;
-
-	/* ******** HTTP Server Section ********* */
 	public WOComponent HTTPServerUpdateClicked() {
 		handler().sendUpdateSiteToWotaskds();
-
-		ConfigurePage aPage = ConfigurePage.create( context() );
-		return aPage;
+		return ConfigurePage.create( context() );
 	}
-
-	/* ******* */
-
-	/* ******** Email Section ********* */
 
 	public WOComponent emailUpdateClicked() {
 		handler().sendUpdateSiteToWotaskds();
-
-		ConfigurePage aPage = ConfigurePage.create( context() );
-		return aPage;
+		return ConfigurePage.create( context() );
 	}
-
-	/* ******* */
-
-	/* ******** Adaptor Section ********* */
-	public String _loadSchedulerSelection = null;
-
-	public String loadSchedulerItem;
-
-	public NSArray loadSchedulerList = MObject.loadSchedulerArray;
-
-	public Integer urlVersionItem;
-
-	public NSArray urlVersionList = MObject.urlVersionArray;
-
-	public String customSchedulerName;
-
-	public String adaptorInfoUsername;
-	public String adaptorInfoPassword;
 
 	public String loadSchedulerSelection() {
 		if( (theApplication != null) && (siteConfig().scheduler() != null) ) {
@@ -94,14 +71,17 @@ public class ConfigurePage extends MonitorComponent {
 	}
 
 	public Integer urlVersionSelection() {
-		if( theApplication != null )
+		if( theApplication != null ) {
 			return siteConfig().urlVersion();
+		}
+
 		return null;
 	}
 
 	public void setUrlVersionSelection( Integer value ) {
-		if( theApplication != null )
+		if( theApplication != null ) {
 			siteConfig().setUrlVersion( value );
+		}
 	}
 
 	public WOComponent adaptorUpdateClicked() {
@@ -133,19 +113,19 @@ public class ConfigurePage extends MonitorComponent {
 		return context().page();
 	}
 
-	/* ******* */
-
 	public static ConfigurePage create( WOContext context ) {
 		return (ConfigurePage)context.page().pageWithName( ConfigurePage.class.getName() );
 	}
 
 	public WOActionResults adaptorInfoLoginClicked() {
 		String url = siteConfig().woAdaptor() + "/WOAdaptorInfo?" + adaptorInfoUsername + "+" + adaptorInfoPassword;
-		if( url.startsWith( "http://" ) )
+
+		if( url.startsWith( "http://" ) ) {
 			url = url.replaceFirst( "http://", "https://" );
+		}
+
 		ERXRedirect redirect = pageWithName( ERXRedirect.class );
 		redirect.setUrl( url );
 		return redirect;
 	}
-
 }

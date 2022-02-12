@@ -27,11 +27,6 @@ public class InstConfigurePage extends MonitorComponent {
 		super( aWocontext );
 	}
 
-	/*
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 2930097368474314793L;
-
 	public boolean isWindowsHost() {
 		return myInstance().host().osType().equals( "WINDOWS" );
 	}
@@ -275,5 +270,4 @@ public class InstConfigurePage extends MonitorComponent {
 		page.setMyInstance( instance );
 		return page;
 	}
-
 }

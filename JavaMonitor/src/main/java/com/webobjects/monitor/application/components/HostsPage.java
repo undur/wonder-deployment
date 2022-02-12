@@ -36,23 +36,15 @@ import com.webobjects.monitor.application.MonitorComponent;
 
 public class HostsPage extends MonitorComponent {
 
+	public MHost currentHost;
+	public String newHostName;
+	public String hostTypeSelection;
+	public NSArray hostTypeList = MObject.hostTypeArray;
+
 	public HostsPage( WOContext aWocontext ) {
 		super( aWocontext );
 		handler().updateForPage( name() );
 	}
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = -4009657723964398636L;
-
-	public MHost currentHost;
-
-	public String newHostName;
-
-	public String hostTypeSelection;
-
-	public NSArray hostTypeList = MObject.hostTypeArray;
 
 	public WOComponent addHostClicked() {
 		String nullOrError = null;
@@ -254,5 +246,4 @@ public class HostsPage extends MonitorComponent {
 	public static HostsPage create( WOContext context ) {
 		return (HostsPage)context.page().pageWithName( HostsPage.class.getName() );
 	}
-
 }
