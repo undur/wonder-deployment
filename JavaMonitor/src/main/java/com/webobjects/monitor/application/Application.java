@@ -1,5 +1,8 @@
 package com.webobjects.monitor.application;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -25,7 +28,9 @@ import er.extensions.appserver.ERXApplication;
 
 public class Application extends ERXApplication {
 
-	static public void main( String argv[] ) {
+	private static Logger logger = LoggerFactory.getLogger( Application.class );
+
+	public static void main( String argv[] ) {
 		ERXApplication.main( argv, Application.class );
 	}
 
@@ -64,8 +69,8 @@ public class Application extends ERXApplication {
 	}
 
 	@Override
-	public NSMutableDictionary handleMalformedCookieString( RuntimeException arg0, String arg1, NSMutableDictionary arg2 ) {
-		NSLog.err.appendln( "Malformed cookies: " + arg1 );
-		return arg2 == null ? new NSMutableDictionary() : arg2;
+	public NSMutableDictionary handleMalformedCookieString( RuntimeException exception, String cookieString, NSMutableDictionary d ) {
+		logger.error( "Malformed cookies: " + cookieString );
+		return d == null ? new NSMutableDictionary() : d;
 	}
 }
