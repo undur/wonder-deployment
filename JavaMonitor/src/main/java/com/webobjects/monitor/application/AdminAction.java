@@ -15,8 +15,6 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 
-import er.extensions.appserver.ERXResponse;
-
 /**
  * <p>
  * The following direct actions were added to Monitor. They might be useful for
@@ -359,7 +357,7 @@ public class AdminAction extends WODirectAction {
 	}
 
 	public WOActionResults infoAction() {
-		ERXResponse woresponse = new ERXResponse();
+		WOResponse woresponse = new WOResponse();
 		String result = "";
 		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
 			MInstance minstance = (MInstance)enumeration.nextElement();
@@ -400,7 +398,8 @@ public class AdminAction extends WODirectAction {
 	}
 
 	public WOActionResults runningAction() {
-		ERXResponse woresponse = new ERXResponse( "YES" );
+		WOResponse woresponse = new WOResponse();
+		woresponse.setContent( "YES" );
 		String num = (String)context().request().formValueForKey( "num" );
 		int numberOfInstancesRequested = -1;
 		if( num != null && !num.equals( "" ) && !num.equalsIgnoreCase( "all" ) ) {
@@ -429,7 +428,8 @@ public class AdminAction extends WODirectAction {
 	}
 
 	public WOActionResults stoppedAction() {
-		ERXResponse woresponse = new ERXResponse( "YES" );
+		WOResponse woresponse = new WOResponse();
+		woresponse.setContent( "YES" );
 		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
 			MInstance minstance = (MInstance)enumeration.nextElement();
 			if( minstance.state == MObject.DEAD )
@@ -442,7 +442,8 @@ public class AdminAction extends WODirectAction {
 	}
 
 	public WOActionResults bounceAction() {
-		ERXResponse woresponse = new ERXResponse( "OK" );
+		WOResponse woresponse = new WOResponse();
+		woresponse.setContent( "OK" );
 		String bouncetype = (String)context().request().formValueForKey( "bouncetype" );
 		String maxwaitString = (String)context().request().formValueForKey( "maxwait" );
 		if( bouncetype == null || bouncetype == "" || bouncetype.equalsIgnoreCase( "graceful" ) ) {
@@ -645,7 +646,7 @@ public class AdminAction extends WODirectAction {
 
 	@Override
 	public WOActionResults performActionNamed( String s ) {
-		WOResponse woresponse = new ERXResponse();
+		WOResponse woresponse = new WOResponse();
 		if( !siteConfig().isPasswordRequired() || siteConfig().compareStringWithPassword( context().request().stringFormValueForKey( "pw" ) ) ) {
 			try {
 				WOActionResults woactionresults = performMonitorActionNamed( s );

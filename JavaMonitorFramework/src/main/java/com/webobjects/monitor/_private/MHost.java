@@ -32,7 +32,6 @@ import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation._NSThreadsafeMutableArray;
 
-import er.extensions.appserver.ERXResponse;
 import er.extensions.foundation.ERXProperties;
 
 public class MHost extends MObject {
@@ -308,8 +307,7 @@ public class MHost extends MObject {
 					workers[i].join();
 				}
 			}
-			catch( InterruptedException ie ) {
-			}
+			catch( InterruptedException ie ) {}
 		}
 
 		final WORequest aRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig
@@ -401,7 +399,8 @@ public class MHost extends MObject {
 			if( willChange ) {
 				_siteConfig.hostErrorArray.addObjectIfAbsent( this );
 			}
-			aResponse = new ERXResponse( errorResponse );
+			aResponse = new WOResponse();
+			aResponse.setContent( errorResponse );
 		}
 		else {
 			// if we successfully synced, clear the error dictionary

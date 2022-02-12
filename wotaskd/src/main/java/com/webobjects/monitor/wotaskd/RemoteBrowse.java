@@ -25,8 +25,6 @@ import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSPathUtilities;
 
-import er.extensions.appserver.ERXResponse;
-
 public class RemoteBrowse extends WODirectAction {
 	private Object[] fileKeys = new Object[] { "file", "fileType", "fileSize" };
 	private File[] roots;
@@ -116,7 +114,7 @@ public class RemoteBrowse extends WODirectAction {
 
 	public WOResponse getPathAction() {
 		WORequest aRequest = request();
-		ERXResponse aResponse = new ERXResponse();
+		WOResponse aResponse = new WOResponse();
 
 		if( aRequest.isUsingWebServer() ) {
 			aResponse.setStatus( WOMessage.HTTP_STATUS_FORBIDDEN );
