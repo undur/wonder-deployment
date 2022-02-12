@@ -1,5 +1,8 @@
 package com.webobjects.monitor.application;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -25,22 +28,26 @@ import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
 import com.webobjects.monitor.application.components.Main;
 
 import er.extensions.appserver.ERXSession;
-
 public class Session extends ERXSession implements ErrorCollector {
 
-	public boolean _isLoggedIn;
+	private static final Logger logger = LoggerFactory.getLogger( Session.class );
 
-	public Session() {
-		_isLoggedIn = false;
-		return;
-	}
+	/**
+	 * Error/Informational Messages
+	 */
+	private _NSThreadsafeMutableArray errorMessageArray = new _NSThreadsafeMutableArray( new NSMutableArray<Object>() );
+
+	/**
+	 * Indicates that a user is currently logged in
+	 */
+	public boolean _isLoggedIn = false;
 
 	public boolean isLoggedIn() {
 		return _isLoggedIn;
 	}
 
-	public void setIsLoggedIn( boolean aBOOL ) {
-		_isLoggedIn = aBOOL;
+	public void setIsLoggedIn( boolean value ) {
+		_isLoggedIn = value;
 	}
 
 	public MSiteConfig siteConfig() {
@@ -71,9 +78,6 @@ public class Session extends ERXSession implements ErrorCollector {
 		}
 	}
 
-	/** ******** Error/Informational Messages ********* */
-	private _NSThreadsafeMutableArray errorMessageArray = new _NSThreadsafeMutableArray( new NSMutableArray<Object>() );
-
 	public void addErrorIfAbsent( String message ) {
 		errorMessageArray.addObjectIfAbsent( message );
 	}
@@ -88,8 +92,9 @@ public class Session extends ERXSession implements ErrorCollector {
 						new NSMutableDictionary<Object, Object>() );
 			}
 		}
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelInformational, NSLog.DebugGroupDeployment ) )
-			NSLog.debug.appendln( "message(): " + errorMessageArray.array() );
+
+		logger.debug( "message(): " + errorMessageArray.array() );
+
 		if( (errorMessageArray != null) && (errorMessageArray.count() > 0) ) {
 			_message = errorMessageArray.componentsJoinedByString( ", " );
 			errorMessageArray = new _NSThreadsafeMutableArray( new NSMutableArray<Object>() );
