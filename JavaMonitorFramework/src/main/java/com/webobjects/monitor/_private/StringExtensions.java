@@ -12,6 +12,16 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor._private;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPOutputStream;
+
 import com.webobjects.foundation.NSKeyValueCodingAdditions;
 
 public class StringExtensions {
@@ -80,5 +90,63 @@ public class StringExtensions {
 			}
 		}
 		return part;
+	}
+
+	public static class GzipStringShit {
+
+		public static void stringToGZippedFile( String s, File f ) throws IOException {
+			if( s == null ) {
+				throw new NullPointerException( "string argument cannot be null" );
+			}
+			if( f == null ) {
+				throw new NullPointerException( "file argument cannot be null" );
+			}
+
+			final byte[] bytes = s.getBytes( StandardCharsets.UTF_8 );
+			final ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
+			writeInputStreamToGZippedFile( bais, f );
+		}
+
+		public static void writeInputStreamToGZippedFile( InputStream stream, File file ) throws IOException {
+			if( file == null ) {
+				throw new IllegalArgumentException( "Attempting to write to a null file!" );
+			}
+			try( GZIPOutputStream out = new GZIPOutputStream( new FileOutputStream( file ) )) {
+				writeInputStreamToOutputStream( stream, false, out, true );
+			}
+		}
+
+		/**
+		 * Copies the contents of the input stream to the given output stream.
+		 * 
+		 * @param in the input stream to copy from
+		 * @param closeInputStream if true, the input stream will be closed
+		 * @param out the output stream to copy to
+		 * @param closeOutputStream if true, the output stream will be closed
+		 * @throws IOException if there is any failure
+		 */
+		public static void writeInputStreamToOutputStream( InputStream in, boolean closeInputStream, OutputStream out, boolean closeOutputStream ) throws IOException {
+			try {
+				BufferedInputStream bis = new BufferedInputStream( in );
+				try {
+					byte buf[] = new byte[1024 * 50]; //64 KBytes buffer
+					int read = -1;
+					while( (read = bis.read( buf )) != -1 ) {
+						out.write( buf, 0, read );
+					}
+				}
+				finally {
+					if( closeInputStream ) {
+						bis.close();
+					}
+				}
+				out.flush();
+			}
+			finally {
+				if( closeOutputStream ) {
+					out.close();
+				}
+			}
+		}
 	}
 }
