@@ -50,6 +50,11 @@
 			<version>${wonder.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${wonder.core.group}</groupId>
+			<artifactId>WOOgnl</artifactId>
+			<version>${wonder.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>undur</groupId>
 			<artifactId>JavaMonitorFramework</artifactId>
 			<version>${wonder.version}</version>
