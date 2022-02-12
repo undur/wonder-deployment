@@ -117,13 +117,4 @@ public abstract class MonitorComponent extends ERXComponent {
 		}
 		return _message;
 	}
-
-	/*
-	public void appendToResponse(WOResponse response, WOContext context) {
-	    ERXClickToOpenSupport.preProcessResponse(response, context, isClickToOpenEnabled);
-	    super.appendToResponse(response, context);
-	    ERXClickToOpenSupport.postProcessResponse(getClass(), response, context, isClickToOpenEnabled);
-	}
-	*/
-
 }
