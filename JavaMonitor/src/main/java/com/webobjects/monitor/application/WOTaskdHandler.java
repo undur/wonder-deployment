@@ -2,6 +2,9 @@ package com.webobjects.monitor.application;
 
 import java.util.Enumeration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.xml.WOXMLException;
@@ -27,6 +30,8 @@ import com.webobjects.monitor.application.components.HostsPage;
 
 public class WOTaskdHandler {
 
+	private static final Logger logger = LoggerFactory.getLogger( WOTaskdHandler.class );
+
 	public interface ErrorCollector {
 		public void addObjectsFromArrayIfAbsentToErrorMessageArray( NSArray<String> errors );
 	}
@@ -42,16 +47,19 @@ public class WOTaskdHandler {
 	public static void createSiteConfig() {
 
 		_siteConfig = MSiteConfig.unarchiveSiteConfig( false );
+
 		if( _siteConfig == null ) {
-			NSLog.err.appendln( "The Site Configuration could not be loaded from the local filesystem" );
+			logger.error( "The Site Configuration could not be loaded from the local filesystem" );
 			System.exit( 1 );
 		}
 
 		for( Enumeration e = _siteConfig.hostArray().objectEnumerator(); e.hasMoreElements(); ) {
 			_siteConfig.hostErrorArray.addObjectIfAbsent( e.nextElement() );
 		}
-		if( _siteConfig.localHost() != null )
+
+		if( _siteConfig.localHost() != null ) {
 			_siteConfig.hostErrorArray.removeObject( _siteConfig.localHost() );
+		}
 	}
 
 	public Application _theApplication = (Application)WOApplication.application();
