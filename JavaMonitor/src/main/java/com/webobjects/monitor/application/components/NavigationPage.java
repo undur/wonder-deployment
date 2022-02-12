@@ -75,11 +75,6 @@ public class NavigationPage extends MonitorComponent {
 		return pageWithName( Main.class );
 	}
 
-	@Deprecated
-	public boolean showMigrationsTab() {
-		return ERXProperties.booleanForKeyWithDefault( "er.javamonitor.showMigrationsTab", false );
-	}
-
 	public boolean showModProxyTab() {
 		return ERXProperties.booleanForKeyWithDefault( "er.javamonitor.showModProxyTab", false );
 	}

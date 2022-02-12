@@ -38,8 +38,6 @@ public abstract class MonitorComponent extends ERXComponent {
 
 	public final int HELP_PAGE = 4;
 
-	public final int MIGRATION_PAGE = 5;
-
 	public final int MOD_PROXY_PAGE = 6;
 
 	public Application theApplication = (Application)WOApplication.application();

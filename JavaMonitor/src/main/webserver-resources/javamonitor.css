@@ -186,10 +186,7 @@ label {
 #Site li.Site a,
 #Preferences li.Preferences a,
 #Help li.Help a,
-#Migrations li.Migrations a {
-	background-color: #fff;
-	color: #333;
-}
+
 #ModProxy li.ModProxy a {
 	background-color: #fff;
 	color: #333;
