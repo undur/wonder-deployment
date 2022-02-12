@@ -32,21 +32,14 @@ public class MObject implements NSKeyValueCoding {
 	protected static String[] weekNames = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 	public static NSArray<String> weekArray = new NSArray<>( weekNames );
 
-	public static String[] timesOfDay = new String[] { "0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100",
-			"1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300" };
+	public static String[] timesOfDay = new String[] { "0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300" };
 	public static NSArray<String> timeOfDayArray = new NSArray<>( timesOfDay );
 
-	protected static Integer[] schedulingIntervals = new Integer[] { Integer.valueOf( 1 ), Integer.valueOf( 2 ), Integer.valueOf( 3 ), Integer.valueOf( 4 ),
-			Integer.valueOf( 6 ), Integer.valueOf( 8 ), Integer.valueOf( 12 ) };
+	protected static Integer[] schedulingIntervals = new Integer[] { Integer.valueOf( 1 ), Integer.valueOf( 2 ), Integer.valueOf( 3 ), Integer.valueOf( 4 ), Integer.valueOf( 6 ), Integer.valueOf( 8 ), Integer.valueOf( 12 ) };
 	public static NSArray<Integer> schedulingIntervalArray = new NSArray<>( schedulingIntervals );
 
 	public static NSArray<Object> schedulingTypeArray = new NSArray<>( new Object[] { "HOURLY", "DAILY", "WEEKLY" } );
 
-	/*
-	                     1 Hour  =    60 minutes =   3600 seconds =   3600000 ms
-	          1 day  =  24 hours =  1440 minutes =  86400 seconds =  86400000 ms
-	 1 week = 7 days = 168 hours = 10080 minutes = 604800 seconds = 604800000 ms
-	 */
 	public static long halfHourAsSeconds = 1800;
 
 	public static String _POST = "POST";
@@ -67,9 +60,7 @@ public class MObject implements NSKeyValueCoding {
 	public static String directActionString = "/cgi-bin/WebObjects/wotaskd.woa/wa/monitorRequest";
 	public static String adminActionStringPrefix = "/cgi-bin/WebObjects/";
 	public static String adminActionStringPostfix = ".woa/womp/instanceRequest";
-	/**********/
 
-	/********** 'values' validators **********/
 	MSiteConfig _siteConfig;
 
 	public MSiteConfig siteConfig() {
@@ -133,8 +124,7 @@ public class MObject implements NSKeyValueCoding {
 		try {
 			intVal = value.intValue();
 		}
-		catch( Exception e ) {
-		}
+		catch( Exception e ) {}
 
 		if( intVal < 1 ) {
 			return Integer.valueOf( 30 );
@@ -228,9 +218,6 @@ public class MObject implements NSKeyValueCoding {
 		return value.substring( 0, (i + 4) );
 	}
 
-	/**********/
-
-	/********** NSKeyValueCoding/NSKeyValueCoding.ErrorHandling/NSKeyValueCodingAdditions methods **********/
 	public static boolean canAccessFieldsDirectly() {
 		return true;
 	}
@@ -264,5 +251,4 @@ public class MObject implements NSKeyValueCoding {
 	public void takeValueForKeyPath( Object value, String keyPath ) {
 		NSKeyValueCodingAdditions.DefaultImplementation.takeValueForKeyPath( this, value, keyPath );
 	}
-	/**********/
 }
