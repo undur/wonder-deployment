@@ -1,8 +1,5 @@
 package com.webobjects.monitor.application;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -28,8 +25,6 @@ import er.extensions.components.ERXComponent;
 public abstract class MonitorComponent extends ERXComponent {
 
 	public static final boolean isClickToOpenEnabled = Boolean.parseBoolean( System.getProperty( "er.component.clickToOpen", "false" ) );
-
-	protected Logger log = LoggerFactory.getLogger( getClass() );
 
 	private static final long serialVersionUID = -1880897151494772932L;
 
