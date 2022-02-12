@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application.components;
+package com.webobjects.monitor.application.admin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,6 +15,8 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.String_Extensions;
+import com.webobjects.monitor.application.components.AppDetailPage;
+import com.webobjects.monitor.application.components.ApplicationsPage;
 
 public class AdminApplicationsPage extends ApplicationsPage {
 

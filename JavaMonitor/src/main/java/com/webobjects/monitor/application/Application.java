@@ -23,6 +23,7 @@ import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation._NSUtilities;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MSiteConfig;
+import com.webobjects.monitor.application.admin.AdminAction;
 
 import er.extensions.appserver.ERXApplication;
 
