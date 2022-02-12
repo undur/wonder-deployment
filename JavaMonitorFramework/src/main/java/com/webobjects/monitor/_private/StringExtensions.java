@@ -107,7 +107,7 @@ public class StringExtensions {
 			writeInputStreamToGZippedFile( bais, f );
 		}
 
-		public static void writeInputStreamToGZippedFile( InputStream stream, File file ) throws IOException {
+		private static void writeInputStreamToGZippedFile( InputStream stream, File file ) throws IOException {
 			if( file == null ) {
 				throw new IllegalArgumentException( "Attempting to write to a null file!" );
 			}
@@ -118,14 +118,14 @@ public class StringExtensions {
 
 		/**
 		 * Copies the contents of the input stream to the given output stream.
-		 * 
+		 *
 		 * @param in the input stream to copy from
 		 * @param closeInputStream if true, the input stream will be closed
 		 * @param out the output stream to copy to
 		 * @param closeOutputStream if true, the output stream will be closed
 		 * @throws IOException if there is any failure
 		 */
-		public static void writeInputStreamToOutputStream( InputStream in, boolean closeInputStream, OutputStream out, boolean closeOutputStream ) throws IOException {
+		private static void writeInputStreamToOutputStream( InputStream in, boolean closeInputStream, OutputStream out, boolean closeOutputStream ) throws IOException {
 			try {
 				BufferedInputStream bis = new BufferedInputStream( in );
 				try {
