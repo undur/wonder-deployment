@@ -14,7 +14,6 @@ package com.webobjects.monitor.application;
  */
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
-import com.webobjects.appserver.WODirectAction;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
@@ -28,7 +27,9 @@ import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
 import com.webobjects.monitor.application.components.Main;
 
-public class DirectAction extends WODirectAction {
+import er.extensions.appserver.ERXDirectAction;
+
+public class DirectAction extends ERXDirectAction {
 
 	public DirectAction( WORequest aRequest ) {
 		super( aRequest );
@@ -45,7 +46,7 @@ public class DirectAction extends WODirectAction {
 	}
 
 	public WOComponent MainAction() {
-		return pageWithName( "Main" );
+		return pageWithName( Main.class );
 	}
 
 	protected MSiteConfig siteConfig() {
