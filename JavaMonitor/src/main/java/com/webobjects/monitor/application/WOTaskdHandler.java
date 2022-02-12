@@ -101,7 +101,7 @@ public class WOTaskdHandler {
 		MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
 		startReading();
 		try {
-			aName = Util.lastPropertyKeyInKeyPath( aName );
+			aName = String_Extensions.lastPropertyKeyInKeyPath( aName );
 			if( siteConfig.hostArray().count() != 0 ) {
 				if( ApplicationsPage.class.getName().endsWith( aName ) && (siteConfig.applicationArray().count() != 0) ) {
 

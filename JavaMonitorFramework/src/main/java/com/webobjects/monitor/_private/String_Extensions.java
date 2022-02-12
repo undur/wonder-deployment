@@ -12,6 +12,8 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor._private;
 
+import com.webobjects.foundation.NSKeyValueCodingAdditions;
+
 public class String_Extensions {
 
 	public static boolean boolValue( String aString ) {
@@ -57,5 +59,19 @@ public class String_Extensions {
 			}
 		}
 		return true;
+	}
+
+	// FIXME: Re-added from ERXStringUtilities since JavaMonitor turned out to be still using it.
+	@Deprecated
+	public static final String lastPropertyKeyInKeyPath(String keyPath) {
+		String part = null;
+		if (keyPath != null) {
+			int index = keyPath.lastIndexOf(NSKeyValueCodingAdditions.KeyPathSeparator);
+			if (index != -1)
+				part = keyPath.substring(index + 1);
+			else
+				part = keyPath;
+		}
+		return part;
 	}
 }

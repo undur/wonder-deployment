@@ -16,8 +16,8 @@ import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
+import com.webobjects.monitor._private.String_Extensions;
 import com.webobjects.monitor.application.MonitorComponent;
-import com.webobjects.monitor.application.Util;
 
 public class PathWizardPage2 extends MonitorComponent {
 	/**
@@ -48,7 +48,7 @@ public class PathWizardPage2 extends MonitorComponent {
 	public void setCallbackKeypath( String aValue ) {
 		callbackKeypath = aValue;
 		if( myApplication() != null ) {
-			String key = Util.lastPropertyKeyInKeyPath( callbackKeypath );
+			String key = String_Extensions.lastPropertyKeyInKeyPath( callbackKeypath );
 			aPath = (String)myApplication().valueForKey( key );
 		}
 	}
