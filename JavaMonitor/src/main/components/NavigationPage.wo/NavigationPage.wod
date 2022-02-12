@@ -38,20 +38,6 @@ SiteLink: WOHyperlink {
 	action = ConfigurePageClicked;
 }
 
-Title : WOString {
-  value = pageTitle;
-}
-
-ERXStyleSheet : ERXStyleSheet {
-  filename = "javamonitor.css";
-  framework = "app";
-}
-
-Body1 : WOGenericContainer {
-  id = pageId;
-  elementName = "body";
-}
-
 ErrorMsg: WOString {
 	value = message;
 	escapeHTML = false;
