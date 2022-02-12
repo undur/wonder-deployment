@@ -8,22 +8,22 @@
 		<div class="Box NavigationBox">
 			<h1>Monitor</h1>
 			<ul class="NavigationTabs">
-				<li class="Applications"><webobject name="AppLink">Applications</webobject></li>
-				<li class="Hosts"><webobject name="HostLink">Hosts</webobject></li>
-				<li class="Site"><webobject name="SiteLink">Site</webobject></li>
-				<li class="Preferences"><webobject name="PrefLink">Preferences</webobject></li>
-				<li class="Help"><webobject name="HelpLink">Help</webobject></li>
-				<webobject name = "ShowMigrationsTab"><li class="Migrations"><webobject name="MigrationLink">Migrations</webobject></li></webobject>
-				<webobject name = "ShowModProxyTab"><li class="ModProxy"><webobject name="ModProxyLink">Mod_Proxy</webobject></li></webobject>
-				<webobject name="ShouldOfferLogout"><li class="Logout"><webobject name="LogoutLink">Log Out</webobject></li></webobject>
+				<li class="Applications"><wo:link action ="$ApplicationsPageClicked">Applications</wo:link></li>
+				<li class="Hosts"><wo:link action="$HostsPageClicked">Hosts</wo:link></li>
+				<li class="Site"><wo:link action="$ConfigurePageClicked">Site</wo:link></li>
+				<li class="Preferences"><wo:link action="$PrefsPageClicked">Preferences</wo:link></li>
+				<li class="Help"><wo:link action="$HelpPageClicked">Help</wo:link></li>
+				<wo:if condition="$showMigrationsTab"><li class="Migrations"><wo:link action="$MigrationPageClicked">Migrations</wo:link></li></wo:if>
+				<wo:if condition="$showModProxyTab"><li class="ModProxy"><wo:link action="$ModProxyPageClicked">Mod_Proxy</wo:link></li></wo:if>
+				<wo:if condition="$logoutRequired"><li class="Logout"><wo:link action="$logoutClicked" class="LogoutButton">Log Out</wo:link></li></wo:if>
 			</ul>
-			<div id="NavigationLogo"><webobject name="AppleImage" /></div>
+			<div id="NavigationLogo"><wo:img filename="AppleLogo.gif" height="36" width="30" align="right" border="0" /></div>
 		</div>
 		<div id="ContentWrapper">
-			<webobject name = "HasError">
-				<p class="Box ErrorBox LoginErrorBox"><webobject name="ErrorMsg" /></p>
-			</webobject>
-			<webobject name="Content" />
+			<wo:if condition="$message.length">
+				<p class="Box ErrorBox LoginErrorBox"><wo:str value="$message" escapeHTML="$false" /></p>
+			</wo:if>
+			<wo:content />
 		</div>
 	</wo:container>
 </html>
