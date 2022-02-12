@@ -525,7 +525,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		return sendInstanceRequest( anInstance, xmlDict );
 	}
 
-	protected void catchInstanceErrors( MInstance anInstance ) throws MonitorException {
+	private void catchInstanceErrors( MInstance anInstance ) throws MonitorException {
 		MSiteConfig aConfig = theApplication.siteConfig();
 		if( anInstance == null )
 			throw new MonitorException( "Attempt to command null instance on " + _hostName );
@@ -535,7 +535,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 			throw new MonitorException( _hostName + ": " + anInstance.displayName() + " is not running" );
 	}
 
-	protected WOResponse sendInstanceRequest( MInstance anInstance, NSDictionary xmlDict ) throws MonitorException {
+	private WOResponse sendInstanceRequest( MInstance anInstance, NSDictionary xmlDict ) throws MonitorException {
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 			NSLog.debug.appendln( "!@#$!@#$ sendInstanceRequest creates a WOHTTPConnection" );
 
@@ -579,7 +579,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		return aResponse;
 	}
 
-	protected NSMutableDictionary createInstanceRequestDictionary( String commandString, String queryString, MInstance anInstance ) {
+	private NSMutableDictionary createInstanceRequestDictionary( String commandString, String queryString, MInstance anInstance ) {
 		NSMutableDictionary instanceRequest = new NSMutableDictionary( 2 );
 
 		if( commandString != null ) {

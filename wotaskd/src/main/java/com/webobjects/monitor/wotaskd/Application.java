@@ -107,7 +107,7 @@ public class Application extends ERXApplication {
 		return _port;
 	}
 
-	protected int intPort() {
+	private int intPort() {
 		return _intPort;
 	}
 
