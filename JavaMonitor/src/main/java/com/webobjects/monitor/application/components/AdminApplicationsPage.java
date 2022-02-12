@@ -19,19 +19,12 @@ import com.webobjects.monitor._private.String_Extensions;
 public class AdminApplicationsPage extends ApplicationsPage {
 
 	public static final String DISPLAY_NAME = "displayName";
-
 	public static final String ACTION_NAME = "actionName";
-
 	protected static NSArray _actions;
-
 	public NSArray actions;
-
 	public NSDictionary selectedAction;
-
 	public NSDictionary currentActionItem;
-
 	protected NSMutableArray processedHosts;
-
 	protected NSMutableArray processedInstances;
 
 	static {

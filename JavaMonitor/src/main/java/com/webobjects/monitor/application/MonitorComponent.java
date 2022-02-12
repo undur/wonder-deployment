@@ -24,30 +24,19 @@ import er.extensions.components.ERXComponent;
 
 public abstract class MonitorComponent extends ERXComponent {
 
-	public static final boolean isClickToOpenEnabled = Boolean.parseBoolean( System.getProperty( "er.component.clickToOpen", "false" ) );
-
-	private static final long serialVersionUID = -1880897151494772932L;
-
 	public final int APP_PAGE = 0;
-
 	public final int HOST_PAGE = 1;
-
 	public final int SITE_PAGE = 2;
-
 	public final int PREF_PAGE = 3;
-
 	public final int HELP_PAGE = 4;
-
 	public final int MOD_PROXY_PAGE = 6;
 
 	public Application theApplication = (Application)WOApplication.application();
 
 	private WOTaskdHandler _handler;
-
 	private MApplication myApplication;
 	private MInstance myInstance;
 	private MHost myHost;
-
 	private String _message;
 
 	public MonitorComponent( WOContext aWocontext ) {
