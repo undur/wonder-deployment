@@ -1,6 +1,8 @@
 package com.webobjects.monitor.application.admin;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
@@ -565,22 +567,30 @@ public class AdminAction extends WODirectAction {
 
 	}
 
-	protected void prepareApplicationsOnHosts( NSArray<String> appNames, NSArray<String> hostNames ) {
-		throw new RuntimeException( "Missing ERXKey, look into this" ); // FIXME Hugi 2021-11-13
-		/*
-		if( appNames == null )
+	private void prepareApplicationsOnHosts( final List<String> appNames, final List<String> hostNames ) {
+
+		if( appNames == null ) {
 			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
-		for( Enumeration enumeration = appNames.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			String s = (String)enumeration.nextElement();
-			MApplication mapplication = siteConfig().applicationWithName( s );
-			if( mapplication != null ) {
-				NSArray<MInstance> hostInstances = MInstance.HOST_NAME.in( hostNames ).filtered( mapplication.instanceArray() );
-				instances.addObjectsFromArray( hostInstances );
+		}
+
+		for( String s : appNames ) {
+			final MApplication mApplication = siteConfig().applicationWithName( s );
+
+			if( mApplication != null ) {
+				final List<MInstance> hostInstances = new ArrayList<>();
+				
+				for( MInstance mInstance : mApplication.instanceArray() ) {
+					if( hostNames.contains( mInstance.hostName() ) ) {
+						hostInstances.add( mInstance );
+					}
+					
+				}
+
+				instances.addAll( hostInstances );
 			}
 			else
 				throw new DirectActionException( "Unknown application " + s, 404 );
 		}
-		*/
 	}
 
 	protected void prepareInstances( NSArray<String> appNamesAndNumbers ) {
