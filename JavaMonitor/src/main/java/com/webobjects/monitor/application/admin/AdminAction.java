@@ -323,6 +323,7 @@ import com.webobjects.monitor.application.components.AppDetailPage;
  * 
  */
 public class AdminAction extends WODirectAction {
+
 	public class DirectActionException extends RuntimeException {
 
 		public int status;
@@ -333,19 +334,21 @@ public class AdminAction extends WODirectAction {
 		}
 	}
 
-	protected static NSArray supportedActionNames = new NSArray( new String[] { "running", "bounce", "stopped", "start", "stop", "forceQuit", "turnAutoRecoverOn", "turnAutoRecoverOff",
-			"turnRefuseNewSessionsOn", "turnRefuseNewSessionsOff", "turnScheduledOn", "turnScheduledOff", "turnAutoRecoverOn", "turnAutoRecoverOff", "clearDeaths", "info" } );
+	/**
+	 * FIXME: Not sure why this is here, never used
+	 */
+	private static List<String> supportedActionNames = List.of( "running","bounce", "stopped", "start", "stop", "forceQuit", "turnAutoRecoverOn", "turnAutoRecoverOff", "turnRefuseNewSessionsOn", "turnRefuseNewSessionsOff", "turnScheduledOn", "turnScheduledOff", "turnAutoRecoverOn", "turnAutoRecoverOff", "clearDeaths", "info" );
 
-	protected AdminApplicationsPage applicationsPage;
+	private AdminApplicationsPage applicationsPage;
 
-	protected NSMutableArray instances;
+	private NSMutableArray instances;
 
-	protected NSMutableArray applications;
+	private NSMutableArray applications;
 
 	private WOTaskdHandler _handler;
 
-	public AdminAction( WORequest worequest ) {
-		super( worequest );
+	public AdminAction( WORequest request ) {
+		super( request );
 		instances = new NSMutableArray();
 		applications = new NSMutableArray();
 		_handler = new WOTaskdHandler( mySession() );
@@ -573,23 +576,22 @@ public class AdminAction extends WODirectAction {
 			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
 		}
 
-		for( String s : appNames ) {
-			final MApplication mApplication = siteConfig().applicationWithName( s );
+		for( final String appName : appNames ) {
+			final MApplication mApplication = siteConfig().applicationWithName( appName );
 
 			if( mApplication != null ) {
 				final List<MInstance> hostInstances = new ArrayList<>();
 				
-				for( MInstance mInstance : mApplication.instanceArray() ) {
+				for( final MInstance mInstance : mApplication.instanceArray() ) {
 					if( hostNames.contains( mInstance.hostName() ) ) {
 						hostInstances.add( mInstance );
 					}
-					
 				}
 
 				instances.addAll( hostInstances );
 			}
 			else
-				throw new DirectActionException( "Unknown application " + s, 404 );
+				throw new DirectActionException( "Unknown application " + appName, 404 );
 		}
 	}
 
