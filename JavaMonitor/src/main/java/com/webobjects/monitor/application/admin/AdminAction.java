@@ -354,13 +354,11 @@ public class AdminAction extends WODirectAction {
 		_handler = new WOTaskdHandler( mySession() );
 	}
 
-	public WOComponent MainAction() {
-		return pageWithName( "Main" );
-	}
-
-	protected AdminApplicationsPage applicationsPage() {
-		if( applicationsPage == null )
+	private AdminApplicationsPage applicationsPage() {
+		if( applicationsPage == null ) {
 			applicationsPage = new AdminApplicationsPage( context() );
+		}
+
 		return applicationsPage;
 	}
 
@@ -595,7 +593,7 @@ public class AdminAction extends WODirectAction {
 		}
 	}
 
-	protected void prepareInstances( NSArray<String> appNamesAndNumbers ) {
+	private void prepareInstances( NSArray<String> appNamesAndNumbers ) {
 		if( appNamesAndNumbers == null )
 			throw new DirectActionException( "at least one instance name needs to be specified for type ins", 406 );
 		for( Enumeration enumeration = appNamesAndNumbers.objectEnumerator(); enumeration.hasMoreElements(); ) {
@@ -609,11 +607,11 @@ public class AdminAction extends WODirectAction {
 
 	}
 
-	protected void addInstancesForApplication( MApplication mapplication ) {
+	private void addInstancesForApplication( MApplication mapplication ) {
 		instances.addObjectsFromArray( mapplication.instanceArray() );
 	}
 
-	protected void refreshInformation() {
+	private void refreshInformation() {
 		for( Enumeration enumeration = (new NSSet( (NSArray)instances.valueForKey( "application" ) )).objectEnumerator(); enumeration.hasMoreElements(); ) {
 			MApplication mapplication = (MApplication)enumeration.nextElement();
 
@@ -622,7 +620,7 @@ public class AdminAction extends WODirectAction {
 		}
 	}
 
-	public WOActionResults performMonitorActionNamed( String s ) {
+	private WOActionResults performMonitorActionNamed( String s ) {
 		String s1 = (String)context().request().formValueForKey( "type" );
 		if( "all".equalsIgnoreCase( s1 ) ) {
 			prepareApplications( (NSArray)siteConfig().applicationArray().valueForKey( "name" ) );
