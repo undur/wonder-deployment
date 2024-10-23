@@ -12,16 +12,21 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor._private;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.zip.GZIPOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -918,7 +923,7 @@ public class MSiteConfig extends MObject {
 			}
 			if( compress ) {
 				sc = new File( sc.getParentFile(), sc.getName() + ".gz" );
-				StringExtensions.GzipStringShit.stringToGZippedFile( value, sc );
+				stringToGZippedFile( value, sc );
 			}
 			else {
 				_NSStringUtilities.writeToFile( sc, value );
@@ -935,6 +940,18 @@ public class MSiteConfig extends MObject {
 			logger.error( "Cannot write to file {}. Possible Permissions Problem.", sc.getAbsolutePath() );
 			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + " Cannot write to file " + sc.getAbsolutePath() + ". Possible Permissions Problem.", "archiveSiteConfig" );
+		}
+	}
+
+	private static void stringToGZippedFile( final String string, final File file ) throws IOException {
+		Objects.requireNonNull( string );
+		Objects.requireNonNull( file );
+
+		final byte[] bytes = string.getBytes( StandardCharsets.UTF_8 );
+		final ByteArrayInputStream stream = new ByteArrayInputStream( bytes );
+
+		try( final GZIPOutputStream out = new GZIPOutputStream( new FileOutputStream( file ) )) {
+			stream.transferTo( out );
 		}
 	}
 
