@@ -67,20 +67,20 @@ public class MObject implements NSKeyValueCoding {
 		return _siteConfig;
 	}
 
-	protected NSMutableDictionary values;
-	protected _NSThreadsafeMutableDictionary adaptorValues = new _NSThreadsafeMutableDictionary( new NSMutableDictionary() );
+	protected NSMutableDictionary<String, ?> values;
+	protected _NSThreadsafeMutableDictionary<String, ?> adaptorValues = new _NSThreadsafeMutableDictionary<>( new NSMutableDictionary<>() );
 
-	public NSMutableDictionary values() {
+	public NSMutableDictionary<String, ?> values() {
 		return values;
 	}
 
-	public void setValues( NSMutableDictionary newValues ) {
+	public void setValues( NSMutableDictionary<String, ?> newValues ) {
 		values = newValues;
 		_siteConfig.dataHasChanged();
 	}
 
-	public void updateValues( NSDictionary aDict ) {
-		values = new NSMutableDictionary( aDict );
+	public void updateValues( NSDictionary<String, ?> aDict ) {
+		values = new NSMutableDictionary<>( aDict );
 		_siteConfig.dataHasChanged();
 	}
 
