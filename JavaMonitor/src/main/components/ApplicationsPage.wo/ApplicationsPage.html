@@ -1,58 +1,59 @@
-<webobject name = "NavPage">
-<div class="Box ApplicationsListBox">
-<h2 class="SectionHeading">Applications</h2>
-<table>
-  <tr>
-    <th>Application</th>
-    <th>Instances Running</th>
-    <th>Instances Configured</th>
-    <th>View Instances</th>
-    <th>Configuration</th>
-    <th>&nbsp;</th>
-    <th>&nbsp;</th>
-  </tr>
-  <webobject name = "ApplicationsRepetition">
-    <tr class="application">
-      <td class="applicationName">
-        <webobject name = "AppIsRunning">
-          <webobject name = "ApplicationNameLink" />
-        </webobject>
-        <webobject name = "AppIsNOTRunning">
-          <webobject name = "ApplicationName" />
-        </webobject>
-      </td>
-      <td class="RunningInstanceCount"><webobject name = "RunningInstancesCount" /></td>
-      <td class="ConfiguredInstanceCount"><webobject name = "ConfiguredInstanceCount" /></td>
-      <td><webobject name = "AppDetailsLink"><span>View Details</span></webobject></td>
-      <td><webobject name = "ConfigureLink"><span>Configure</span></webobject></td>
-      <td><webobject name = "DeleteLink"><span>Delete</span></webobject></td>
-      <td><webobject name = "BounceLink"><span>Bounce</span></webobject></td>
-    </tr>
-  </webobject>
-  <tr class="Totals">
-      <td class="applicationName">Totals</td>
-      <td class="RunningInstanceCount"><webobject name = "TotalsRunningInstanceCount"></webobject></td>
-      <td class="ConfiguredInstanceCount"><webobject name = "TotalsConfiguredInstanceCount"></webobject></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-  </tr>
-</table>
-</div>
-<div class="Box AddApplicationBox">
-<webobject name = "AddApplicationForm">
-  Add Application Named:
-  <webobject name = "ApplicationNameTextField" />
-  <webobject name = "AddApplicationSubmitButton" />
-</webobject>
-<div class="Notes">
-	<h4>Notes:</h4>
-	<ul>
-		<li>Application names may only contain alpha-numeric or '-'.</li>
-    	<li>Application names do not need to match the Application executable's filename.</li>
-    	<li>Application names are used by the adaptor for load-balancing.</li>
-    </ul>
-</div>
-</div>
-</webobject>
+<wo:JMTablerLook currentPage="$APP_PAGE" title="Applications" pageId="Applications">
+	<div class="card mb-3">
+		<div class="card-header">
+			Applications
+		</div>
+		<table class="table table-sm table-striped mb-0">
+			<tr>
+				<th>Application</th>
+				<th>Instances Running</th>
+				<th>Instances Configured</th>
+				<th>View Instances</th>
+				<th>Configuration</th>
+				<th></th>
+				<th></th>
+			</tr>
+			<wo:repetition list="$applications" item="$currentApplication">
+				<tr>
+					<td>
+						<wo:if condition="$currentApplication.isRunning">
+							<wo:link href="$hrefToApp" target="new"><wo:str value="$currentApplication.name" /></wo:link>
+						</wo:if>
+						<wo:if condition="$currentApplication.isRunning" negate="$true">
+							<wo:str value="$currentApplication.name" />
+						</wo:if>
+					</td>
+					<td><wo:str value="$currentApplication.runningInstancesCount" /></td>
+					<td><wo:str value="$currentApplication.instanceArray.count" /></td>
+					<td><wo:link action="$appDetailsClicked" class="btn btn-sm">View Details</wo:link></td>
+					<td><wo:link action="$configureClicked" class="btn btn-sm">Configure</wo:link></td>
+					<td><wo:link action="$deleteClicked" class="btn btn-sm btn-danger">Delete</wo:link></td>
+					<td><wo:link action="$bounceClicked" class="btn btn-sm btn-info">Bounce</wo:link></td>
+				</tr>
+			</wo:repetition>
+			<tr>
+				<td><strong>Totals</strong></td>
+				<td><strong><wo:str value="$totalInstancesRunning" numberformat="#,##0" /></strong></td>
+				<td><strong><wo:str value="$totalInstancesConfigured" numberformat="#,##0" /></strong></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+	<div class="card p-3">
+		<wo:form action="$addApplicationClicked">
+			<label>Add Application Named:</label>
+			<wo:textfield value="$newApplicationName" size="40" /> <wo:submit action="$addApplicationClicked" value="Add Application" />
+		</wo:form>
+		<div class="pt-3">
+			<h4>Notes:</h4>
+			<ul>
+				<li>Application names may only contain alpha-numeric or '-'.</li>
+		    	<li>Application names do not need to match the Application executable's filename.</li>
+		    	<li>Application names are used by the adaptor for load-balancing.</li>
+		    </ul>
+		</div>
+	</div>
+</wo:JMTablerLook>
