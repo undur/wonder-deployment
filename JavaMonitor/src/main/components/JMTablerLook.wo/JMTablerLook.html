@@ -166,66 +166,16 @@
 					<div class="container-xl">
 						<ul class="navbar-nav">
 							<!-- FIXME: We're missing an active state for the currently selected tab -->
-							<li class="nav-item">
-								<wo:link action="$ApplicationsPageClicked" class="nav-link">
-									<span class="nav-link-icon d-md-none d-lg-inline-block">
-										<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-									</span>
-									<span class="nav-link-title">Applications</span>
-								</wo:link>
-							</li>
-							<li class="nav-item">
-								<wo:link action="$HostsPageClicked" class="nav-link">
-									<span class="nav-link-icon d-md-none d-lg-inline-block">
-										<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-									</span>
-									<span class="nav-link-title">Hosts</span>
-								</wo:link>
-							</li>
-							<li class="nav-item">
-								<wo:link action="$ConfigurePageClicked" class="nav-link">
-									<span class="nav-link-icon d-md-none d-lg-inline-block">
-										<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-									</span>
-									<span class="nav-link-title">Site</span>
-								</wo:link>
-							</li>
-							<li class="nav-item">
-								<wo:link action="$PrefsPageClicked" class="nav-link">
-									<span class="nav-link-icon d-md-none d-lg-inline-block">
-										<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-									</span>
-									<span class="nav-link-title">Preferences</span>
-								</wo:link>
-							</li>
-							<li class="nav-item">
-								<wo:link action="$HelpPageClicked" class="nav-link">
-									<span class="nav-link-icon d-md-none d-lg-inline-block">
-										<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-									</span>
-									<span class="nav-link-title">Help</span>
-								</wo:link>
-							</li>
-							<wo:if condition="$showModProxyTab">
+							<wo:repetition list="$menuItems" item="$currentMenuItem">
 								<li class="nav-item">
-									<wo:link action="$ModProxyPageClicked" class="nav-link">
+									<wo:link action="$currentMenuItemClicked" class="nav-link">
 										<span class="nav-link-icon d-md-none d-lg-inline-block">
-											<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+											<wo:str value="$currentMenuItem.icon.svg" escapeHTML="$false" />
 										</span>
-										<span class="nav-link-title">mod_proxy</span>
+										<span class="nav-link-title"><wo:str value="$currentMenuItem.name" /></span>
 									</wo:link>
 								</li>
-							</wo:if>
-							<wo:if condition="$logoutRequired">
-								<li class="nav-item">
-									<wo:link action="$logoutClicked" class="nav-link">
-										<span class="nav-link-icon d-md-none d-lg-inline-block">
-											<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-										</span>
-										<span class="nav-link-title">Logout</span>
-									</wo:link>
-								</li>
-							</wo:if>
+							</wo:repetition>
 						</ul>
 						<div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
 							<wo:form directActionName="SMAction/search" method="GET" autocomplete="off" novalidate>
