@@ -1,56 +1,47 @@
-<webobject name = "NavPage">
-<div class="Box HostListBox">
-<h2 class="SectionHeading">Hosts</h2>
-  <table>
-    <tr>
-      <th>Host name</th>
-      <th>Available*</th>
-      <th>Host Type</th>
-      <th>Running Instances</th>
-      <th>Processor Description</th>
-      <th>OS / Platform</th>
-      <th>&nbsp;</th>
-      <th>&nbsp;</th>
-    </tr>
-    <webobject name = "HostsRepetition">
-      <tr>
-        <td>
-               <webobject name = "HostName" /> /
-             <webobject name = "HostAddress" />
-        </td>
-        <td class="HostAvailability">
-          <webobject name = "HostIsAvailable">
-              YES | <webobject name = "wotaskdLink">View Config</webobject>
-          </webobject>
-          <webobject name = "HostIsNOTAvailable">
-            <span class="HostNotAvailable">NO</span>
-          </webobject>
-        </td>
-        <td><webobject name = "HostType" /></td>
-        <td><webobject name = "InstanceCount" /></td>
-        <td><webobject name = "ProcessorDescription" /></td>
-        <td><webobject name = "HostOSName" /></td>
-        <td>
-          <webobject name = "ConfigureHostLink"><span>Configure</span></webobject>
-        </td>
-        <td>
-          <webobject name = "RemoveHostLink"><span>Delete</span></webobject>
-        </td>
-      </tr>
-    </webobject>
-  </table>
-</div>
-<div class="Box AddHostBox">
-  <webobject name = "AddHostForm">
-    Add Host: <webobject name = "HostNameTextField" /> of type: <webobject name = "PopUpButton1" /> <webobject name = "AddHostSubmitButton" /> 
-  </webobject>
-  <div class="Notes">
-  	<h4>Notes</h4>
-    <ul>
-    	<li>Hosts may be added as either hostnames or IP addresses**</li>
-    	<li>* A host is available if it is running the <b>wotaskd</b> service/daemon.</li>
-    	<li>** If "localhost" or "127.0.0.1" is a host, it must be the <b>only</b> host.</li>
-    </ul>
-  </div>
-</div>
-</webobject>
+<wo:JMTablerLook currentPage="$HOST_PAGE" title="Hosts" pageId="Hosts">
+	<div class="card mb-3">
+		<div class="card-header">
+			Hosts
+		</div>
+		<table class="table table-sm table-striped mb-0">
+			<tr>
+				<th>Host name</th>
+				<th>Available*</th>
+				<th>Host Type</th>
+				<th>Running Instances</th>
+				<th>Processor Description</th>
+				<th>OS / Platform</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
+			<wo:repetition list="$theApplication.siteConfig.hostArray" item="$currentHost">
+				<tr>
+					<td><wo:str value="$currentHost.name" /> / <wo:str value="$currentHost.addressAsString" /></td>
+					<td>
+						<wo:if condition="$currentHost.isAvailable">YES | <wo:link action="$displayWotaskdInfoClicked" target="_blank">View Config</wo:link></wo:if>
+						<wo:if condition="$currentHost.isAvailable" negate="$true"> <span class="HostNotAvailable">NO</span></wo:if>
+					</td>
+					<td><wo:str value="$currentHost.osType" /></td>
+					<td><wo:str value="$currentHost.runningInstances" /></td>
+					<td><wo:str value="$currentHost.processorType" /></td>
+					<td><wo:str value="$currentHost.operatingSystem" /></td>
+					<td><wo:link action="$configureHostClicked" class="btn btn-sm">Configure</wo:link></td>
+					<td><wo:link action="$removeHostClicked" class="btn btn-sm btn-danger">Delete</wo:link></td>
+				</tr>
+			</wo:repetition>
+		</table>
+	</div>
+	<div class="card p-3">
+		<wo:form>
+			Add Host: <wo:textfield value="$newHostName" size="40" /> of type: <wo:popUpButton list="$hostTypeList" /> <wo:submit action="$addHostClicked" value="Add Host" /> 
+		</wo:form>
+		<div class="pt-3">
+			<h4>Notes</h4>
+			<ul>
+				<li>Hosts may be added as either hostnames or IP addresses**</li>
+				<li>* A host is available if it is running the <b>wotaskd</b> service/daemon.</li>
+				<li>** If "localhost" or "127.0.0.1" is a host, it must be the <b>only</b> host.</li>
+			</ul>
+		</div>
+	</div>
+</wo:JMTablerLook>
