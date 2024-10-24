@@ -50,11 +50,11 @@ public abstract class MonitorComponent extends ERXComponent {
 		_message = null;
 	}
 
-	protected NSMutableArray allHosts() {
+	public NSMutableArray allHosts() {
 		return siteConfig().hostArray();
 	}
 
-	protected MSiteConfig siteConfig() {
+	public MSiteConfig siteConfig() {
 		return WOTaskdHandler.siteConfig();
 	}
 
