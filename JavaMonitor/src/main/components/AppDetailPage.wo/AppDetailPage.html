@@ -34,7 +34,7 @@
 		</div>
 	</wo:if>
 	
-	<div class="card mb-3">
+	<div class="card p-3 mb-3">
 		<h2>
 			<wo:if condition="$myApplication.isRunning_M">
 				<wo:link href="$hrefToApp" target="new"><wo:str value="$myApplication.name" /></wo:link>
@@ -51,22 +51,24 @@
 		<wo:if condition="$currentBouncer"><div>Bouncer: <wo:str value="$currentBouncer.status" /></div></wo:if>
 		
 		<p>
-			<wo:link action="$refreshClicked">Refresh</wo:link> | <wo:link action="$showStatisticsClicked"><wo:if condition="$showDetailStatistics">Hide Stats</wo:if><wo:if condition="$showDetailStatistics" negate="$true">Show Stats</wo:if></wo:link>
+			<wo:link action="$refreshClicked" class="btn btn-sm">Refresh</wo:link> <wo:link action="$showStatisticsClicked" class="btn btn-sm"><wo:if condition="$showDetailStatistics">Hide Stats</wo:if><wo:if condition="$showDetailStatistics" negate="$true">Show Stats</wo:if></wo:link>
 		</p>
-		
+	</div>
+
+	<div class="card mb-3">	
 		<wo:if condition="$session.message.length">
 			<div class="alert alert-important alert-danger">
 				<wo:str value="$session.message" />
 			</div>
 		</wo:if>
 		
-		<table class="table table-sm table-striped mb-0">
+		<table class="table table-sm table-bordered mb-0">
 			<tr>
 				<th>Select</th>
 				<th>Name</th>
 				<th>Host: Port</th>
 				<th>Status</th>
-				<th>Start - Stop</th>
+				<th>Start / Stop</th>
 				<th>Auto- Recover</th>
 				<th>Refuse New Sessions</th>
 				<th>Scheduled</th>
@@ -83,8 +85,6 @@
 				</wo:if>
 				<th>Configure</th>
 				<th>Delete</th>
-			</tr>
-			<tr>
 			</tr>
 			<wo:repetition list="$displayGroup.allObjects" item="$currentInstance">
 				<tr>
@@ -201,8 +201,9 @@
 					</td>
 				</tr>
 			</wo:repetition>
-		
+
 			<wo:if condition="$hasInstances">
+				<!-- FIXME: We can probably just throw these rows out. Keeping them in just for now while we try out the layout
 				<wo:if condition="$showDetailStatistics">
 					<tr class="SpacerTableRow">
 						<td colSpan = "16">&nbsp</td>
@@ -213,7 +214,8 @@
 						<td colSpan = "13">&nbsp</td>
 					</tr>
 				</wo:if>
-				<tr>
+				  -->
+				<tr style="background-color: rgb(240,240,240)">
 					<td class="AllSelect">
 						<strong>Select</strong><br />
 						<wo:link action="$selectAllAction">All</wo:link> | <wo:link action="$selectNoneAction">None</wo:link>
