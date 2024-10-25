@@ -8,8 +8,8 @@
 				<th>Application</th>
 				<th>Instances Running</th>
 				<th>Instances Configured</th>
-				<th>View Instances</th>
-				<th>Configuration</th>
+				<th></th>
+				<th></th>
 				<th></th>
 				<th></th>
 			</tr>
@@ -25,8 +25,8 @@
 					</td>
 					<td><wo:str value="$currentApplication.runningInstancesCount" /></td>
 					<td><wo:str value="$currentApplication.instanceArray.count" /></td>
-					<td><wo:link action="$appDetailsClicked" class="btn btn-sm">View Details</wo:link></td>
-					<td><wo:link action="$configureClicked" class="btn btn-sm">Configure</wo:link></td>
+					<td><wo:link action="$appDetailsClicked" class="btn btn-sm btn-secondary">Instances</wo:link></td>
+					<td><wo:link action="$configureClicked" class="btn btn-sm btn-secondary">Config</wo:link></td>
 					<td><wo:link action="$deleteClicked" class="btn btn-sm btn-danger">Delete</wo:link></td>
 					<td><wo:link action="$bounceClicked" class="btn btn-sm btn-info">Bounce</wo:link></td>
 				</tr>
