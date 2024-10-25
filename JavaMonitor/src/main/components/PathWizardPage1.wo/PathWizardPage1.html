@@ -1,18 +1,18 @@
-<webobject name="SingleHostConditional"><webobject name="Refresh" /></webobject>
-<webobject name="NavPage">
-<div class="Box PathWizardPage1Box">
-<webobject name="SingleHostConditional">
-	<p>Please wait while we fetch the file listing...</p>
-</webobject>
-<webobject name="MultipleHostsConditional">
-  <p>Choose the host on which you would like to select a path:</p>
-  <ul>
-  <webobject name="HostRepetition"><li><webobject name="HostLink"><webobject name="HostName" /></webobject></li></webobject>
-  </ul>
-</webobject>
-<webobject name="NoHostsConditional">
-  <p>There are no hosts configured.</p>
-  <p>Please <webobject name="AddHostsLink">add hosts</webobject> before using the PathWizard.</p>
-</webobject>
-</div>
-</webobject>
+<wo:if condition="$onlyOneHost"><wo:WOMetaRefresh action="$onlyHostClicked" seconds="0" /></wo:if>
+<wo:JMTablerLook currentPage="$APP_PAGE">
+	<div class="card p-3">
+		<wo:if condition="$onlyOneHost">
+			<p>Please wait while we fetch the file listing...</p>
+		</wo:if>
+		<wo:if condition="$multipleHosts">
+			<p>Choose the host on which you would like to select a path:</p>
+			<ul>
+				<wo:repetition list="$hostList" item="$aCurrentHost"><li><wo:link action="$hostClicked"><wo:str value="$aCurrentHost.name" /></wo:link></li></wo:repetition>
+			</ul>
+		</wo:if>
+		<wo:if condition="$noHosts">
+			<p>There are no hosts configured.</p>
+			<p>Please <wo:link pageName="HostsPage">add hosts</wo:link> before using the PathWizard.</p>
+		</wo:if>
+	</div>
+</wo:JMTablerLook>
