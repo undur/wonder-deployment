@@ -88,7 +88,7 @@ public class HostsPage extends MonitorComponent {
 
 						}
 						else {
-							mySession().addErrorIfAbsent(
+							session().addErrorIfAbsent(
 									"The wotaskd on " + newHostName
 											+ " is an older version, please upgrade before adding..." );
 						}
@@ -96,10 +96,10 @@ public class HostsPage extends MonitorComponent {
 					}
 					else {
 						if( nullOrError != null ) {
-							mySession().addErrorIfAbsent( nullOrError );
+							session().addErrorIfAbsent( nullOrError );
 						}
 						else {
-							mySession().addErrorIfAbsent( "The host " + newHostName + " has already been added" );
+							session().addErrorIfAbsent( "The host " + newHostName + " has already been added" );
 						}
 					}
 				}
@@ -108,11 +108,11 @@ public class HostsPage extends MonitorComponent {
 				}
 			}
 			catch( UnknownHostException ex ) {
-				mySession().addErrorIfAbsent( "ERROR: Cannot find IP address for hostname: " + newHostName );
+				session().addErrorIfAbsent( "ERROR: Cannot find IP address for hostname: " + newHostName );
 			}
 		}
 		else {
-			mySession().addErrorIfAbsent( newHostName + " is not a valid hostname" );
+			session().addErrorIfAbsent( newHostName + " is not a valid hostname" );
 		}
 		newHostName = null;
 
