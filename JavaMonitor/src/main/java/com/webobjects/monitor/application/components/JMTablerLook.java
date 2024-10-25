@@ -30,4 +30,8 @@ public class JMTablerLook extends NavigationPage {
 		final String url = application().resourceManager().urlForResourceNamed( "images/avatar.png", "app", NSArray.emptyArray(), context().request() );
 		return "background-image: url(%s)".formatted( url );
 	}
+	
+	public boolean notSelected() {
+		return currentPage != currentMenuItem.id();
+	}
 }

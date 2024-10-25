@@ -95,18 +95,18 @@ public class NavigationPage extends MonitorComponent {
 	 */
 	public List<MenuItem> menuItems() {
 		final ArrayList<MenuItem> items = new ArrayList<>();
-		items.add( new MenuItem( "Applications", Icon.Cube, this::ApplicationsPageClicked ) );
-		items.add( new MenuItem( "Hosts", Icon.Server, this::HostsPageClicked ) );
-		items.add( new MenuItem( "Site", Icon.Home, this::ConfigurePageClicked ) );
-		items.add( new MenuItem( "Preferences", Icon.Adjustments, this::PrefsPageClicked ) );
-		items.add( new MenuItem( "Help", Icon.Help, this::HelpPageClicked ) );
+		items.add( new MenuItem( 0, "Applications", Icon.Cube, this::ApplicationsPageClicked ) );
+		items.add( new MenuItem( 1, "Hosts", Icon.Server, this::HostsPageClicked ) );
+		items.add( new MenuItem( 2, "Site", Icon.Home, this::ConfigurePageClicked ) );
+		items.add( new MenuItem( 3, "Preferences", Icon.Adjustments, this::PrefsPageClicked ) );
+		items.add( new MenuItem( 4, "Help", Icon.Help, this::HelpPageClicked ) );
 
 		if( showModProxyTab() ) {
-			items.add( new MenuItem( "mod_proxy", Icon.Polygon, this::ModProxyPageClicked) );
+			items.add( new MenuItem( 6, "mod_proxy", Icon.Polygon, this::ModProxyPageClicked) );
 		}
 
 		if( logoutRequired() ) {
-			items.add( new MenuItem( "Logout", Icon.Home, this::logoutClicked ) );
+			items.add( new MenuItem( 7, "Logout", Icon.Home, this::logoutClicked ) );
 		}
 
 		return items;
@@ -115,7 +115,7 @@ public class NavigationPage extends MonitorComponent {
 	/**
 	 * Represents a menuitem in the top menubar
 	 */
-	public record MenuItem( String name, Icon icon, Supplier<WOComponent> supplier ) {}
+	public record MenuItem( int id, String name, Icon icon, Supplier<WOComponent> supplier ) {}
 
 	/**
 	 * SVG icons we can use for our menuitems. hijacked from https://tabler.io/icons
