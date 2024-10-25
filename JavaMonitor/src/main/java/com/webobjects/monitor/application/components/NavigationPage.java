@@ -71,7 +71,7 @@ public class NavigationPage extends MonitorComponent {
 	 * @return true if logout is possible in the given context
 	 */
 	public boolean logoutRequired() {
-		return siteConfig() != null && (mySession().isLoggedIn() && siteConfig().isPasswordRequired());
+		return siteConfig() != null && (session().isLoggedIn() && siteConfig().isPasswordRequired());
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class NavigationPage extends MonitorComponent {
 
 	@Deprecated
 	public WOComponent logoutClicked() {
-		mySession().setIsLoggedIn( false );
+		session().setIsLoggedIn( false );
 		return pageWithName( Main.class );
 	}
 }

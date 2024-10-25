@@ -105,9 +105,4 @@ public abstract class MonitorComponent extends ERXComponent {
 	
 	@Deprecated
 	public Application theApplication = (Application)WOApplication.application();
-
-	@Deprecated
-	public Session mySession() {
-		return session();
-	}
 }

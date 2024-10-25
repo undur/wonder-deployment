@@ -67,14 +67,14 @@ public class InstConfigurePage extends MonitorComponent {
 			return;
 		if( !value.equals( myInstance().port() ) ) {
 			if( myInstance().state != MObject.DEAD ) {
-				mySession().addErrorIfAbsent( "This instance is still running; unable to change port" );
+				session().addErrorIfAbsent( "This instance is still running; unable to change port" );
 				return;
 			}
 			if( !myInstance().host().isPortInUse( value ) ) {
 				myInstance().setPort( value );
 			}
 			else {
-				mySession().addErrorIfAbsent( "This port is in use" );
+				session().addErrorIfAbsent( "This port is in use" );
 			}
 		}
 	}
@@ -99,7 +99,7 @@ public class InstConfigurePage extends MonitorComponent {
 				myInstance().setId( value );
 			}
 			else {
-				mySession().addErrorIfAbsent( "This ID is in use" );
+				session().addErrorIfAbsent( "This ID is in use" );
 			}
 		}
 	}

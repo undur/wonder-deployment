@@ -579,7 +579,7 @@ public class AppDetailPage extends MonitorComponent {
 		if( currentBouncer() != null &&
 				!"Finished".equals( currentBouncer().status() ) &&
 				!currentBouncer().errors().isEmpty() ) {
-			mySession().addObjectsFromArrayIfAbsentToErrorMessageArray( currentBouncer().errors() );
+			session().addObjectsFromArrayIfAbsentToErrorMessageArray( currentBouncer().errors() );
 			session().removeObjectForKey( bouncerName() );
 		}
 		return nextPage;

@@ -31,15 +31,15 @@ public class PrefsPage extends MonitorComponent {
 		if( (adminPassword1 != null && adminPassword2 != null) && (adminPassword1.equals( adminPassword2 )) ) {
 			siteConfig()._setOldPassword();
 			siteConfig().setPassword( adminPassword1 );
-			mySession().setIsLoggedIn( true );
-			mySession().addErrorIfAbsent( "Password has been updated" );
+			session().setIsLoggedIn( true );
+			session().addErrorIfAbsent( "Password has been updated" );
 
 			handler().sendUpdateSiteToWotaskds();
 
 			siteConfig()._resetOldPassword();
 		}
 		else {
-			mySession().addErrorIfAbsent( "Passwords did not match or were empty.  Password was NOT updated" );
+			session().addErrorIfAbsent( "Passwords did not match or were empty.  Password was NOT updated" );
 		}
 
 		return aPage;
@@ -49,7 +49,7 @@ public class PrefsPage extends MonitorComponent {
 		siteConfig()._setOldPassword();
 		siteConfig().resetPassword();
 		PrefsPage aPage = PrefsPage.create( context() );
-		mySession().addErrorIfAbsent( "Password has been updated" );
+		session().addErrorIfAbsent( "Password has been updated" );
 
 		handler().sendUpdateSiteToWotaskds();
 

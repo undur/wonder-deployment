@@ -41,17 +41,17 @@ public class Main extends MonitorComponent {
 	public boolean loginRequired() {
 		boolean result = false;
 		if( siteConfig() != null ) {
-			result = (!mySession().isLoggedIn() && siteConfig().isPasswordRequired());
+			result = (!session().isLoggedIn() && siteConfig().isPasswordRequired());
 		}
 		return result;
 	}
 
 	public WOComponent loginClicked() {
 		if( siteConfig().compareStringWithPassword( password() ) ) {
-			mySession().setIsLoggedIn( true );
+			session().setIsLoggedIn( true );
 		}
 		else {
-			mySession().addErrorIfAbsent( "Incorrect Password" );
+			session().addErrorIfAbsent( "Incorrect Password" );
 			return pageWithName( Main.class );
 		}
 
