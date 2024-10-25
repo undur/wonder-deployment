@@ -1,5 +1,5 @@
-<webobject name="NavPage">
-<div class="Box PathWizardPage2Box">
-	<webobject name="FileBrowser" />
-</div>
-</webobject>
+<wo:JMTablerLook currentPage="$APP_PAGE">
+	<div class="card p-3">
+		<wo:FileBrowser startingPath="$aPath" host="$host" callbackUpdateAction="updateClicked" callbackSelectionAction="selectionClicked" showFiles="$showFiles" />
+	</div>
+</wo:JMTablerLook>
