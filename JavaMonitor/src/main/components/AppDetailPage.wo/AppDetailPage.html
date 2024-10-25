@@ -1,10 +1,9 @@
-<wo:if condition="$isRefreshEnabled">
-	<wo:WOMetaRefresh action="$refreshClicked" seconds="$theApplication.siteConfig.viewRefreshRate" />
-</wo:if>
-
-<!-- FIXME:  Having the meta-refresh here above is...odd -->
-
 <wo:JMTablerLook currentPage="$APP_PAGE" title="$myApplication.name" pageId="Applications">
+	<!-- FIXME:  Having the meta-refresh here is...odd. Needs to get moved into the look/<head> -->
+	<wo:if condition="$isRefreshEnabled">
+		<wo:WOMetaRefresh action="$refreshClicked" seconds="$theApplication.siteConfig.viewRefreshRate" />
+	</wo:if>
+
 	<!-- FIXME: These styles should be in a global CSS, just here while we work on fixing up the UI -->
 	<style>
 		.AppControlOff {
@@ -27,6 +26,7 @@
 			text-align: center;
 		}
 	</style>
+
 	<wo:if condition="$hasHosts" negate="$true">
 		<div class="alert alert-important alert-danger">
 			<h3>There are no hosts configured.</h3>
