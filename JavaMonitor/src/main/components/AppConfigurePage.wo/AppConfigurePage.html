@@ -1,8 +1,20 @@
 <wo:JMTablerLook currentPage="$APP_PAGE" title="$appDefaults.name" pageId="Applications">
-	<div class="card p-3 mb-3">
-		<h1>Configuring Application &quot;<wo:str value="$appDefaults.name" />&quot;</h1>
-		<div>
-			<wo:link action="$detailPageClicked" class="btn btn-primary">Instances</wo:link>
+	<style>
+		.expansion {
+			font-size: 20px;
+			color: black;
+			font-weight: 600;
+			color: rgb(24, 36, 51);
+		}
+	</style>
+	<div class="card p-3 pb-1 mb-3">
+		<div class="row">
+			<div class="col">
+				<h1>&quot;<wo:str value="$appDefaults.name" />&quot; configuration</h1>
+			</div>
+			<div class="col" align="right">
+				<wo:link action="$detailPageClicked" class="btn btn-primary">Instances</wo:link>
+			</div>
 		</div>
 	</div>
 

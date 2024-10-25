@@ -9,9 +9,6 @@
 				<th>Instances Running</th>
 				<th>Instances Configured</th>
 				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
 			</tr>
 			<wo:repetition list="$applications" item="$currentApplication">
 				<tr>
@@ -25,35 +22,38 @@
 					</td>
 					<td><wo:str value="$currentApplication.runningInstancesCount" /></td>
 					<td><wo:str value="$currentApplication.instanceArray.count" /></td>
-					<td><wo:link action="$appDetailsClicked" class="btn btn-sm btn-secondary">Instances</wo:link></td>
-					<td><wo:link action="$configureClicked" class="btn btn-sm btn-secondary">Config</wo:link></td>
-					<td><wo:link action="$deleteClicked" class="btn btn-sm btn-danger">Delete</wo:link></td>
-					<td><wo:link action="$bounceClicked" class="btn btn-sm btn-info">Bounce</wo:link></td>
+					<td>
+						<wo:link action="$appDetailsClicked" class="btn btn-sm">Instances</wo:link>
+						<wo:link action="$configureClicked" class="btn btn-sm">Configuration</wo:link>
+						<wo:link action="$bounceClicked" class="btn btn-sm">Bounce</wo:link>
+						<wo:link action="$deleteClicked" class="btn btn-sm btn-danger">Delete</wo:link>
+					</td>
 				</tr>
 			</wo:repetition>
-			<tr>
-				<td><strong>Totals</strong></td>
-				<td><strong><wo:str value="$totalInstancesRunning" numberformat="#,##0" /></strong></td>
-				<td><strong><wo:str value="$totalInstancesConfigured" numberformat="#,##0" /></strong></td>
+			<tr style="color: gray">
 				<td></td>
-				<td></td>
-				<td></td>
+				<td><wo:str value="$totalInstancesRunning" numberformat="#,##0" /></td>
+				<td><wo:str value="$totalInstancesConfigured" numberformat="#,##0" /></td>
 				<td></td>
 			</tr>
 		</table>
 	</div>
 	<div class="card p-3">
-		<wo:form action="$addApplicationClicked">
-			<label>Add Application Named:</label>
-			<wo:textfield value="$newApplicationName" size="40" /> <wo:submit action="$addApplicationClicked" value="Add Application" />
-		</wo:form>
-		<div class="pt-3">
-			<h4>Notes:</h4>
-			<ul>
-				<li>Application names may only contain alpha-numeric or '-'.</li>
-		    	<li>Application names do not need to match the Application executable's filename.</li>
-		    	<li>Application names are used by the adaptor for load-balancing.</li>
-		    </ul>
+		<div class="row">
+			<wo:form action="$addApplicationClicked" class="col">
+				<label class="mb-2"><strong>Add Application Named:</strong></label>
+				<span class="input-group">
+					<wo:textfield value="$newApplicationName" placeholder="new application name..." class="form-control" />
+					<wo:submit action="$addApplicationClicked" class="btn" value="Add Application" />
+				</span>
+			</wo:form>
+			<div class="col">
+				<ul>
+					<li>Application names may only contain alpha-numeric or '-'.</li>
+			    	<li>Application names do not need to match the Application executable's filename.</li>
+			    	<li>Application names are used by the adaptor for load-balancing.</li>
+			    </ul>
+			</div>
 		</div>
 	</div>
 </wo:JMTablerLook>

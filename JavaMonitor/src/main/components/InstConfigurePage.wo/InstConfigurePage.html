@@ -4,13 +4,23 @@
 			color:red;
 		}
 	</style>
-	<div class="card p-3 mb-3">
-		<h1>Configuring Instance "<wo:str value="$myInstance.id" numberformat="0" />" on <wo:str value="$myInstance.hostName" /></h1>
-		<div>
-			<wo:link action="$returnClicked" class="btn btn-primary">Detail View</wo:link>
+	<div class="card p-3 pb-1 mb-3">
+		<div class="row">
+			<div class="col">
+				<h1>Instance <wo:str value="$myInstance.displayName" /> on <wo:str value="$myInstance.hostName" /></h1>
+			</div>
+			<div class="col" align="right">
+				<wo:link action="$returnClicked" class="btn btn-primary">All instances</wo:link>
+			</div>
 		</div>
-		<p>The Instance must be restarted for changes to take effect.</p>
-		<p>(Changes to these settings only affect this instance; for all instances, use the <wo:link action="$appConfigLinkClicked">Application Configure Page</wo:link>)</p>
+	</div>
+	
+	<div class="card p-3 mb-3">
+		<div>
+			Changes made here apply only to this instance. To change all instances go to <wo:link action="$appConfigLinkClicked">Application Configuration</wo:link><br>
+			<br>
+			The Instance must be restarted for changes to take effect.
+		</div>
 	</div>
 
 	<div class="card p-3 mb-3">

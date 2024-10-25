@@ -34,25 +34,36 @@
 		</div>
 	</wo:if>
 	
+	<div class="card p-3 pb-1 mb-3">
+		<div class="row">
+			<div class="col">
+				<h1> 
+					<wo:if condition="$myApplication.isRunning_M">
+						"<wo:link href="$hrefToApp" target="new"><wo:str value="$myApplication.name" /></wo:link>"
+					</wo:if>
+					<wo:if condition="$myApplication.isRunning_M" negate="$true">
+						"<wo:str value="$myApplication.name" />"
+					</wo:if> instances
+				</h1>
+			</div>
+			<div class="col" align="right">		
+				<wo:link action="$configureApplicationClicked" class="btn btn-primary">Configuration</wo:link>
+			</div>
+		</div>
+	</div>
+
 	<div class="card p-3 mb-3">
-		<h2>
-			<wo:if condition="$myApplication.isRunning_M">
-				<wo:link href="$hrefToApp" target="new"><wo:str value="$myApplication.name" /></wo:link>
-			</wo:if>
-			<wo:if condition="$myApplication.isRunning_M" negate="$true">
-				<wo:str value="$myApplication.name" />
-			</wo:if>
-		</h2>
-	
-		<wo:if condition="$isRefreshEnabled">
-			<p>This page automatically updates every <wo:str value="$theApplication.siteConfig.viewRefreshRate" /> seconds.</p>
-		</wo:if>
-	
-		<wo:if condition="$currentBouncer"><div>Bouncer: <wo:str value="$currentBouncer.status" /></div></wo:if>
-		
-		<p>
-			<wo:link action="$refreshClicked" class="btn btn-sm">Refresh</wo:link> <wo:link action="$showStatisticsClicked" class="btn btn-sm"><wo:if condition="$showDetailStatistics">Hide Stats</wo:if><wo:if condition="$showDetailStatistics" negate="$true">Show Stats</wo:if></wo:link>
-		</p>
+		<div class="row">
+			<div class="col">
+				<wo:if condition="$currentBouncer"><div>Bouncer: <wo:str value="$currentBouncer.status" /></div></wo:if>
+				<wo:link action="$refreshClicked" class="btn btn-sm">Refresh</wo:link> <wo:link action="$showStatisticsClicked" class="btn btn-sm"><wo:if condition="$showDetailStatistics">Hide Stats</wo:if><wo:if condition="$showDetailStatistics" negate="$true">Show Stats</wo:if></wo:link>
+			</div>
+			<div class="col" align="right">
+				<wo:if condition="$isRefreshEnabled">
+					This page automatically updates every <wo:str value="$theApplication.siteConfig.viewRefreshRate" /> seconds.
+				</wo:if>
+			</div>
+		</div>	
 	</div>
 
 	<div class="card mb-3">	
@@ -306,7 +317,7 @@
 	
 	<wo:if condition="$hasHosts">
 		<div class="card p-3">
-			<wo:form>
+			<wo:form class="mb-0">
 				Add: <wo:textfield value="$numberToAdd" numberformat="0" size="3" /> instance(s) on host: <wo:popUpButton list="$theApplication.siteConfig.hostArray" item="$aHost" displayString="$aHost.name" selection="$selectedHost" /> <wo:submit action="$addInstanceClicked" value="Add" />
 			</wo:form>
 		</div>
