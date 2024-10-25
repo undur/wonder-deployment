@@ -216,20 +216,18 @@
 				</wo:if>
 				  -->
 				<tr style="background-color: rgb(240,240,240)">
-					<td class="AllSelect">
-						<strong>Select</strong><br />
-						<wo:link action="$selectAllAction">All</wo:link> | <wo:link action="$selectNoneAction">None</wo:link>
-					</td>
-					<td class="AllFilter" colSpan = "3">
-						<b>Select all instances that are:</b><br /><wo:link action="$selectRunning">Running</wo:link> | <wo:link action="$selectNotRunning">Not Running</wo:link>
-						<div id="FilterByInstanceName" >
-							<wo:form multipleSubmit="$true">
-								Named: <wo:textfield value="$instanceNameFilterValue" placeholder="Regular Expression" />
-								<wo:submit action="$selectInstanceNamesMatchingFilter" value="Select" />
-							</wo:form>
-							<div id="FilterByInstanceName__error">
-								<wo:str value="$filterErrorMessage"></wo:str>
-							</div>
+					<td colspan="4">
+						<strong>Select instances:</strong><br>
+						<br>
+						<wo:link action="$selectAllAction" class="btn btn-sm">All</wo:link> <wo:link action="$selectNoneAction" class="btn btn-sm">None</wo:link> <wo:link action="$selectRunning" class="btn btn-sm">Running</wo:link> <wo:link action="$selectNotRunning" class="btn btn-sm">Not Running</wo:link>
+						<br>
+						<br>
+						<wo:form multipleSubmit="$true">
+							Named: <wo:textfield value="$instanceNameFilterValue" placeholder="Regular Expression" />
+							<wo:submit action="$selectInstanceNamesMatchingFilter" value="Select" />
+						</wo:form>
+						<div id="FilterByInstanceName__error">
+							<wo:str value="$filterErrorMessage"></wo:str>
 						</div>
 					</td>
 					<!-- Start / Stop All -->
