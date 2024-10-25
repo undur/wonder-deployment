@@ -49,7 +49,7 @@ public class FileBrowser extends MonitorComponent {
 		super( aWocontext );
 	}
 
-	boolean hasErrorMsg() {
+	public boolean hasErrorMsg() {
 		return errorMsg != null && errorMsg.length() > 0;
 	}
 
