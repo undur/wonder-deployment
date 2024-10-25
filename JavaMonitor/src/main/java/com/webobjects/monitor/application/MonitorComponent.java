@@ -31,8 +31,6 @@ public abstract class MonitorComponent extends ERXComponent {
 	public final int HELP_PAGE = 4;
 	public final int MOD_PROXY_PAGE = 6;
 
-	public Application theApplication = (Application)WOApplication.application();
-
 	private WOTaskdHandler _handler;
 	private MApplication _myApplication;
 	private MInstance _myInstance;
@@ -41,7 +39,7 @@ public abstract class MonitorComponent extends ERXComponent {
 
 	public MonitorComponent( WOContext aWocontext ) {
 		super( aWocontext );
-		_handler = new WOTaskdHandler( mySession() );
+		_handler = new WOTaskdHandler( session() );
 	}
 
 	@Override
@@ -52,7 +50,7 @@ public abstract class MonitorComponent extends ERXComponent {
 
 	public String message() {
 		if( _message == null ) {
-			_message = ((Session)session()).message();
+			_message = session().message();
 		}
 		return _message;
 	}
@@ -64,8 +62,12 @@ public abstract class MonitorComponent extends ERXComponent {
 	public MSiteConfig siteConfig() {
 		return WOTaskdHandler.siteConfig();
 	}
+	
+	public Application application() {
+		return (Application)super.application();
+	}
 
-	public Session mySession() {
+	public Session session() {
 		return (Session)super.session();
 	}
 
@@ -99,5 +101,13 @@ public abstract class MonitorComponent extends ERXComponent {
 
 	public void setMyHost( MHost host ) {
 		_myHost = host;
+	}
+	
+	@Deprecated
+	public Application theApplication = (Application)WOApplication.application();
+
+	@Deprecated
+	public Session mySession() {
+		return session();
 	}
 }
