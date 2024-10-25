@@ -37,11 +37,13 @@ public class DirectAction extends ERXDirectAction {
 
 	@Override
 	public WOActionResults defaultAction() {
+
 		if( request().stringFormValueForKey( "pw" ) != null ) {
 			Main loginPage = (Main)pageWithName( Main.class.getName() );
 			loginPage.setPassword( request().stringFormValueForKey( "pw" ) );
 			return loginPage.loginClicked();
 		}
+
 		return super.defaultAction();
 	}
 
@@ -49,18 +51,18 @@ public class DirectAction extends ERXDirectAction {
 		return pageWithName( Main.class );
 	}
 
-	protected MSiteConfig siteConfig() {
+	private MSiteConfig siteConfig() {
 		return WOTaskdHandler.siteConfig();
 	}
 
-	private Object nonNull( Object value ) {
+	private static Object nonNull( Object value ) {
 		if( value == null ) {
 			return "";
 		}
 		return value;
 	}
 
-	private NSDictionary historyEntry( MApplication app ) {
+	private static NSDictionary historyEntry( MApplication app ) {
 		NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
 		result.setObjectForKey( app.name(), "applicationName" );
 		NSArray<MInstance> allInstances = app.instanceArray();
