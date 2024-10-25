@@ -117,11 +117,6 @@ InstTransactions: WOString {
 	value = currentInstance.transactions;
 }
 
-InstanceRepetition: WORepetition {
-	item = currentInstance;
-	list = displayGroup.allObjects;
-}
-
 InstanceRunningConditional: WOConditional {
 	condition = currentInstance.isRunning_M;
 }
