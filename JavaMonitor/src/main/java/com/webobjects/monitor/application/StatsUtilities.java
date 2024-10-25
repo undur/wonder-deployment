@@ -21,44 +21,39 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 
 public class StatsUtilities {
-	public static NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%Y:%m:%d:%H:%M:%S %Z" );
 
-	static public Integer totalTransactionsForApplication( MApplication anApp ) {
-		int aTotalTrans = 0;
-		NSArray anInstArray = anApp.instanceArray();
-		int i;
-		int anInstArrayCount = anInstArray.count();
+	/**
+	 * @return The total number of transactions for all instances of the application 
+	 */
+	public static int totalTransactionsForApplication( MApplication anApp ) {
+		int totalTransactionsForApplication = 0;
 
-		for( i = 0; i < anInstArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)anInstArray.objectAtIndex( i );
+		for( MInstance anInstance : anApp.instanceArray() ) {
 			NSDictionary aStatsDict = anInstance.statistics();
 
 			if( aStatsDict != null ) {
 				try {
-					String aValue = (String)aStatsDict.valueForKey( "transactions" );
-					aTotalTrans = aTotalTrans + Integer.parseInt( aValue );
+					String transactions = (String)aStatsDict.valueForKey( "transactions" );
+					totalTransactionsForApplication += Integer.parseInt( transactions );
 				}
 				catch( Throwable ex ) {
 					// do nothing
+					// FIXME: Don't fail silently! // Hugi 2024-10-25
 				}
 			}
 		}
-		return Integer.valueOf( aTotalTrans );
+		return totalTransactionsForApplication;
 	}
 
 	/**
 	 * Returns the total number of transactions for running instances of the given monitored application
 	 * If the monitored application has no running instances, returns Integer.valueOf(0)
-	 *
-	 * @param monitoredApplication
-	 * @return
 	 */
 	public static Integer totalTransactionsForActiveInstancesOfApplication( MApplication monitoredApplication ) {
-		Integer totalTransactions = sumStatisticOfActiveInstances( monitoredApplication, "transactions" );
-		return totalTransactions;
+		return sumStatisticOfActiveInstances( monitoredApplication, "transactions" );
 	}
 
-	static public Integer totalActiveSessionsForApplication( MApplication anApp ) {
+	public static Integer totalActiveSessionsForApplication( MApplication anApp ) {
 		NSArray anInstArray = anApp.instanceArray();
 		int aTotalActiveSessions = 0;
 		int i;
@@ -84,9 +79,6 @@ public class StatsUtilities {
 	/**
 	 * Returns the total number of active sessions for running instances of the given monitored application
 	 * If the monitored application has no running instances, returns Integer.valueOf(0)
-	 *
-	 * @param monitoredApplication
-	 * @return
 	 */
 	public static Integer totalActiveSessionsForActiveInstancesOfApplication( MApplication monitoredApplication ) {
 		Integer totalActiveSessions = sumStatisticOfActiveInstances( monitoredApplication, "activeSessions" );
@@ -96,12 +88,8 @@ public class StatsUtilities {
 	/**
 	 * Calculates and returns the sum of the statistic indicated by the given statisticsKey for
 	 * the running instances of the given monitored application.
-	 *
-	 * @param monitoredApplication
-	 * @param statisticsKey
-	 * @return
 	 */
-	protected static Integer sumStatisticOfActiveInstances( MApplication monitoredApplication, String statisticsKey ) {
+	private static Integer sumStatisticOfActiveInstances( MApplication monitoredApplication, String statisticsKey ) {
 		int sum = 0;
 		NSArray<MInstance> instances = monitoredApplication.instanceArray();
 		for( MInstance anInstance : instances ) {
@@ -122,7 +110,7 @@ public class StatsUtilities {
 		return sumAsInteger;
 	}
 
-	static public Float totalAverageTransactionForApplication( MApplication anApp ) {
+	public static Float totalAverageTransactionForApplication( MApplication anApp ) {
 		NSArray anInstArray = anApp.instanceArray();
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
@@ -159,7 +147,7 @@ public class StatsUtilities {
 		return Float.valueOf( aTotalAvg );
 	}
 
-	static public Float totalAverageIdleTimeForApplication( MApplication anApp ) {
+	public static Float totalAverageIdleTimeForApplication( MApplication anApp ) {
 		NSArray anInstArray = anApp.instanceArray();
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
@@ -196,7 +184,11 @@ public class StatsUtilities {
 		return Float.valueOf( aTotalAvg );
 	}
 
-	static public Float actualTransactionsPerSecondForApplication( MApplication anApp ) {
+	public static Float actualTransactionsPerSecondForApplication( MApplication anApp ) {
+
+		// FIXME: We're going to replace this with java.time stuff eventually // Hugi 2024-10-25
+		NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%Y:%m:%d:%H:%M:%S %Z" );
+
 		float anOverallRate = (float)0.0;
 		NSArray anInstArray = anApp.instanceArray();
 		int i;
@@ -223,7 +215,7 @@ public class StatsUtilities {
 
 					try {
 						// Important! This relies on the fact that the stats will deliver startdate based on GMT, since new NSTimestamp is also base on GMT!
-						aDate = (NSTimestamp)StatsUtilities.dateFormatter.parseObject( aStartDate );
+						aDate = (NSTimestamp)dateFormatter.parseObject( aStartDate );
 						aRunningTime = (aDate.getTime() - System.currentTimeMillis()) / 1000;
 					}
 					catch( java.text.ParseException ex ) {
