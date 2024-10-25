@@ -137,10 +137,6 @@ LinkToWOStats: WOHyperlink {
 	class="Button WOStatsButton";
 }
 
-MessageString: WOString {
-	value = session.message;
-}
-
 NextShutdown: WOString {
     value = nextShutdown;
 //    dateformat = "%m/%d/%Y %H:%M:%S %Z";

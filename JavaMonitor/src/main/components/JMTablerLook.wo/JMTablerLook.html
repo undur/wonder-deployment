@@ -228,7 +228,9 @@
         <div class="page-body">
           <div class="container-xl">
 			<wo:if condition="$message.length">
-				<p class="Box ErrorBox LoginErrorBox"><wo:str value="$message" escapeHTML="$false" /></p>
+				<div class="alert alert-important alert-danger">
+					<wo:str value="$message" escapeHTML="$false" />
+				</div>
 			</wo:if>
             <wo:content />
           </div>

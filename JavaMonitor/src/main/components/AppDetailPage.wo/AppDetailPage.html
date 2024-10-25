@@ -33,148 +33,152 @@
 	<webobject name = "RefreshLink">Refresh</webobject> | <webobject name = "ShowDetailStatistics"><webobject name="ShowStatistics">Hide Stats</webobject><webobject name="NotShowStatistics">Show Stats</webobject></webobject>
 </p>
 
-<span class="error"><webobject name = "MessageString"></webobject> <!--  FIXME: Nice error alert -->
-</span>
-<table>
-  <tr>
-    <th>Select</th>
-    <th>Name</th>
-    <th>Host: Port</th>
-    <th>Status</th>
-    <th>Start - Stop</th>
-    <th>Auto- Recover</th>
-    <th>Refuse New Sessions</th>
-    <th>Scheduled</th>
-    <th>Next shutdown</th>
-	<th>Deaths</th>
-    <webobject name = "ShowStatistics">
-	    <th>Transactions</th>
-	    <th>Active Sessions</th>
-	    <th>Average Transactions</th>
-	    <th>Average Idle Period</th>
-   </webobject><webobject name = "ShowWOStats">
- 		<th>WOStats</th>
-	</webobject>
-    <th>Configure</th>
-    <th>Delete</th>
-  </tr>
-  <tr>
-     </tr>
-  <webobject name = "InstanceRepetition">
-    <tr>
-<!-- Selection -->
-	<td class="InstanceSelect"><webobject name = "SelectOneForm"><webobject name = "Observer"><webobject name = "IsSelected"/></webobject></webobject></td>
+<wo:if condition="$session.message.length">
+	<div class="alert alert-important alert-danger">
+		<wo:str value="$session.message" />
+	</div>
+</wo:if>
 
-<!--       Instance Number       -->
-      <td>
-        <webobject name = "InstanceRunningConditional">
-          <webobject name = "InstAdaptorLink">
-            <webobject name = "InstIndex"></webobject>
-          </webobject>
-        </webobject>
-        <webobject name = "InstanceNOTRunningConditional">
-          <webobject name = "InstIndex"></webobject>
-        </webobject>
-      </td>
-<!--       Host - Port       -->
-      <td class="InstanceHostPort">
-          <webobject name = "InstanceRunningConditional">
-            <webobject name = "InstDirectLink">
-              <webobject name = "InstRunningOnHost"></webobject>
-            </webobject>
-          </webobject>
-          <webobject name = "InstanceNOTRunningConditional">
-            <webobject name = "InstRunningOnHost"></webobject>
-          </webobject>
-      </td>
-<!--       Status (On/Off/Starting/Stopping)       -->
-      <td class="InstanceStatusColumn">
-        <webobject name = "InstStatusImage"></webobject>
-      </td>
-<!--       Start/Stop Buttons       -->
-      <td class="InstanceStartStop">
-      	<div class="Balls">
-        <webobject name = "StartInstanceLink"><webobject name = "StartImage"></webobject></webobject>
-        &nbsp;
-        <webobject name = "StopInstanceLink"><webobject name = "StopImage"></webobject></webobject>
-        </div>
-      </td>
-<!--       Auto-Recover       -->
-      <td class="InstanceAutoRecover">
-        <webobject name = "IFSchedulingIsOn">
-          <div class="AppControl AppControlAutoRecoverSchedulingOn">On</div>
-        </webobject>
-        <webobject name = "IFSchedulingIsOff">
-          <webobject name = "ToggleAutoRecoverLink"><webobject name="AutoRecoverDiv"><webobject name="AutoRecoverLabel"/></webobject></webobject>
-        </webobject>
-      </td>
-<!--       Refuse New Sessions       -->
-      <td class="InstanceRefuseNewSessions">
-        <webobject name = "IFSchedulingIsOn">
-          <webobject name="RefuseNewSessionsDiv"><webobject name="RefuseNewSessionsLabel"/></webobject>
-        </webobject>
-        <webobject name = "IFSchedulingIsOff">
-          <webobject name = "InstanceRunningConditional">
-            <webobject name = "ToggleRefuseNewSessionsLink">
-              <webobject name="RefuseNewSessionsDiv"><webobject name="RefuseNewSessionsLabel"/></webobject>
-            </webobject>
-          </webobject>
-          <webobject name = "InstanceNOTRunningConditional">
-            <div class="AppControl AppControlOff">Off</div>
-          </webobject>
-        </webobject>
-      </td>
-<!--       Schedule       -->
-      <td class="InstanceSchedule">
-        <webobject name = "ToggleSchedulingLink">
-        	<webobject name="ScheduleDiv"><webobject name="ScheduleLabel"/></webobject>
-        </webobject>
-      </td>
-<!--       Next Scheduled Shutdown       -->
-      <td class="NextShutDown">
-        <webobject name = "NextShutdown"></webobject>
-      </td>
-      <td class="DeathCount">
-        <webobject name = "ShouldDisplayDeathDetailLink">
-          <span class="Deaths"><webobject name = "InstDeathCount"></webobject></span>
-          <webobject name = "InstDeathDetailLink">
-            (Details)
-          </webobject>
-        </webobject>
-        <webobject name = "ShouldNOTDisplayDeathDetailLink">-</webobject>
-      </td>
-<!--       Statistics       -->
-      <webobject name = "ShowStatistics"><td class="TransactionsCount">
-        <webobject name = "InstTransactions"></webobject>
-      </td>
-      <td class="ActiveSessionCount">
-        <webobject name = "InstActiveSessions"></webobject>
-      </td>
-      <td class="AverageTransactionsCount">
-        <webobject name = "InstAverageTransaction"></webobject>
-      </td>
-      <td class="AverageIdlePeriod">
-        <webobject name = "InstAverageIdle"></webobject>
-      </td>
-    </webobject>
-    <webobject name = "ShowWOStats">
-      <td class="InstanceWOStats">
-        <webobject name = "InstanceRunningConditional">
-          <webobject name = "LinkToWOStats"><span>WOStats</span></webobject>
-        </webobject>
-        <webobject name = "InstanceNOTRunningConditional"><div class="WOStatsOff">Off</div></webobject>
-      </td>
-      </webobject>
-<!--       Configure       -->
-      <td>
-        <webobject name = "InstConfigureLink">Configure</webobject>
-      </td>
-<!--       Delete       -->
-      <td>
-        <webobject name = "InstDeleteLink">Delete</webobject>
-      </td>
-    </tr>
-  </webobject>
+<table class="table table-sm table-striped table-bordered">
+	<tr>
+		<th>Select</th>
+		<th>Name</th>
+		<th>Host: Port</th>
+		<th>Status</th>
+		<th>Start - Stop</th>
+		<th>Auto- Recover</th>
+		<th>Refuse New Sessions</th>
+		<th>Scheduled</th>
+		<th>Next shutdown</th>
+		<th>Deaths</th>
+		<webobject name = "ShowStatistics">
+			<th>Transactions</th>
+			<th>Active Sessions</th>
+			<th>Average Transactions</th>
+			<th>Average Idle Period</th>
+		</webobject>
+		<webobject name = "ShowWOStats">
+			<th>WOStats</th>
+		</webobject>
+		<th>Configure</th>
+		<th>Delete</th>
+	</tr>
+	<tr>
+	</tr>
+	<webobject name = "InstanceRepetition">
+		<tr>
+			<!-- Selection -->
+			<td class="InstanceSelect"><webobject name = "SelectOneForm"><webobject name = "Observer"><webobject name = "IsSelected"/></webobject></webobject></td>
+			<!-- Instance Number -->
+			<td>
+				<webobject name = "InstanceRunningConditional">
+					<webobject name = "InstAdaptorLink">
+						<webobject name = "InstIndex"></webobject>
+					</webobject>
+				</webobject>
+				<webobject name = "InstanceNOTRunningConditional">
+					<webobject name = "InstIndex"></webobject>
+				</webobject>
+			</td>
+			<!-- Host - Port -->
+			<td class="InstanceHostPort">
+				<webobject name = "InstanceRunningConditional">
+					<webobject name = "InstDirectLink">
+						<webobject name = "InstRunningOnHost"></webobject>
+					</webobject>
+				</webobject>
+				<webobject name = "InstanceNOTRunningConditional">
+					<webobject name = "InstRunningOnHost"></webobject>
+				</webobject>
+			</td>
+			<!-- Status (On/Off/Starting/Stopping) -->
+			<td class="InstanceStatusColumn">
+				<webobject name = "InstStatusImage"></webobject>
+			</td>
+			<!-- Start/Stop Buttons -->
+			<td class="InstanceStartStop">
+				<div class="Balls">
+					<webobject name = "StartInstanceLink"><webobject name = "StartImage"></webobject></webobject>
+					&nbsp;
+					<webobject name = "StopInstanceLink"><webobject name = "StopImage"></webobject></webobject>
+				</div>
+			</td>
+			<!-- Auto-Recover -->
+			<td class="InstanceAutoRecover">
+				<webobject name = "IFSchedulingIsOn">
+					<div class="AppControl AppControlAutoRecoverSchedulingOn">On</div>
+				</webobject>
+				<webobject name = "IFSchedulingIsOff">
+					<webobject name = "ToggleAutoRecoverLink"><webobject name="AutoRecoverDiv"><webobject name="AutoRecoverLabel"/></webobject></webobject>
+				</webobject>
+			</td>
+			<!-- Refuse New Sessions -->
+			<td class="InstanceRefuseNewSessions">
+				<webobject name = "IFSchedulingIsOn">
+					<webobject name="RefuseNewSessionsDiv"><webobject name="RefuseNewSessionsLabel"/></webobject>
+				</webobject>
+				<webobject name = "IFSchedulingIsOff">
+					<webobject name = "InstanceRunningConditional">
+						<webobject name = "ToggleRefuseNewSessionsLink">
+							<webobject name="RefuseNewSessionsDiv"><webobject name="RefuseNewSessionsLabel"/></webobject>
+						</webobject>
+					</webobject>
+					<webobject name = "InstanceNOTRunningConditional">
+						<div class="AppControl AppControlOff">Off</div>
+					</webobject>
+				</webobject>
+			</td>
+			<!-- Schedule -->
+			<td class="InstanceSchedule">
+				<webobject name = "ToggleSchedulingLink">
+					<webobject name="ScheduleDiv"><webobject name="ScheduleLabel"/></webobject>
+				</webobject>
+			</td>
+			<!-- Next Scheduled Shutdown -->
+			<td class="NextShutDown">
+				<webobject name = "NextShutdown"></webobject>
+			</td>
+			<td class="DeathCount">
+				<webobject name = "ShouldDisplayDeathDetailLink">
+					<span class="Deaths"><webobject name = "InstDeathCount"></webobject></span>
+					<webobject name = "InstDeathDetailLink">(Details)</webobject>
+				</webobject>
+				<webobject name = "ShouldNOTDisplayDeathDetailLink">-</webobject>
+			</td>
+			<!-- Statistics -->
+			<webobject name = "ShowStatistics">
+				<td class="TransactionsCount">
+					<webobject name = "InstTransactions"></webobject>
+				</td>
+				<td class="ActiveSessionCount">
+					<webobject name = "InstActiveSessions"></webobject>
+				</td>
+				<td class="AverageTransactionsCount">
+					<webobject name = "InstAverageTransaction"></webobject>
+				</td>
+				<td class="AverageIdlePeriod">
+					<webobject name = "InstAverageIdle"></webobject>
+				</td>
+			</webobject>
+			<webobject name = "ShowWOStats">
+				<td class="InstanceWOStats">
+					<webobject name = "InstanceRunningConditional">
+						<webobject name = "LinkToWOStats"><span>WOStats</span></webobject>
+					</webobject>
+					<webobject name = "InstanceNOTRunningConditional"><div class="WOStatsOff">Off</div></webobject>
+				</td>
+			</webobject>
+			<!-- Configure -->
+			<td>
+				<webobject name = "InstConfigureLink">Configure</webobject>
+			</td>
+			<!-- Delete -->
+			<td>
+				<webobject name = "InstDeleteLink">Delete</webobject>
+			</td>
+		</tr>
+	</webobject>
+
   <webobject name = "HasInstancesConditional">
     <webobject name = "ShowStatistics">
     <tr class="SpacerTableRow">
