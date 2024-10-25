@@ -34,9 +34,9 @@ public abstract class MonitorComponent extends ERXComponent {
 	public Application theApplication = (Application)WOApplication.application();
 
 	private WOTaskdHandler _handler;
-	private MApplication myApplication;
-	private MInstance myInstance;
-	private MHost myHost;
+	private MApplication _myApplication;
+	private MInstance _myInstance;
+	private MHost _myHost;
 	private String _message;
 
 	public MonitorComponent( WOContext aWocontext ) {
@@ -48,6 +48,13 @@ public abstract class MonitorComponent extends ERXComponent {
 	public void awake() {
 		super.awake();
 		_message = null;
+	}
+
+	public String message() {
+		if( _message == null ) {
+			_message = ((Session)session()).message();
+		}
+		return _message;
 	}
 
 	public NSMutableArray allHosts() {
@@ -67,37 +74,30 @@ public abstract class MonitorComponent extends ERXComponent {
 	}
 
 	public final MApplication myApplication() {
-		return myApplication;
+		return _myApplication;
 	}
 
 	public void setMyApplication( MApplication application ) {
 		assert application != null;
-		myApplication = application;
-		myInstance = null;
+		_myApplication = application;
+		_myInstance = null;
 	}
 
 	public final MInstance myInstance() {
-		return myInstance;
+		return _myInstance;
 	}
 
 	public void setMyInstance( MInstance instance ) {
 		assert instance != null;
-		myInstance = instance;
-		myApplication = instance.application();
+		_myInstance = instance;
+		_myApplication = instance.application();
 	}
 
 	public final MHost myHost() {
-		return myHost;
+		return _myHost;
 	}
 
 	public void setMyHost( MHost host ) {
-		myHost = host;
-	}
-
-	public String message() {
-		if( _message == null ) {
-			_message = ((Session)session()).message();
-		}
-		return _message;
+		_myHost = host;
 	}
 }
