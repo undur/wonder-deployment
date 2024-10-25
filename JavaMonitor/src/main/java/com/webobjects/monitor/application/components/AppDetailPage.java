@@ -652,6 +652,9 @@ public class AppDetailPage extends MonitorComponent {
 		return results;
 	}
 
+	/**
+	 * FIXME: We're going to have to take into account those scheduling classes // Hugi 2024-10-25 
+	 */
 	public String refuseNewSessionsClass() {
 		String base = "AppControl";
 		String result = base + " " + base + "NotRefusingNewSessions";

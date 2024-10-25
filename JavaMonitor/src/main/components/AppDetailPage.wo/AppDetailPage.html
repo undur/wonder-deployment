@@ -5,7 +5,28 @@
 <!-- FIXME:  Having the meta-refresh here above is...odd -->
 
 <wo:JMTablerLook currentPage="$APP_PAGE" title="$myApplication.name" pageId="Applications">
-	
+	<!-- FIXME: These styles should be in a global CSS, just here while we work on fixing up the UI -->
+	<style>
+		.AppControlOff {
+			padding: 3px;
+			background-color: rgb(200,200,200);
+			color: white;
+			text-align: center;
+		}
+		.AppControlAutoRecoverOn, .AppControlNotRefusingNewSessions {
+			padding: 3px;
+			background-color: green;
+			color: white;
+			text-align: center;
+		}
+
+		.AppControlAutoRecoverOff, .AppControlRefusingNewSessions {
+			padding: 3px;
+			background-color: red;
+			color: white;
+			text-align: center;
+		}
+	</style>
 	<wo:if condition="$hasHosts" negate="$true">
 		<div class="alert alert-important alert-danger">
 			<h3>There are no hosts configured.</h3>
@@ -30,7 +51,7 @@
 		<wo:if condition="$currentBouncer"><div>Bouncer: <wo:str value="$currentBouncer.status" /></div></wo:if>
 		
 		<p>
-			<webobject name = "RefreshLink">Refresh</webobject> | <webobject name = "ShowDetailStatistics"><webobject name="ShowStatistics">Hide Stats</webobject><webobject name="NotShowStatistics">Show Stats</webobject></webobject>
+			<wo:link action="$refreshClicked">Refresh</wo:link> | <wo:link action="$showStatisticsClicked"><wo:if condition="$showDetailStatistics">Hide Stats</wo:if><wo:if condition="$showDetailStatistics" negate="$true">Show Stats</wo:if></wo:link>
 		</p>
 		
 		<wo:if condition="$session.message.length">
@@ -39,7 +60,7 @@
 			</div>
 		</wo:if>
 		
-		<table class="table table-sm table-striped table-bordered mb-0">
+		<table class="table table-sm table-striped mb-0">
 			<tr>
 				<th>Select</th>
 				<th>Name</th>
@@ -51,15 +72,15 @@
 				<th>Scheduled</th>
 				<th>Next shutdown</th>
 				<th>Deaths</th>
-				<webobject name = "ShowStatistics">
+				<wo:if condition="$showDetailStatistics">
 					<th>Transactions</th>
 					<th>Active Sessions</th>
 					<th>Average Transactions</th>
 					<th>Average Idle Period</th>
-				</webobject>
-				<webobject name = "ShowWOStats">
+				</wo:if>
+				<wo:if condition = "$showDetailStatistics" negate="$true">
 					<th>WOStats</th>
-				</webobject>
+				</wo:if>
 				<th>Configure</th>
 				<th>Delete</th>
 			</tr>
@@ -68,224 +89,226 @@
 			<wo:repetition list="$displayGroup.allObjects" item="$currentInstance">
 				<tr>
 					<!-- Selection -->
-					<td class="InstanceSelect"><webobject name = "SelectOneForm"><webobject name = "Observer"><webobject name = "IsSelected"/></webobject></webobject></td>
+					<td class="InstanceSelect">
+						<wo:form action="$selectOne"><wo:AjaxObserveField action="$selectOne"><wo:checkbox checked="$isSelectedInstance"/></wo:AjaxObserveField></wo:form>
+					</td>
 					<!-- Instance Number -->
 					<td>
-						<webobject name = "InstanceRunningConditional">
-							<webobject name = "InstAdaptorLink">
-								<webobject name = "InstIndex"></webobject>
-							</webobject>
-						</webobject>
-						<webobject name = "InstanceNOTRunningConditional">
-							<webobject name = "InstIndex"></webobject>
-						</webobject>
+						<wo:if condition="$currentInstance.isRunning_M">
+							<wo:link href="$hrefToInst" target="new">
+								<wo:str value="$currentInstance.displayName" />
+							</wo:link>
+						</wo:if>
+						<wo:if condition="$currentInstance.isRunning_M" negate="$true">
+							<wo:str value="$currentInstance.displayName" />
+						</wo:if>
 					</td>
 					<!-- Host - Port -->
 					<td class="InstanceHostPort">
-						<webobject name = "InstanceRunningConditional">
-							<webobject name = "InstDirectLink">
-								<webobject name = "InstRunningOnHost"></webobject>
-							</webobject>
-						</webobject>
-						<webobject name = "InstanceNOTRunningConditional">
-							<webobject name = "InstRunningOnHost"></webobject>
-						</webobject>
+						<wo:if condition="$currentInstance.isRunning_M">
+							<wo:link href="$hrefToInstDirect" target="new">
+								<wo:str value="$currentInstance.displayHostAndPort" />
+							</wo:link>
+						</wo:if>
+						<wo:if condition="$currentInstance.isRunning_M" negate="$true">
+							<wo:str value="$currentInstance.displayHostAndPort" />
+						</wo:if>
 					</td>
 					<!-- Status (On/Off/Starting/Stopping) -->
 					<td class="InstanceStatusColumn">
-						<webobject name = "InstStatusImage"></webobject>
+						<wo:img alt="$instanceStatusImageText" filename="$instanceStatusImage" height="35" width="49" />
 					</td>
 					<!-- Start/Stop Buttons -->
 					<td class="InstanceStartStop">
 						<div class="Balls">
-							<webobject name = "StartInstanceLink"><webobject name = "StartImage"></webobject></webobject>
+							<wo:link action="$startInstance"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
 							&nbsp;
-							<webobject name = "StopInstanceLink"><webobject name = "StopImage"></webobject></webobject>
+							<wo:link action="$stopInstance"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
 					<!-- Auto-Recover -->
 					<td class="InstanceAutoRecover">
-						<webobject name = "IFSchedulingIsOn">
+						<wo:if condition="$currentInstance.schedulingEnabled">
 							<div class="AppControl AppControlAutoRecoverSchedulingOn">On</div>
-						</webobject>
-						<webobject name = "IFSchedulingIsOff">
-							<webobject name = "ToggleAutoRecoverLink"><webobject name="AutoRecoverDiv"><webobject name="AutoRecoverLabel"/></webobject></webobject>
-						</webobject>
+						</wo:if>
+						<wo:if condition="$currentInstance.schedulingEnabled" negate="$true">
+							<wo:link action="$toggleAutoRecover"><wo:container elementName="div" class="$autoRecoverDivClass"><wo:str value="$autoRecoverLabel" /></wo:container></wo:link>
+						</wo:if>
 					</td>
 					<!-- Refuse New Sessions -->
 					<td class="InstanceRefuseNewSessions">
-						<webobject name = "IFSchedulingIsOn">
-							<webobject name="RefuseNewSessionsDiv"><webobject name="RefuseNewSessionsLabel"/></webobject>
-						</webobject>
-						<webobject name = "IFSchedulingIsOff">
-							<webobject name = "InstanceRunningConditional">
-								<webobject name = "ToggleRefuseNewSessionsLink">
-									<webobject name="RefuseNewSessionsDiv"><webobject name="RefuseNewSessionsLabel"/></webobject>
-								</webobject>
-							</webobject>
-							<webobject name = "InstanceNOTRunningConditional">
+						<wo:if condition="$currentInstance.schedulingEnabled">
+							<wo:container elementName="div" class="$refuseNewSessionsClass"><wo:str value="$refuseNewSessionsLabel" escapeHTML="$false" /></wo:container>
+						</wo:if>
+						<wo:if condition="$currentInstance.schedulingEnabled" negate="$true">
+							<wo:if condition="$currentInstance.isRunning_M">
+								<wo:link action="$toggleRefuseNewSessions">
+									<wo:container elementName="div" class="$refuseNewSessionsClass"><wo:str value="$refuseNewSessionsLabel" escapeHTML="$false" /></wo:container>
+								</wo:link>
+							</wo:if>
+							<wo:if condition="$currentInstance.isRunning_M" negate="$true">
 								<div class="AppControl AppControlOff">Off</div>
-							</webobject>
-						</webobject>
+							</wo:if>
+						</wo:if>
 					</td>
 					<!-- Schedule -->
 					<td class="InstanceSchedule">
-						<webobject name = "ToggleSchedulingLink">
-							<webobject name="ScheduleDiv"><webobject name="ScheduleLabel"/></webobject>
-						</webobject>
+						<wo:link action="$toggleScheduling" class="AppControlLink">
+							<wo:container elementName="div" class="$schedulingDivClass"><wo:str value="$schedulingLabel" escapeHTML="$false" /></wo:container>
+						</wo:link>
 					</td>
 					<!-- Next Scheduled Shutdown -->
 					<td class="NextShutDown">
-						<webobject name = "NextShutdown"></webobject>
+						<wo:str value="$nextShutdown" />
 					</td>
 					<td class="DeathCount">
-						<webobject name = "ShouldDisplayDeathDetailLink">
-							<span class="Deaths"><webobject name = "InstDeathCount"></webobject></span>
-							<webobject name = "InstDeathDetailLink">(Details)</webobject>
-						</webobject>
-						<webobject name = "ShouldNOTDisplayDeathDetailLink">-</webobject>
+						<wo:if condition="$shouldDisplayDeathDetailLink">
+							<span class="Deaths"><wo:str value="$currentInstance.deathCount" numberformat="0" /></span>
+							<wo:link action="$instanceDeathDetailClicked">(Details)</wo:link>
+						</wo:if>
+						<wo:if condition="$shouldDisplayDeathDetailLink" negate="$true">-</wo:if>
 					</td>
 					<!-- Statistics -->
-					<webobject name = "ShowStatistics">
+					<wo:if condition="$showDetailStatistics">
 						<td class="TransactionsCount">
-							<webobject name = "InstTransactions"></webobject>
+							<wo:str value="$currentInstance.transactions" />
 						</td>
 						<td class="ActiveSessionCount">
-							<webobject name = "InstActiveSessions"></webobject>
+							<wo:str value="$currentInstance.activeSessions" />
 						</td>
 						<td class="AverageTransactionsCount">
-							<webobject name = "InstAverageTransaction"></webobject>
+							<wo:str value="$currentInstance.avgTransactionTime" />
 						</td>
 						<td class="AverageIdlePeriod">
-							<webobject name = "InstAverageIdle"></webobject>
+							<wo:str value="$currentInstance.averageIdlePeriod" />
 						</td>
-					</webobject>
-					<webobject name = "ShowWOStats">
+					</wo:if>
+					<wo:if condition="$showDetailStatistics" negate="$true">
 						<td class="InstanceWOStats">
-							<webobject name = "InstanceRunningConditional">
-								<webobject name = "LinkToWOStats"><span>WOStats</span></webobject>
-							</webobject>
-							<webobject name = "InstanceNOTRunningConditional"><div class="WOStatsOff">Off</div></webobject>
+							<wo:if condition="$currentInstance.isRunning_M">
+								<wo:link href="$linkToWOStats" target="_blank" class="Button WOStatsButton"><span>WOStats</span></wo:link>
+							</wo:if>
+							<wo:if condition="$currentInstance.isRunning_M" negate="$true"><div class="WOStatsOff">Off</div></wo:if>
 						</td>
-					</webobject>
+					</wo:if>
 					<!-- Configure -->
 					<td>
-						<webobject name = "InstConfigureLink">Configure</webobject>
+						<wo:link action="$configureInstanceClicked" class="Button ConfigureButton">Configure</wo:link>
 					</td>
 					<!-- Delete -->
 					<td>
-						<webobject name = "InstDeleteLink">Delete</webobject>
+						<wo:link action="$deleteInstanceClicked" class="Button DeleteButton">Delete</wo:link>
 					</td>
 				</tr>
 			</wo:repetition>
 		
-			<webobject name = "HasInstancesConditional">
-				<webobject name = "ShowStatistics">
+			<wo:if condition="$hasInstances">
+				<wo:if condition="$showDetailStatistics">
 					<tr class="SpacerTableRow">
 						<td colSpan = "16">&nbsp</td>
 					</tr>
-				</webobject>
-				<webobject name = "ShowWOStats">
+				</wo:if>
+				<wo:if condition="$showDetailStatistics" negate="$true">
 					<tr class="SpacerTableRow">
 						<td colSpan = "13">&nbsp</td>
 					</tr>
-				</webobject>
+				</wo:if>
 				<tr>
 					<td class="AllSelect">
 						<strong>Select</strong><br />
-						<webobject name = "SelectAllLink">All</webobject> | <webobject name = "SelectNoneLink">None</webobject>
+						<wo:link action="$selectAllAction">All</wo:link> | <wo:link action="$selectNoneAction">None</wo:link>
 					</td>
 					<td class="AllFilter" colSpan = "3">
-						<b>Select all instances that are:</b><br /><webobject name = "SelectRunning">Running</webobject> | <webobject name = "SelectNotRunning">Not Running</webobject>
+						<b>Select all instances that are:</b><br /><wo:link action="$selectRunning">Running</wo:link> | <wo:link action="$selectNotRunning">Not Running</wo:link>
 						<div id="FilterByInstanceName" >
-							<webobject name="FormToFilter">
-								Named: <webobject name="FilterByInstanceName"></webobject>
-								<webobject name="FilterButton"></webobject>
-							</webobject>
+							<wo:form multipleSubmit="$true">
+								Named: <wo:textfield value="$instanceNameFilterValue" placeholder="Regular Expression" />
+								<wo:submit action="$selectInstanceNamesMatchingFilter" value="Select" />
+							</wo:form>
 							<div id="FilterByInstanceName__error">
-								<webobject name="FilterByInstanceNameError"></webobject>
+								<wo:str value="$filterErrorMessage"></wo:str>
 							</div>
 						</div>
 					</td>
 					<!-- Start / Stop All -->
 					<td class="AllStartStop">
 						<div class="Balls">
-							<webobject name = "StartAllLink"><webobject name = "StartImage"/></webobject>
+							<wo:link action="$startAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
 							&nbsp;
-							<webobject name = "StopAllLink"><webobject name = "StopImage"/></webobject>
+							<wo:link action="$stopAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
 					<!-- AutoRecover All -->
 					<td class="AllAutoRecover">
 						<div class="Balls">
-							<webobject name = "AutoRecoverEnableAllLink"><webobject name = "StartImage"/></webobject>
+							<wo:link action="$autoRecoverEnableAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
 							&nbsp;
-							<webobject name = "AutoRecoverDisableAllLink"><webobject name = "StopImage"/></webobject>
+							<wo:link action="$autoRecoverDisableAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
 					<!--  Refuse New Sessions All -->
 					<td class="AllRefuseNewSessions">
 						<div class="Balls">
-							<webobject name = "RefuseNewSessionsAllLink"><webobject name = "StartImage"/></webobject>
+							<wo:link action="$refuseNewSessionsAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
 							&nbsp;
-							<webobject name = "AcceptNewSessionsAllLink"><webobject name = "StopImage"/></webobject>
+							<wo:link action="$acceptNewSessionsAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
 					<!-- Scheduling All -->
 					<td class="AllScheduling">
 						<div class="Balls">
-							<webobject name = "SchedulingEnableAllLink"><webobject name = "StartImage"/></webobject>
+							<wo:link action="$schedulingEnableAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
 							&nbsp;
-							<webobject name = "SchedulingDisableAllLink"><webobject name = "StopImage"/></webobject>
+							<wo:link action="$schedulingDisableAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
 					<!-- Next Scheduled Shutdown -->
-					<td class="AllBounce"><webobject name = "BounceLink">Bounce</webobject>&nbsp;<webobject name = "BounceHelpLink"><webobject name="HelpImage"/></webobject></td>
-					<td class="AllClearDeaths"><webobject name = "ClearDeathsLink">Clear Deaths</webobject></td>
+					<td class="AllBounce"><wo:link action="$bounceClicked">Bounce</wo:link>&nbsp;<wo:link pageName="HelpPage" fragmentIdentifier="18"><wo:img filename="help.png" style="vertical-align: middle" /></wo:link></td>
+					<td class="AllClearDeaths"><wo:link action="$clearAllDeathsClicked">Clear Deaths</wo:link></td>
 					<!-- Statistics All -->
-					<webobject name = "ShowStatistics">
+					<wo:if condition="$showDetailStatistics">
 						<td class="TotalTransactionCount">
-							<webobject name = "TotalTransactions"></webobject>
+							<wo:str value="$totalTransactions" numberformat="0" />
 						</td>
 						<td class="TotalActiveSessions">
-							<webobject name = "TotalActiveSessions"></webobject>
+							<wo:str value="$totalActiveSessions" numberformat="0" />
 						</td>
 						<td class="TotalAverageTransaction">
-							<webobject name = "TotalAverageTransaction"></webobject>
+							<wo:str value="$totalAverageTransaction" numberformat="0.000" />
 						</td>
 						<td class="TotalAverageIdleTime">
-							<webobject name = "TotalAverageIdleTime"></webobject>
+							<wo:str value = "$totalAverageIdleTime" numberformat="0.000" />
 						</td>
-					</webobject>
-					<webobject name = "ShowWOStats">
+					</wo:if>
+					<wo:if condition="$showDetailStatistics" negate="$true">
 						<td>
-							<webobject name = "ActualRatePerMinute"></webobject> TPM
+							<wo:str value="$actualRatePerMinute" numberformat="0.00" /> TPM
 						</td>
-					</webobject>
+					</wo:if>
 					<!-- Configure -->
-					<td><webobject name = "ConfigureLink"><span>Configure</span></webobject></td>
-					<td><webobject name = "InstDeleteAllLink"><span>Delete</span></webobject></td>
+					<td><wo:link action="$configureApplicationClicked" class="Button ConfigureButton"><span>Configure</span></wo:link></td>
+					<td><wo:link action="$deleteAllInstancesClicked" class="Button DeleteButton"><span>Delete</span></wo:link></td>
 				</tr>
 			
 				<wo:if condition="$showDetailStatistics">
 					<tr class="TotalsForRunningInstances">
 						<td colspan="10" class="label">Running Sessions</td>
-						<td class="TotalTransactionCount"><webobject name = "TotalTransactionsForActiveInstances"></webobject></td>
-						<td class="TotalActiveSessions"><webobject name = "ActiveSessionsForActiveInstances"></webobject></td>
+						<td class="TotalTransactionCount"><wo:str value="$totalTransactionsForActiveInstances" numberformat="#,##0" /></td>
+						<td class="TotalActiveSessions"><wo:str value="$totalActiveSessionsForActiveInstances" numberformat = "#,##0" /></td>
 						<td class="TotalAverageTransaction"></td>
 						<td class="TotalAverageIdleTime"></td>
 						<td colspan="2"></td>
 					</tr>
 				</wo:if>
-			</webobject>
+			</wo:if>
 		</table>
 	</div>
 	
-	<webobject name = "AddHasHostsConditional">
+	<wo:if condition="$hasHosts">
 		<div class="card p-3">
-			<webobject name = "AddInstanceForm">
-				Add: <webobject name = "AddNumInstances"></webobject> instance(s) on host: <webobject name = "AddHostPopUp"/> <webobject name = "AddInstanceSubmitButton"/>
-			</webobject>
+			<wo:form>
+				Add: <wo:textfield value="$numberToAdd" numberformat="0" size="3" /> instance(s) on host: <wo:popUpButton list="$theApplication.siteConfig.hostArray" item="$aHost" displayString="$aHost.name" selection="$selectedHost" /> <wo:submit action="$addInstanceClicked" value="Add" />
+			</wo:form>
 		</div>
-	</webobject>
+	</wo:if>
 </wo:JMTablerLook>
