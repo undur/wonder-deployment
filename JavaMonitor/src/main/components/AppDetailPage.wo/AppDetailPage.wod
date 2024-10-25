@@ -1,4 +1,0 @@
-TotalAverageTransaction: WOString {
-	numberformat = "0.000";
-	value = totalAverageTransaction;
-}

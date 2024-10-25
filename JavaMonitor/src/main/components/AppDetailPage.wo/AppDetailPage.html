@@ -193,11 +193,11 @@
 					</wo:if>
 					<!-- Configure -->
 					<td>
-						<wo:link action="$configureInstanceClicked" class="Button ConfigureButton">Configure</wo:link>
+						<wo:link action="$configureInstanceClicked" class="btn btn-sm btn-secondary">Config</wo:link>
 					</td>
 					<!-- Delete -->
 					<td>
-						<wo:link action="$deleteInstanceClicked" class="Button DeleteButton">Delete</wo:link>
+						<wo:link action="$deleteInstanceClicked" class="btn btn-sm btn-danger">Delete</wo:link>
 					</td>
 				</tr>
 			</wo:repetition>
@@ -263,8 +263,8 @@
 						</div>
 					</td>
 					<!-- Next Scheduled Shutdown -->
-					<td class="AllBounce"><wo:link action="$bounceClicked">Bounce</wo:link>&nbsp;<wo:link pageName="HelpPage" fragmentIdentifier="18"><wo:img filename="help.png" style="vertical-align: middle" /></wo:link></td>
-					<td class="AllClearDeaths"><wo:link action="$clearAllDeathsClicked">Clear Deaths</wo:link></td>
+					<td class="AllBounce"><wo:link action="$bounceClicked" class="btn btn-sm btn-secondary">Bounce</wo:link>&nbsp;<wo:link pageName="HelpPage" fragmentIdentifier="18"><wo:img filename="help.png" height="24" width="24" /></wo:link></td>
+					<td class="AllClearDeaths"><wo:link action="$clearAllDeathsClicked" class="btn btn-sm btn-secondary">Clear Deaths</wo:link></td>
 					<!-- Statistics All -->
 					<wo:if condition="$showDetailStatistics">
 						<td class="TotalTransactionCount">
@@ -286,8 +286,8 @@
 						</td>
 					</wo:if>
 					<!-- Configure -->
-					<td><wo:link action="$configureApplicationClicked" class="Button ConfigureButton"><span>Configure</span></wo:link></td>
-					<td><wo:link action="$deleteAllInstancesClicked" class="Button DeleteButton"><span>Delete</span></wo:link></td>
+					<td><wo:link action="$configureApplicationClicked"  class="btn btn-sm btn-secondary"><span>Config</span></wo:link></td>
+					<td><wo:link action="$deleteAllInstancesClicked"  class="btn btn-sm btn-danger"><span>Delete</span></wo:link></td>
 				</tr>
 			
 				<wo:if condition="$showDetailStatistics">
