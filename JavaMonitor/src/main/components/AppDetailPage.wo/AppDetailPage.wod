@@ -3,24 +3,6 @@ ActualRatePerMinute: WOString {
 	value = actualRatePerMinute;
 }
 
-AppLink: WOHyperlink {
-	href = hrefToApp;
-	target = "new";
-}
-
-AppName: WOString {
-	value = myApplication.name;
-}
-
-AppIsNOTRunning: WOConditional {
-	condition = myApplication.isRunning_M;
-	negate = true;
-}
-
-AppIsRunning: WOConditional {
-	condition = myApplication.isRunning_M;
-}
-
 ClearDeathsLink: WOHyperlink {
 	action = clearAllDeathsClicked;
 }
@@ -149,10 +131,6 @@ InstanceNOTRunningConditional: WOConditional {
 	negate = true;
 }
 
-IsRefreshEnabled: WOConditional {
-	condition = isRefreshEnabled;
-}
-
 LinkToWOStats: WOHyperlink {
 	href = linkToWOStats;
 	target = "_blank";
@@ -163,28 +141,13 @@ MessageString: WOString {
 	value = session.message;
 }
 
-NavPage: NavigationPage {
-	currentPage = APP_PAGE;
-	title = myApplication.name;
-	pageId = "Applications";
-}
-
 NextShutdown: WOString {
     value = nextShutdown;
 //    dateformat = "%m/%d/%Y %H:%M:%S %Z";
 }
 
-Refresh: WOMetaRefresh {
-	action = refreshClicked;
-	seconds = theApplication.siteConfig.viewRefreshRate;
-}
-
 RefreshLink: WOHyperlink {
 	action = refreshClicked;
-}
-
-RefreshRate: WOString {
-	value = theApplication.siteConfig.viewRefreshRate;
 }
 
 RefuseNewSessionsDiv : WOGenericContainer {
@@ -297,10 +260,6 @@ ActiveSessionsForActiveInstances: WOString {
 
 // Start of Add Instance Stuff
 
-AddHostsLink : WOHyperlink {
-    action = hostsPageClicked;
-}
-
 AddInstanceForm: WOForm {}
 
 AddInstanceSubmitButton: WOSubmitButton {
@@ -310,11 +269,6 @@ AddInstanceSubmitButton: WOSubmitButton {
 
 AddHasHostsConditional: WOConditional {
     condition = hasHosts;
-}
-
-AddHasNOHostsConditional : WOConditional {
-    condition = hasHosts;
-    negate = YES;
 }
 
 AddHostPopUp: WOPopUpButton {
@@ -366,12 +320,7 @@ ShowDetailStatistics : WOHyperlink {
 BounceLink : WOHyperlink {
 	action = bounceClicked;
 }
-HasBouncer: WOConditional {
-	condition = currentBouncer;
-}
-Bouncer : WOString {
-  value = currentBouncer.status;
-}
+
 BounceHelpLink : WOHyperlink {
 	pageName = "HelpPage";
 	fragmentIdentifier = "18";

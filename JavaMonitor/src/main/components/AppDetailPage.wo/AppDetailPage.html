@@ -1,35 +1,39 @@
-<webobject name = "IsRefreshEnabled">
-  <webobject name = "Refresh"></webobject>
-</webobject>
-<webobject name = "NavPage">
-<webobject name = "AddHasNOHostsConditional">
-<div class="Box ErrorBox">
-  <h3>There are no hosts configured.</h3>
-  <p>Please <webobject name = "AddHostsLink">add hosts</webobject> before adding instances.</p>
-</div>
-</webobject>
-<div class="Box ApplicationDetailsBox">
-  <h2 class="SectionHeading">
-    <webobject name = "AppIsRunning">
-      <webobject name = "AppLink">
-        <webobject name = "AppName"></webobject>
-      </webobject>
-    </webobject>
-    <webobject name = "AppIsNOTRunning">
-      <webobject name = "AppName"></webobject>
-    </webobject>
-  </h2>
-<webobject name = "IsRefreshEnabled">
-    <p>This page automatically updates every <webobject name = "RefreshRate"></webobject> seconds.</p>
-</webobject>
-<webobject name = "HasBouncer"><div>Bouncer: <webobject name = "Bouncer"/></div></webobject>
-<p><webobject name = "RefreshLink">Refresh</webobject> | 
-	<webobject name = "ShowDetailStatistics">
-		<webobject name="ShowStatistics">Hide Stats</webobject>
-		<webobject name="NotShowStatistics">Show Stats</webobject>
-    </webobject></p>
+<wo:if condition="$isRefreshEnabled">
+	<wo:WOMetaRefresh action="$refreshClicked" seconds="$theApplication.siteConfig.viewRefreshRate" />
+</wo:if>
 
-<span class="error"><webobject name = "MessageString"></webobject>
+<!-- FIXME:  Having the meta-refresh here above is...odd -->
+
+<wo:JMTablerLook currentPage="$APP_PAGE" title="$myApplication.name" pageId="Applications">
+
+<wo:if condition="$hasHosts" negate="$true">
+	<div class="alert alert-important alert-danger">
+		<h3>There are no hosts configured.</h3>
+		<p>Please <wo:link action="$hostsPageClicked">add hosts</wo:link> before adding instances.</p>
+	</div>
+</wo:if>
+
+<div class="Box ApplicationDetailsBox">
+	<h2>
+		<wo:if condition="$myApplication.isRunning_M">
+			<wo:link href="$hrefToApp" target="new"><wo:str value="$myApplication.name" /></wo:link>
+		</wo:if>
+		<wo:if condition="$myApplication.isRunning_M" negate="$true">
+			<wo:str value="$myApplication.name" />
+		</wo:if>
+	</h2>
+
+	<wo:if condition="$isRefreshEnabled">
+		<p>This page automatically updates every <wo:str value="$theApplication.siteConfig.viewRefreshRate" /> seconds.</p>
+	</wo:if>
+
+<wo:if condition="$currentBouncer"><div>Bouncer: <wo:str value="$currentBouncer.status" /></div></wo:if>
+
+<p>
+	<webobject name = "RefreshLink">Refresh</webobject> | <webobject name = "ShowDetailStatistics"><webobject name="ShowStatistics">Hide Stats</webobject><webobject name="NotShowStatistics">Show Stats</webobject></webobject>
+</p>
+
+<span class="error"><webobject name = "MessageString"></webobject> <!--  FIXME: Nice error alert -->
 </span>
 <table>
   <tr>
@@ -283,4 +287,4 @@
   </webobject>
 </div>
 </webobject>
-</webobject>
+</wo:JMTablerLook>
