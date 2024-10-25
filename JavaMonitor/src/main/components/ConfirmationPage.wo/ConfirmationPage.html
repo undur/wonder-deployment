@@ -1,11 +1,12 @@
-<webobject name="NavPage" />
-<div class="Box ConfirmationBox">
-  <h2><webobject name="Question" /></h2>
-  <p><webobject name="Explaination" /></p>
-  <table>
-  <tr>
-    <td><webobject name="ConfirmClicked">Yes</webobject></td>
-    <td><webobject name="CancelClicked">No</webobject></td>
-  </tr>
-</table>
-</div>
+<wo:JMTablerLook currentPage="$delegate.pageType" title="Confirmation Request">
+	<div class="Box ConfirmationBox">
+		<h2><wo:str value="$delegate.question" escapeHTML="$false" /></h2>
+		<p><wo:str value="$delegate.explaination" escapeHTML="$false" /></p>
+		<table>
+			<tr>
+				<td><wo:link action="$delegate.confirm" class="btn btn-success">Yes</wo:link></td>
+				<td><wo:link action="$delegate.cancel" class="btn btn-secondary">No</wo:link></td>
+			</tr>
+		</table>
+	</div>
+</wo:JMTablerLook>
