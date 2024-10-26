@@ -64,17 +64,11 @@ public class Session extends ERXSession implements ErrorCollector {
 	}
 
 	/**
-	 * FIXME: Should be deleted // Hugi 2024-10-25 
+	 * Check to make sure they have logged in if it is required
 	 */
-	@Deprecated
-	private static MSiteConfig siteConfig() {
-		return WOTaskdHandler.siteConfig();
-	}
-
 	@Override
 	public void appendToResponse( WOResponse aResponse, WOContext aContext ) {
-		// Check to make sure they have logged in if it is required
-		final MSiteConfig siteConfig = siteConfig();
+		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
 
 		if( siteConfig == null || siteConfig.isPasswordRequired() ) {
 			if( _isLoggedIn ) {
@@ -98,12 +92,14 @@ public class Session extends ERXSession implements ErrorCollector {
 	public String message() {
 		String _message = null;
 
-		if( siteConfig() != null ) {
-			final NSArray globalErrors = siteConfig().globalErrorDictionary.allValues();
+		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
+
+		if( siteConfig != null ) {
+			final NSArray globalErrors = siteConfig.globalErrorDictionary.allValues();
 
 			if( !globalErrors.isEmpty() ) {
 				addObjectsFromArrayIfAbsentToErrorMessageArray( globalErrors );
-				siteConfig().globalErrorDictionary = new _NSThreadsafeMutableDictionary( new NSMutableDictionary<Object, Object>() );
+				siteConfig.globalErrorDictionary = new _NSThreadsafeMutableDictionary( new NSMutableDictionary<Object, Object>() );
 			}
 		}
 
