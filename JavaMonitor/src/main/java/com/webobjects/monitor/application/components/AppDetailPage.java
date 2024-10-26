@@ -37,6 +37,8 @@ import com.webobjects.monitor.application.starter.RollingShutdownBouncer;
 import com.webobjects.monitor.application.starter.ShutdownBouncer;
 import com.webobjects.monitor.util.StatsUtilities;
 
+import er.extensions.appserver.ERXApplication;
+
 public class AppDetailPage extends MonitorComponent {
 
 	public MInstance currentInstance;
@@ -788,22 +790,32 @@ public class AppDetailPage extends MonitorComponent {
 		}
 	}
 
-	public static AppDetailPage create( WOContext context, MApplication currentApplication, NSArray<MInstance> selected ) {
-		AppDetailPage page = (AppDetailPage)WOApplication.application().pageWithName( AppDetailPage.class.getName(), context );
-		page.setMyApplication( currentApplication );
-		NSArray instancesArray = currentApplication.instanceArray();
+	/**
+	 * @return A new page instance
+	 */
+	public static AppDetailPage create( final WOContext context, final MApplication mApplication, final NSArray<MInstance> selected ) {
+		final AppDetailPage page = ERXApplication.erxApplication().pageWithName( AppDetailPage.class, context );
+		page.setMyApplication( mApplication );
+
+		NSArray instancesArray = mApplication.instanceArray();
+
 		if( instancesArray == null ) {
 			instancesArray = NSArray.EmptyArray;
 		}
-		NSMutableArray<MInstance> result = new NSMutableArray<>();
-		result.addObjectsFromArray( currentApplication.instanceArray() );
-		EOSortOrdering order = new EOSortOrdering( "id", EOSortOrdering.CompareAscending );
+
+		final NSMutableArray<MInstance> result = new NSMutableArray<>();
+		result.addObjectsFromArray( mApplication.instanceArray() );
+
+		final EOSortOrdering order = new EOSortOrdering( "id", EOSortOrdering.CompareAscending );
 		EOSortOrdering.sortArrayUsingKeyOrderArray( result, new NSArray( order ) );
+
 		instancesArray = result;
+
 		// AK: the MInstances don't really support equals()...
 		if( !page.displayGroup.allObjects().equals( instancesArray ) ) {
 			page.displayGroup.setObjectArray( instancesArray );
 		}
+
 		if( selected != null ) {
 			NSMutableArray<MInstance> active = new NSMutableArray<>();
 			for( MInstance instance : selected ) {
@@ -816,9 +828,13 @@ public class AppDetailPage extends MonitorComponent {
 		else {
 			page.displayGroup.setSelectedObjects( page.displayGroup.allObjects() );
 		}
+
 		return page;
 	}
 
+	/**
+	 * FIXME: Ouch.... // Hugi 2024-10-26
+	 */
 	public static AppDetailPage create( WOContext context, MApplication currentApplication ) {
 		NSArray selected = (context.page() instanceof AppDetailPage ? ((AppDetailPage)context.page()).selectedInstances() : null);
 		return create( context, currentApplication, selected );
