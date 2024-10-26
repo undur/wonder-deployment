@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,10 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSLog;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
-import com.webobjects.foundation._NSThreadsafeMutableArray;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.components.JMLoginPage;
@@ -31,6 +30,7 @@ import com.webobjects.monitor.util.WOTaskdHandler;
 import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
 
 import er.extensions.appserver.ERXSession;
+
 public class Session extends ERXSession implements ErrorCollector {
 
 	private static final Logger logger = LoggerFactory.getLogger( Session.class );
@@ -38,7 +38,7 @@ public class Session extends ERXSession implements ErrorCollector {
 	/**
 	 * Error/Informational Messages
 	 */
-	private _NSThreadsafeMutableArray errorMessageArray = new _NSThreadsafeMutableArray( new NSMutableArray<Object>() );
+	private List<String> errorMessages = Collections.synchronizedList( new ArrayList<>() );
 
 	/**
 	 * Indicates that a user is currently logged in
@@ -70,9 +70,9 @@ public class Session extends ERXSession implements ErrorCollector {
 	@Override
 	public void appendToResponse( WOResponse aResponse, WOContext aContext ) {
 		// Check to make sure they have logged in if it is required
-		MSiteConfig aMonitorConfig = siteConfig();
+		final MSiteConfig siteConfig = siteConfig();
 
-		if( (aMonitorConfig == null) || (aMonitorConfig.isPasswordRequired()) ) {
+		if( siteConfig == null || siteConfig.isPasswordRequired() ) {
 			if( _isLoggedIn ) {
 				super.appendToResponse( aResponse, aContext );
 			}
@@ -82,7 +82,7 @@ public class Session extends ERXSession implements ErrorCollector {
 					super.appendToResponse( aResponse, aContext );
 				}
 				else {
-					NSLog.err.appendln( "Tried to access " + (aContext.page()) + " while not logged in." );
+					logger.info( "Tried to access " + aContext.page() + " while not logged in." );
 				}
 			}
 		}
@@ -91,36 +91,35 @@ public class Session extends ERXSession implements ErrorCollector {
 		}
 	}
 
-	public void addErrorIfAbsent( String message ) {
-		errorMessageArray.addObjectIfAbsent( message );
-	}
-
 	public String message() {
 		String _message = null;
+
 		if( siteConfig() != null ) {
-			NSArray globalArray = siteConfig().globalErrorDictionary.allValues();
-			if( (globalArray != null) && (globalArray.count() > 0) ) {
-				addObjectsFromArrayIfAbsentToErrorMessageArray( globalArray );
-				siteConfig().globalErrorDictionary = new _NSThreadsafeMutableDictionary(
-						new NSMutableDictionary<Object, Object>() );
+			final NSArray globalErrors = siteConfig().globalErrorDictionary.allValues();
+
+			if( !globalErrors.isEmpty() ) {
+				addObjectsFromArrayIfAbsentToErrorMessageArray( globalErrors );
+				siteConfig().globalErrorDictionary = new _NSThreadsafeMutableDictionary( new NSMutableDictionary<Object, Object>() );
 			}
 		}
 
-		logger.debug( "message(): " + errorMessageArray.array() );
+		logger.debug( "message(): " + errorMessages );
 
-		if( (errorMessageArray != null) && (errorMessageArray.count() > 0) ) {
-			_message = errorMessageArray.componentsJoinedByString( ", " );
-			errorMessageArray = new _NSThreadsafeMutableArray( new NSMutableArray<Object>() );
+		if( !errorMessages.isEmpty() ) {
+			_message = String.join( ",", errorMessages );
+			errorMessages = Collections.synchronizedList( new ArrayList<>() );
 		}
+
 		return _message;
 	}
 
-	public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
-		if( errors != null && errors.size() > 0 ) {
-			int arrayCount = errors.size();
-			for( int i = 0; i < arrayCount; i++ ) {
-				addErrorIfAbsent( errors.get( i ) );
-			}
+	public void addErrorIfAbsent( final String error ) {
+		if( !errorMessages.contains( error ) ) {
+			errorMessages.add( error );
 		}
+	}
+
+	public void addObjectsFromArrayIfAbsentToErrorMessageArray( final List<String> errors ) {
+		errors.forEach( this::addErrorIfAbsent );
 	}
 }
