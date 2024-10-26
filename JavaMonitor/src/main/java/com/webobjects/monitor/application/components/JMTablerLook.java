@@ -9,12 +9,10 @@ import java.util.function.Supplier;
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor.application.Icon;
 import com.webobjects.monitor.application.MonitorComponent;
 
-import er.ajax.AjaxUtils;
 import er.extensions.foundation.ERXProperties;
 
 public class JMTablerLook extends MonitorComponent {
@@ -66,15 +64,6 @@ public class JMTablerLook extends MonitorComponent {
 		return currentPage != currentMenuItem.id();
 	}
 	
-	/**
-	 * FIXME: Don't think we need to include prototype.js everywhere. Figure out use sites and include there // Hugi 2024-10-24
-	 */
-	@Override
-	public void appendToResponse( WOResponse response, WOContext context ) {
-		super.appendToResponse( response, context );
-		AjaxUtils.addScriptResourceInHead( context, response, "Ajax", "prototype.js" );
-	}
-
 	/**
 	 * @return Display name for the <title> tag
 	 */
