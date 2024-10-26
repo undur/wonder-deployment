@@ -15,7 +15,6 @@ import java.util.List;
  SUCH DAMAGE.
  */
 import com.webobjects.appserver.WOActionResults;
-import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
@@ -56,14 +55,6 @@ public class DirectAction extends ERXDirectAction {
 		}
 
 		return loginPage;
-	}
-
-	/**
-	 * FIXME: This can probably be deleted
-	 */
-	@Deprecated
-	public WOComponent MainAction() {
-		return pageWithName( JMLoginPage.class );
 	}
 
 	private static Object nonNull( Object value ) {
