@@ -1,8 +1,5 @@
 package com.webobjects.monitor.application;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -19,7 +16,6 @@ import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver._private.WODirectActionRequestHandler;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSLog;
-import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation._NSUtilities;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MSiteConfig;
@@ -29,8 +25,6 @@ import com.webobjects.monitor.util.WOTaskdHandler;
 import er.extensions.appserver.ERXApplication;
 
 public class Application extends ERXApplication {
-
-	private static Logger logger = LoggerFactory.getLogger( Application.class );
 
 	public static void main( String argv[] ) {
 		ERXApplication.main( argv, Application.class );
