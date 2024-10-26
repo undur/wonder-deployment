@@ -1,5 +1,10 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -14,9 +19,6 @@ package com.webobjects.monitor.application.components;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.eocontrol.EOSortOrdering;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
@@ -33,12 +35,10 @@ public class ApplicationsPage extends MonitorComponent {
 		handler().updateForPage( name() );
 	}
 
-	public NSArray<MApplication> applications() {
-		NSMutableArray<MApplication> applications = new NSMutableArray<>();
-		applications.addObjectsFromArray( siteConfig().applicationArray() );
-		EOSortOrdering order = new EOSortOrdering( "name", EOSortOrdering.CompareAscending );
-		EOSortOrdering.sortArrayUsingKeyOrderArray( applications, new NSArray( order ) );
-
+	public List<MApplication> applications() {
+		final List<MApplication> applications = new ArrayList<>();
+		applications.addAll( siteConfig().applicationArray() );
+		Collections.sort( applications, Comparator.comparing( MApplication::name ) );
 		calculateTotals( applications );
 		return applications;
 	}
@@ -144,7 +144,7 @@ public class ApplicationsPage extends MonitorComponent {
 	 * 
 	 * @param applications
 	 */
-	public void calculateTotals( NSMutableArray<MApplication> applications ) {
+	public void calculateTotals( List<MApplication> applications ) {
 		int totalRunningInstances = 0;
 		int totalConfiguredInstances = 0;
 
