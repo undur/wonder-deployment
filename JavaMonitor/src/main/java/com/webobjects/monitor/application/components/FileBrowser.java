@@ -31,7 +31,7 @@ import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MonitorException;
 import com.webobjects.monitor.application.Application;
 import com.webobjects.monitor.application.MonitorComponent;
-import com.webobjects.monitor.application.WOTaskdHandler;
+import com.webobjects.monitor.util.WOTaskdHandler;
 
 public class FileBrowser extends MonitorComponent {
 

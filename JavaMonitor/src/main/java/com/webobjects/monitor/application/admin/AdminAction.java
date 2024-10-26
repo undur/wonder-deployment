@@ -16,8 +16,8 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.Session;
-import com.webobjects.monitor.application.WOTaskdHandler;
 import com.webobjects.monitor.application.components.AppDetailPage;
+import com.webobjects.monitor.util.WOTaskdHandler;
 
 /**
  * <p>

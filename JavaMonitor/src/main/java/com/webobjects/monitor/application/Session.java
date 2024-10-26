@@ -24,8 +24,9 @@ import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation._NSThreadsafeMutableArray;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 import com.webobjects.monitor._private.MSiteConfig;
-import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
 import com.webobjects.monitor.application.components.Main;
+import com.webobjects.monitor.util.WOTaskdHandler;
+import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
 
 import er.extensions.appserver.ERXSession;
 public class Session extends ERXSession implements ErrorCollector {

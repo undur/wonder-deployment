@@ -31,11 +31,11 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor.application.MonitorComponent;
-import com.webobjects.monitor.application.StatsUtilities;
 import com.webobjects.monitor.application.starter.ApplicationStarter;
 import com.webobjects.monitor.application.starter.GracefulBouncer;
 import com.webobjects.monitor.application.starter.RollingShutdownBouncer;
 import com.webobjects.monitor.application.starter.ShutdownBouncer;
+import com.webobjects.monitor.util.StatsUtilities;
 
 public class AppDetailPage extends MonitorComponent {
 

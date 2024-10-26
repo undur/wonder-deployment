@@ -4,8 +4,8 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableSet;
 import com.webobjects.monitor._private.MApplication;
-import com.webobjects.monitor.application.WOTaskdHandler;
-import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
+import com.webobjects.monitor.util.WOTaskdHandler;
+import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
 
 /**
  * Bounces an application. 

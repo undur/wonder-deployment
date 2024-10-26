@@ -1,4 +1,4 @@
-package com.webobjects.monitor.application;
+package com.webobjects.monitor.util;
 /**
  * SVG icons we can use for our menuitems. hijacked from https://tabler.io/icons
  */

@@ -19,6 +19,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MSiteConfig;
+import com.webobjects.monitor.util.WOTaskdHandler;
 
 import er.extensions.components.ERXComponent;
 

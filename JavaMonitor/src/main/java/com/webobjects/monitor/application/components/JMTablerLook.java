@@ -10,8 +10,8 @@ import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.monitor.application.Icon;
 import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.util.Icon;
 
 import er.extensions.foundation.ERXProperties;
 

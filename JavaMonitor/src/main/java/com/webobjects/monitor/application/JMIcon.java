@@ -6,6 +6,7 @@ import com.webobjects.appserver.WODynamicElement;
 import com.webobjects.appserver.WOElement;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSDictionary;
+import com.webobjects.monitor.util.Icon;
 
 /**
  * For displaying the icons defined in the Icon enum.
