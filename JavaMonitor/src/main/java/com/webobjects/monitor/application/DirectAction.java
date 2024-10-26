@@ -66,10 +66,6 @@ public class DirectAction extends ERXDirectAction {
 		return pageWithName( JMLoginPage.class );
 	}
 
-	private MSiteConfig siteConfig() {
-		return WOTaskdHandler.siteConfig();
-	}
-
 	private static Object nonNull( Object value ) {
 		if( value == null ) {
 			return "";
@@ -118,7 +114,9 @@ public class DirectAction extends ERXDirectAction {
 	public WOResponse statisticsAction() {
 		WOResponse response = new WOResponse();
 		String pw = context().request().stringFormValueForKey( "pw" );
-		if( siteConfig().compareStringWithPassword( pw ) ) {
+		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
+
+		if( siteConfig.compareStringWithPassword( pw ) ) {
 			WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
 
 				public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
@@ -128,7 +126,7 @@ public class DirectAction extends ERXDirectAction {
 			handler.startReading();
 			try {
 				NSMutableArray stats = new NSMutableArray();
-				for( MApplication app : siteConfig().applicationArray() ) {
+				for( MApplication app : siteConfig.applicationArray() ) {
 					handler.getInstanceStatusForHosts( app.hostArray() );
 					NSDictionary appStats = historyEntry( app );
 					stats.addObject( appStats );
