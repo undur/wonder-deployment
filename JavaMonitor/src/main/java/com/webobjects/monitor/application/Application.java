@@ -46,6 +46,8 @@ public class Application extends ERXApplication {
 
 		WOTaskdHandler.createSiteConfig();
 
+		setDefaultRequestHandler( requestHandlerForKey( directActionRequestHandlerKey() ) );
+
 		registerRequestHandler( new WODirectActionRequestHandler() {
 			@Override
 			public NSArray getRequestHandlerPathForRequest( WORequest worequest ) {

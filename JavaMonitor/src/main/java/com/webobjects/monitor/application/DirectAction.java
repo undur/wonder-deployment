@@ -25,6 +25,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.WOTaskdHandler.ErrorCollector;
+import com.webobjects.monitor.application.components.ApplicationsPage;
 import com.webobjects.monitor.application.components.Main;
 
 import er.extensions.appserver.ERXDirectAction;
@@ -38,13 +39,20 @@ public class DirectAction extends ERXDirectAction {
 	@Override
 	public WOActionResults defaultAction() {
 
+		final Session session = (Session)existingSession();
+
+		if( session != null && session.isLoggedIn() ) {
+			return pageWithName( ApplicationsPage.class.getName() );
+		}
+
+		final Main loginPage = pageWithName( Main.class );
+
 		if( request().stringFormValueForKey( "pw" ) != null ) {
-			Main loginPage = (Main)pageWithName( Main.class.getName() );
 			loginPage.setPassword( request().stringFormValueForKey( "pw" ) );
 			return loginPage.loginClicked();
 		}
 
-		return super.defaultAction();
+		return loginPage;
 	}
 
 	public WOComponent MainAction() {
