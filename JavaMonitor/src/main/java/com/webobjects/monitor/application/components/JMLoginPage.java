@@ -17,7 +17,7 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor.application.MonitorComponent;
 import com.webobjects.monitor.application.Session;
 
-public class Main extends MonitorComponent {
+public class JMLoginPage extends MonitorComponent {
 
 	private String _password;
 	private String _message;
@@ -26,7 +26,7 @@ public class Main extends MonitorComponent {
 		return ApplicationsPage.create( context() );
 	}
 
-	public Main( WOContext aWocontext ) {
+	public JMLoginPage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
 
@@ -52,7 +52,7 @@ public class Main extends MonitorComponent {
 		}
 		else {
 			session().addErrorIfAbsent( "Incorrect Password" );
-			return pageWithName( Main.class );
+			return pageWithName( JMLoginPage.class );
 		}
 
 		return pageWithName( ApplicationsPage.class.getName() );

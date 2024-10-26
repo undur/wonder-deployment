@@ -154,6 +154,6 @@ public class JMTablerLook extends MonitorComponent {
 	@Deprecated
 	public WOComponent logoutClicked() {
 		session().setIsLoggedIn( false );
-		return pageWithName( Main.class );
+		return pageWithName( JMLoginPage.class );
 	}
 }

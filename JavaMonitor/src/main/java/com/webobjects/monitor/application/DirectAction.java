@@ -25,7 +25,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.components.ApplicationsPage;
-import com.webobjects.monitor.application.components.Main;
+import com.webobjects.monitor.application.components.JMLoginPage;
 import com.webobjects.monitor.util.WOTaskdHandler;
 import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
 
@@ -46,7 +46,7 @@ public class DirectAction extends ERXDirectAction {
 			return pageWithName( ApplicationsPage.class );
 		}
 
-		final Main loginPage = pageWithName( Main.class );
+		final JMLoginPage loginPage = pageWithName( JMLoginPage.class );
 
 		if( request().stringFormValueForKey( "pw" ) != null ) {
 			loginPage.setPassword( request().stringFormValueForKey( "pw" ) );
@@ -61,7 +61,7 @@ public class DirectAction extends ERXDirectAction {
 	 */
 	@Deprecated
 	public WOComponent MainAction() {
-		return pageWithName( Main.class );
+		return pageWithName( JMLoginPage.class );
 	}
 
 	private MSiteConfig siteConfig() {
