@@ -6,6 +6,12 @@
 			font-weight: 600;
 			color: rgb(24, 36, 51);
 		}
+		
+		.small-note {
+			color:Gray;
+			font-size: 12px;
+			font-weight: normal;
+		}
 	</style>
 	<div class="card p-3 pb-1 mb-3">
 		<div class="row">
@@ -24,7 +30,10 @@
 			<wo:form multipleSubmit="$true">
 				<table class="table table-sm">
 					<tr>
-						<th> Path*: </th>
+						<th width="250">
+							Path:<br>
+							<span class="small-note">The path of the executable<br> (inside the '.woa' directory)</span>
+						</th>
 						<td>
 							<span class="input-group mb-1">
 								<span class="input-group-text" style="width: 100px">macOS:</span>
@@ -45,27 +54,12 @@
 						<td><wo:submit action="$updatePathOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
 					</tr>
 					<tr>
-						<th>Auto Recover:</th>
-						<td><wo:checkbox checked="$appDefaults.autoRecover" /> (Does not apply to scheduled instances)</td>
-						<td><wo:submit action="$updateAutoRecoverOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
-					</tr>
-					<tr>
-						<th>Minimum Active Sessions: </th>
-						<td><wo:textfield value="$appDefaults.minimumActiveSessionsCount" numberformat="0" size="5" /></td>
-						<td><wo:submit action="$updateMinimumOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
-					</tr>
-					<tr>
-						<th>Caching enabled: </th>
-						<td><wo:checkbox checked="$appDefaults.cachingEnabled" /></td>
-						<td><wo:submit action="$updateCachingOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
-					</tr>
-					<tr>
-						<th>Debugging enabled: </th>
-						<td><wo:checkbox checked="$appDefaults.debuggingEnabled" /></td>
-						<td><wo:submit action="$updateDebuggingOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
-					</tr>
-					<tr>
-						<th>Output Path**:</th>
+						<th>
+							Output Path:<br>
+							<span class="small-note">
+								Path to a directory. Log files will be saved there as [ApplicationName]-[instanceID]
+							</span>
+						</th>
 						<td>
 							<span class="input-group mb-1">
 								<span class="input-group-text" style="width: 100px">macOS:</span>
@@ -86,13 +80,33 @@
 						<td><wo:submit action="$updateOutputOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
 					</tr>
 					<tr>
+						<th>Auto Recover:</th>
+						<td><wo:checkbox checked="$appDefaults.autoRecover" /> (Does not apply to scheduled instances)</td>
+						<td><wo:submit action="$updateAutoRecoverOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
+					</tr>
+					<tr>
+						<th>Caching enabled: </th>
+						<td><wo:checkbox checked="$appDefaults.cachingEnabled" /></td>
+						<td><wo:submit action="$updateCachingOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
+					</tr>
+					<tr>
+						<th>Debugging enabled: </th>
+						<td><wo:checkbox checked="$appDefaults.debuggingEnabled" /></td>
+						<td><wo:submit action="$updateDebuggingOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
+					</tr>
+					<tr>
 						<th>Auto Open In Browser<br />Auto Open Client Application:</th>
 						<td><wo:checkbox checked="$appDefaults.autoOpenInBrowser" /></td>
 						<td><wo:submit action="$updateAutoOpenOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
 					</tr>
 					<tr>
+						<th>Minimum Active Sessions: </th>
+						<td><wo:textfield value="$appDefaults.minimumActiveSessionsCount" numberformat="0" size="5" /></td>
+						<td><wo:submit action="$updateMinimumOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
+					</tr>
+					<tr>
 						<th>Lifebeat Interval:</th>
-						<td><wo:textfield value="$appDefaults.lifebeatInterval" numberformat="0" /></td>
+						<td><wo:textfield value="$appDefaults.lifebeatInterval" numberformat="0" size="5" /></td>
 						<td><wo:submit action="$updateLifebeatOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
 					</tr>
 					<tr>
@@ -106,8 +120,6 @@
 						<td><wo:submit action="$defaultsPushClicked" value="Push All" class="btn btn-sm btn-secondary" /></td>
 					</tr>
 				</table>
-				<p>* The path of the executable (inside the '.woa' directory).</p>
-				<p>** This should be a directory - the path should end with a file separator (instance logs will be saved as &lt;ApplicationName&gt;-&lt;ID&gt;)</p>
 			</wo:form>
 		</wo:AjaxExpansion>
 	</div>
