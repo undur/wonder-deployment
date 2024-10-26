@@ -3,6 +3,12 @@
 		.Warning {
 			color:red;
 		}
+		
+		.small-note {
+			color:Gray;
+			font-size: 12px;
+			font-weight: normal;
+		}
 	</style>
 	<div class="card p-3 pb-1 mb-3">
 		<div class="row">
@@ -42,7 +48,10 @@
 					</tr>
 				</wo:if>
 				<tr>
-					<th><wo:str value="$pathDiff" escapeHTML="$false" />Path*:</th>
+					<th width="250">
+						<wo:str value="$pathDiff" escapeHTML="$false" />Path:<br>
+						<span class="small-note">The path of the executable<br> (inside the '.woa' directory)</span>
+					</th>
 					<td>
 						<span class="input-group">
 							<wo:textfield value="$myInstance.path" size="50" class="form-control" />
@@ -51,15 +60,12 @@
 					</td>
 				</tr>
 				<tr>
-					<th><wo:str value="$minDiff" escapeHTML="$false" />Minimum Active Sessions:</th>
-					<td><wo:textfield value="$myInstance.minimumActiveSessionsCount" numberformat="0" size="8" /></td>
-				</tr>
-				<tr>
-					<th><wo:str value="$cachingDiff" escapeHTML="$false" />Caching enabled:</th>
-					<td><wo:checkbox checked="$myInstance.cachingEnabled" /></td>
-				</tr>
-				<tr>
-					<th><wo:str value="$outputDiff" escapeHTML="$false" />Output Path:</th>
+					<th>
+						<wo:str value="$outputDiff" escapeHTML="$false" />Output Path:<br>
+						<span class="small-note">
+							Path to a directory. Log files will be saved there as [ApplicationName]-[instanceID]
+						</span>
+					</th>
 					<td>
 						<span class="input-group">
 							<wo:textfield value="$myInstance.outputPath" size="50" class="form-control" />
@@ -68,12 +74,20 @@
 					</td>
 				</tr>
 				<tr>
-					<th><wo:str value="$browserDiff" escapeHTML="$false" />Auto Open In Browser:</th>
-					<td><wo:checkbox checked="$myInstance.autoOpenInBrowser" /></td>
+					<th><wo:str value="$cachingDiff" escapeHTML="$false" />Caching enabled:</th>
+					<td><wo:checkbox checked="$myInstance.cachingEnabled" /></td>
 				</tr>
 				<tr>
 					<th><wo:str value="$debugDiff" escapeHTML="$false" />Debugging enabled:</th>
 					<td><wo:checkbox checked="$myInstance.debuggingEnabled" /></td>
+				</tr>
+				<tr>
+					<th><wo:str value="$browserDiff" escapeHTML="$false" />Auto Open In Browser:</th>
+					<td><wo:checkbox checked="$myInstance.autoOpenInBrowser" /></td>
+				</tr>
+				<tr>
+					<th><wo:str value="$minDiff" escapeHTML="$false" />Minimum Active Sessions:</th>
+					<td><wo:textfield value="$myInstance.minimumActiveSessionsCount" numberformat="0" size="8" /></td>
 				</tr>
 				<tr>
 					<th><wo:str value="$lifebeatDiff" escapeHTML="$false" />Lifebeat Interval:</th>
@@ -93,10 +107,9 @@
 			</table>
 			<br>
 			<p>
-				* The path of the executable (inside the '.woa' directory).<br>
-				<span  class="Warning">**</span> Setting differs from the Application level setting.
+				If any settings are marked with <span class="Warning">**</span>, it means they differ from the Application level setting.
 			</p>
-			<p>With the current settings, this instance will be started with the following arguments:</p>
+			<p>Given the current settings, this instance will be started with the following arguments:</p>
 			<div><pre style="white-space: pre-wrap"><code><wo:str value="$myInstance.commandLineArguments" /></code></pre></div>
 		</wo:form>
 	</div>

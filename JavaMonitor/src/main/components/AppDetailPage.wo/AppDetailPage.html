@@ -6,14 +6,14 @@
 
 	<!-- FIXME: These styles should be in a global CSS, just here while we work on fixing up the UI -->
 	<style>
-		.AppControlOff, .AppControlScheduleEnabledNotRefusingNewSessions {
+		.AppControlOff, .AppControlNotRefusingNewSessions, .AppControlScheduleEnabledNotRefusingNewSessions, .AppControlAutoRecoverOff, .AppControlScheduleOff {
 			padding: 3px;
 			background-color: rgba(150,150,150,0.5);
 			color: white;
 			text-align: center;
 		}
 
-		.AppControlAutoRecoverOn, .AppControlNotRefusingNewSessions, .AppControlScheduleOn, .AppControlAutoRecoverSchedulingOn {
+		.AppControlAutoRecoverOn, .AppControlScheduleOn, .AppControlAutoRecoverSchedulingOn {
 			padding: 3px;
 			background-color: rgb(47,179,68);
 			color: white;
@@ -21,7 +21,7 @@
 			border-radius: 5;
 		}
 
-		.AppControlAutoRecoverOff, .AppControlRefusingNewSessions, .AppControlScheduleOff {
+		.AppControlRefusingNewSessions {
 			padding: 3px;
 			background-color: rgb(214,57,57);
 			color: white;
