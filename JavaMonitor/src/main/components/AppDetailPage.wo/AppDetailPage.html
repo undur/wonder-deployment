@@ -15,16 +15,22 @@
 
 		.AppControlAutoRecoverOn, .AppControlNotRefusingNewSessions, .AppControlScheduleOn, .AppControlAutoRecoverSchedulingOn {
 			padding: 3px;
-			background-color: green;
+			background-color: rgb(47,179,68);
 			color: white;
 			text-align: center;
+			border-radius: 5;
 		}
 
 		.AppControlAutoRecoverOff, .AppControlRefusingNewSessions, .AppControlScheduleOff {
 			padding: 3px;
-			background-color: red;
+			background-color: rgb(214,57,57);
 			color: white;
 			text-align: center;
+		}
+		
+		.toggle-image {
+			height: 28px;
+			width: auto;
 		}
 	</style>
 
@@ -129,7 +135,7 @@
 					</td>
 					<!-- Status (On/Off/Starting/Stopping) -->
 					<td class="InstanceStatusColumn">
-						<wo:img alt="$instanceStatusImageText" filename="$instanceStatusImage" height="35" width="49" />
+						<wo:img filename="$instanceStatusImage" alt="$instanceStatusImageText" class="toggle-image" />
 					</td>
 					<!-- Start/Stop Buttons -->
 					<td class="InstanceStartStop">
