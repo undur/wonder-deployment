@@ -42,7 +42,7 @@ public class DirectAction extends ERXDirectAction {
 		final Session session = (Session)existingSession();
 
 		if( session != null && session.isLoggedIn() ) {
-			return pageWithName( ApplicationsPage.class.getName() );
+			return pageWithName( ApplicationsPage.class );
 		}
 
 		final Main loginPage = pageWithName( Main.class );
@@ -55,6 +55,10 @@ public class DirectAction extends ERXDirectAction {
 		return loginPage;
 	}
 
+	/**
+	 * FIXME: This can probably be deleted
+	 */
+	@Deprecated
 	public WOComponent MainAction() {
 		return pageWithName( Main.class );
 	}
