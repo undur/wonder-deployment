@@ -43,6 +43,16 @@ public class Session extends ERXSession implements ErrorCollector {
 	 */
 	public boolean _isLoggedIn = false;
 
+	public Session() {
+		setStoresIDsInCookies( true );
+		setStoresIDsInURLs( false );
+	}
+
+	@Override
+	public String domainForIDCookies() {
+		return "/";
+	}
+
 	public boolean isLoggedIn() {
 		return _isLoggedIn;
 	}
