@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.List;
+
 /*
  (c) Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -14,7 +16,6 @@ package com.webobjects.monitor.application.components;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
@@ -91,10 +92,10 @@ public class AppConfigurePage extends MonitorComponent {
 					if( app == null ) {
 						pushAppOnly = false;
 						myApplication().setName( defaultsName );
-						NSArray _instanceArray = myApplication().instanceArray();
-						int instanceArrayCount = _instanceArray.count();
+						List<MInstance> _instanceArray = myApplication().instanceArray();
+						int instanceArrayCount = _instanceArray.size();
 						for( int i = 0; i < instanceArrayCount; i++ ) {
-							MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+							MInstance anInstance = _instanceArray.get( i );
 							anInstance._takeNameFromApplication();
 						}
 					}
@@ -149,10 +150,10 @@ public class AppConfigurePage extends MonitorComponent {
 			myApplication().setWinPath( appDefaults.winPath() );
 			myApplication().setMacPath( appDefaults.macPath() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takePathFromApplication();
 			}
 			_defaultsPush();
@@ -168,10 +169,10 @@ public class AppConfigurePage extends MonitorComponent {
 		try {
 			myApplication().setAutoRecover( appDefaults.autoRecover() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "autoRecover" );
 			}
 			_defaultsPush();
@@ -187,10 +188,10 @@ public class AppConfigurePage extends MonitorComponent {
 		try {
 			myApplication().setMinimumActiveSessionsCount( appDefaults.minimumActiveSessionsCount() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "minimumActiveSessionsCount" );
 			}
 			_defaultsPush();
@@ -206,10 +207,10 @@ public class AppConfigurePage extends MonitorComponent {
 		try {
 			myApplication().setCachingEnabled( appDefaults.cachingEnabled() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "cachingEnabled" );
 			}
 			_defaultsPush();
@@ -225,10 +226,10 @@ public class AppConfigurePage extends MonitorComponent {
 		try {
 			myApplication().setDebuggingEnabled( appDefaults.debuggingEnabled() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "debuggingEnabled" );
 			}
 			_defaultsPush();
@@ -246,10 +247,10 @@ public class AppConfigurePage extends MonitorComponent {
 			myApplication().setWinOutputPath( appDefaults.winOutputPath() );
 			myApplication().setMacOutputPath( appDefaults.macOutputPath() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeOutputPathFromApplication();
 			}
 			_defaultsPush();
@@ -265,10 +266,10 @@ public class AppConfigurePage extends MonitorComponent {
 		try {
 			myApplication().setAutoOpenInBrowser( appDefaults.autoOpenInBrowser() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "autoOpenInBrowser" );
 			}
 			_defaultsPush();
@@ -284,10 +285,10 @@ public class AppConfigurePage extends MonitorComponent {
 		try {
 			myApplication().setLifebeatInterval( appDefaults.lifebeatInterval() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "lifebeatInterval" );
 			}
 			_defaultsPush();
@@ -303,10 +304,10 @@ public class AppConfigurePage extends MonitorComponent {
 		try {
 			myApplication().setAdditionalArgs( appDefaults.additionalArgs() );
 
-			NSArray _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.count();
+			List<MInstance> _instanceArray = myApplication().instanceArray();
+			int instanceArrayCount = _instanceArray.size();
 			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "additionalArgs" );
 			}
 			_defaultsPush();
@@ -388,13 +389,13 @@ public class AppConfigurePage extends MonitorComponent {
 
 	public MInstance currentScheduledInstance;
 
-	public NSArray weekList = MObject.weekArray;
+	public List<String> weekList = MObject.weekArray;
 
-	public NSArray timeOfDayList = MObject.timeOfDayArray;
+	public List<String> timeOfDayList = MObject.timeOfDayArray;
 
-	public NSArray schedulingTypeList = MObject.schedulingTypeArray;
+	public List<Object> schedulingTypeList = MObject.schedulingTypeArray;
 
-	public NSArray schedulingIntervalList = MObject.schedulingIntervalArray;
+	public List<Integer> schedulingIntervalList = MObject.schedulingIntervalArray;
 
 	public String weekSelection() {
 		return MObject.morphedSchedulingStartDay( currentScheduledInstance.schedulingStartDay() );
@@ -451,11 +452,11 @@ public class AppConfigurePage extends MonitorComponent {
 
 	public String loadSchedulerItem;
 
-	public NSArray loadSchedulerList = MObject.loadSchedulerArray;
+	public List<Object> loadSchedulerList = MObject.loadSchedulerArray;
 
 	public Integer urlVersionItem;
 
-	public NSArray urlVersionList = MObject.urlVersionArray;
+	public List<Object> urlVersionList = MObject.urlVersionArray;
 
 	public String customSchedulerName;
 
@@ -463,11 +464,11 @@ public class AppConfigurePage extends MonitorComponent {
 		if( myApplication().scheduler() != null ) {
 			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOfObject( myApplication().scheduler() );
 			if( indexOfScheduler != -1 ) {
-				_loadSchedulerSelection = (String)loadSchedulerList.objectAtIndex( indexOfScheduler );
+				_loadSchedulerSelection = (String)loadSchedulerList.get( indexOfScheduler );
 			}
 			else {
 				// Custom scheduler
-				_loadSchedulerSelection = (String)loadSchedulerList.objectAtIndex( loadSchedulerList.count() - 1 );
+				_loadSchedulerSelection = (String)loadSchedulerList.get( loadSchedulerList.size() - 1 );
 				customSchedulerName = myApplication().scheduler();
 			}
 		}
@@ -490,11 +491,11 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().startReading();
 		try {
 			String newValue;
-			int i = loadSchedulerList.indexOfObject( _loadSchedulerSelection );
+			int i = loadSchedulerList.indexOf( _loadSchedulerSelection );
 			if( i == 0 ) {
 				newValue = null;
 			}
-			else if( i == (loadSchedulerList.count() - 1) ) {
+			else if( i == (loadSchedulerList.size() - 1) ) {
 				newValue = customSchedulerName;
 				if( !StringExtensions.isValidXMLString( newValue ) ) {
 					newValue = null;
