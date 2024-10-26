@@ -52,7 +52,7 @@ public class ConfigurePage extends MonitorComponent {
 	}
 
 	public String loadSchedulerSelection() {
-		if( (theApplication != null) && (siteConfig().scheduler() != null) ) {
+		if( (application() != null) && (siteConfig().scheduler() != null) ) {
 			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOfObject( siteConfig().scheduler() );
 			if( indexOfScheduler != -1 ) {
 				_loadSchedulerSelection = (String)loadSchedulerList.objectAtIndex( indexOfScheduler );
@@ -71,7 +71,7 @@ public class ConfigurePage extends MonitorComponent {
 	}
 
 	public Integer urlVersionSelection() {
-		if( theApplication != null ) {
+		if( application() != null ) {
 			return siteConfig().urlVersion();
 		}
 
@@ -79,7 +79,7 @@ public class ConfigurePage extends MonitorComponent {
 	}
 
 	public void setUrlVersionSelection( Integer value ) {
-		if( theApplication != null ) {
+		if( application() != null ) {
 			siteConfig().setUrlVersion( value );
 		}
 	}

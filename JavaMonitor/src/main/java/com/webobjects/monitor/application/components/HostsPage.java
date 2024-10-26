@@ -176,7 +176,7 @@ public class HostsPage extends MonitorComponent {
 		WOResponse aResponse = null;
 
 		try {
-			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( currentHost.name(), theApplication.lifebeatDestinationPort() );
+			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( currentHost.name(), application().lifebeatDestinationPort() );
 			anHTTPConnection.setReceiveTimeout( 10000 );
 
 			if( anHTTPConnection.sendRequest( aRequest ) ) {
