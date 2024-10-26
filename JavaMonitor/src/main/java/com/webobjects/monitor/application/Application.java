@@ -76,10 +76,4 @@ public class Application extends ERXApplication {
 			NSLog.debug.setAllowedDebugLevel( NSLog.DebugLevelDetailed );
 		}
 	}
-
-	@Override
-	public NSMutableDictionary handleMalformedCookieString( RuntimeException exception, String cookieString, NSMutableDictionary d ) {
-		logger.error( "Malformed cookies: " + cookieString );
-		return d == null ? new NSMutableDictionary() : d;
-	}
 }
