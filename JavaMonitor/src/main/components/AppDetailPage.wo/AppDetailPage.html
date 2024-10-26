@@ -28,9 +28,10 @@
 	</style>
 
 	<wo:if condition="$hasHosts" negate="$true">
-		<div class="alert alert-important alert-danger">
-			<h3>There are no hosts configured.</h3>
-			<p>Please <wo:link action="$hostsPageClicked">add hosts</wo:link> before adding instances.</p>
+		<div class="alert alert-important alert-warning">
+			<h1>There are no hosts configured.</h1>
+			<p>You must add hosts before adding instances. Software doesn't run itself.</p>
+			<p><wo:link action="$hostsPageClicked" class="btn btn-primary">Add hosts</wo:link></p>
 		</div>
 	</wo:if>
 	
