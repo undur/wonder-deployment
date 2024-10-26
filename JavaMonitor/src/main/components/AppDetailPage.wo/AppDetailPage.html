@@ -113,24 +113,16 @@
 					</td>
 					<!-- Instance Number -->
 					<td>
+						<wo:str value="$currentInstance.displayName" />
 						<wo:if condition="$currentInstance.isRunning_M">
-							<wo:link href="$hrefToInst" target="new">
-								<wo:str value="$currentInstance.displayName" />
-							</wo:link>
-						</wo:if>
-						<wo:if condition="$currentInstance.isRunning_M" negate="$true">
-							<wo:str value="$currentInstance.displayName" />
+							<wo:link href="$hrefToInst" target="new" title="Open through proxy/adaptor/webserver"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
 					</td>
 					<!-- Host - Port -->
 					<td class="InstanceHostPort">
+						<wo:str value="$currentInstance.displayHostAndPort" />
 						<wo:if condition="$currentInstance.isRunning_M">
-							<wo:link href="$hrefToInstDirect" target="new">
-								<wo:str value="$currentInstance.displayHostAndPort" />
-							</wo:link>
-						</wo:if>
-						<wo:if condition="$currentInstance.isRunning_M" negate="$true">
-							<wo:str value="$currentInstance.displayHostAndPort" />
+							<wo:link href="$hrefToInstDirect" target="new" title="Open through direct connect"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
 					</td>
 					<!-- Status (On/Off/Starting/Stopping) -->

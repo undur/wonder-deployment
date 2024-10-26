@@ -13,11 +13,9 @@
 			<wo:repetition list="$applications" item="$currentApplication">
 				<tr>
 					<td>
+						<wo:link action="$appDetailsClicked"><wo:str value="$currentApplication.name" /></wo:link>
 						<wo:if condition="$currentApplication.isRunning">
-							<wo:link href="$hrefToApp" target="new"><wo:str value="$currentApplication.name" /></wo:link>
-						</wo:if>
-						<wo:if condition="$currentApplication.isRunning" negate="$true">
-							<wo:str value="$currentApplication.name" />
+							<span style="float: right"><wo:link href="$hrefToApp" target="new"><wo:JMIcon name="Link" /></wo:link></span>
 						</wo:if>
 					</td>
 					<td><wo:str value="$currentApplication.runningInstancesCount" /></td>
