@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,11 +115,11 @@ public class Session extends ERXSession implements ErrorCollector {
 		return _message;
 	}
 
-	public void addObjectsFromArrayIfAbsentToErrorMessageArray( NSArray<String> anArray ) {
-		if( anArray != null && anArray.count() > 0 ) {
-			int arrayCount = anArray.count();
+	public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
+		if( errors != null && errors.size() > 0 ) {
+			int arrayCount = errors.size();
 			for( int i = 0; i < arrayCount; i++ ) {
-				addErrorIfAbsent( anArray.objectAtIndex( i ) );
+				addErrorIfAbsent( errors.get( i ) );
 			}
 		}
 	}

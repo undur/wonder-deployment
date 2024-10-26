@@ -1,6 +1,7 @@
 package com.webobjects.monitor.util;
 
 import java.util.Enumeration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class WOTaskdHandler {
 	private static final Logger logger = LoggerFactory.getLogger( WOTaskdHandler.class );
 
 	public interface ErrorCollector {
-		public void addObjectsFromArrayIfAbsentToErrorMessageArray( NSArray<String> errors );
+		public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors );
 	}
 
 	private static _NSCollectionReaderWriterLock _lock = new _NSCollectionReaderWriterLock();

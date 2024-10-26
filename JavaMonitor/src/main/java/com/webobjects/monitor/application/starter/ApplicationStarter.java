@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.starter;
 
+import java.util.List;
+
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableSet;
@@ -54,8 +56,8 @@ public abstract class ApplicationStarter extends Thread implements ErrorCollecto
 		}
 	}
 
-	public synchronized void addObjectsFromArrayIfAbsentToErrorMessageArray( NSArray<String> aErrors ) {
-		_errors.addObjectsFromArray( aErrors );
+	public synchronized void addObjectsFromArrayIfAbsentToErrorMessageArray( final List<String> errors ) {
+		_errors.addAll( errors );
 	}
 
 	public synchronized NSArray<String> errors() {

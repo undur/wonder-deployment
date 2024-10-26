@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application;
 
+import java.util.List;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -119,7 +121,7 @@ public class DirectAction extends ERXDirectAction {
 		if( siteConfig().compareStringWithPassword( pw ) ) {
 			WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
 
-				public void addObjectsFromArrayIfAbsentToErrorMessageArray( NSArray<String> aErrors ) {
+				public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
 
 				}
 			} );
