@@ -1,7 +1,5 @@
 package com.webobjects.monitor.application;
 
-import java.util.List;
-
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -17,18 +15,11 @@ import java.util.List;
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSDictionary;
-import com.webobjects.foundation.NSMutableArray;
-import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSPropertyListSerialization;
-import com.webobjects.monitor._private.MApplication;
-import com.webobjects.monitor._private.MInstance;
-import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 import com.webobjects.monitor.application.components.JMLoginPage;
+import com.webobjects.monitor.util.StatsUtilitiesEvenMore;
 import com.webobjects.monitor.util.WOTaskdHandler;
-import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
 
 import er.extensions.appserver.ERXDirectAction;
 
@@ -60,82 +51,11 @@ public class DirectAction extends ERXDirectAction {
 	public WOResponse statisticsAction() {
 		final WOResponse response = new WOResponse();
 		final String pw = context().request().stringFormValueForKey( "pw" );
-		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
 
-		if( siteConfig.compareStringWithPassword( pw ) ) {
-			response.appendContentString( NSPropertyListSerialization.stringFromPropertyList( statistics() ) );
+		if( WOTaskdHandler.siteConfig().compareStringWithPassword( pw ) ) {
+			response.appendContentString( NSPropertyListSerialization.stringFromPropertyList( StatsUtilitiesEvenMore.statistics() ) );
 		}
 
 		return response;
-	}
-
-	private static NSDictionary statisticsHistoryEntry( MApplication app ) {
-		final NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
-		result.setObjectForKey( app.name(), "applicationName" );
-		final NSArray<MInstance> allInstances = app.instanceArray();
-		result.setObjectForKey( Integer.valueOf( allInstances.count() ), "configuredInstances" );
-
-		int runningInstances = 0;
-		int refusingInstances = 0;
-		final NSMutableArray instances = new NSMutableArray();
-
-		for( MInstance instance : allInstances ) {
-			if( instance.isRunning_M() ) {
-				runningInstances++;
-				instances.addObject( instance );
-			}
-			if( instance.isRefusingNewSessions() ) {
-				refusingInstances++;
-			}
-		}
-
-		result.setObjectForKey( Integer.valueOf( runningInstances ), "runningInstances" );
-		result.setObjectForKey( Integer.valueOf( refusingInstances ), "refusingInstances" );
-
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@sum.activeSessionsValue" ) ), "sumSessions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.activeSessionsValue" ) ), "maxSessions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.activeSessionsValue" ) ), "avgSessions" );
-
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@sum.transactionsValue" ) ), "sumTransactions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.transactionsValue" ) ), "maxTransactions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.transactionsValue" ) ), "avgTransactions" );
-
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.avgTransactionTimeValue" ) ), "maxAvgTransactionTime" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.avgTransactionTimeValue" ) ), "avgAvgTransactionTime" );
-
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.avgIdleTimeValue" ) ), "maxAvgIdleTime" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.avgIdleTimeValue" ) ), "avgAvgIdleTime" );
-
-		return result;
-	}
-
-	private static NSArray statistics() {
-		final WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
-			public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
-
-			}
-		} );
-
-		final NSMutableArray stats = new NSMutableArray();
-
-		handler.startReading();
-
-		try {
-			for( final MApplication app : WOTaskdHandler.siteConfig().applicationArray() ) {
-				handler.getInstanceStatusForHosts( app.hostArray() );
-
-				final NSDictionary appStats = statisticsHistoryEntry( app );
-				stats.addObject( appStats );
-			}
-		}
-		finally {
-			handler.endReading();
-		}
-
-		return stats;
-	}
-	
-	private static Object nonNull( Object value ) {
-		return value != null ? value : "";
 	}
 }
