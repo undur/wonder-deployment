@@ -36,6 +36,11 @@
 						</th>
 						<td>
 							<span class="input-group mb-1">
+								<span class="input-group-text" style="width: 100px">Unix:</span>
+								<wo:textfield value="$appDefaults.unixPath" class="form-control" />
+								<wo:link action="$pathPickerWizardClickedUnix" class="btn">Pick...</wo:link>
+							</span>
+							<span class="input-group mb-1">
 								<span class="input-group-text" style="width: 100px">macOS:</span>
 								<wo:textfield value="$appDefaults.macPath" class="form-control" />
 								<wo:link action="$pathPickerWizardClickedMac" class="btn">Pick...</wo:link>
@@ -44,11 +49,6 @@
 								<span class="input-group-text" style="width: 100px">Windows:</span>
 								<wo:textfield value="$appDefaults.winPath" class="form-control" />
 								<wo:link action="$pathPickerWizardClickedWindows" class="btn">Pick...</wo:link>
-							</span>
-							<span class="input-group mb-1">
-								<span class="input-group-text" style="width: 100px">Unix:</span>
-								<wo:textfield value="$appDefaults.unixPath" class="form-control" />
-								<wo:link action="$pathPickerWizardClickedUnix" class="btn">Pick...</wo:link>
 							</span>
 						</td>
 						<td><wo:submit action="$updatePathOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
@@ -62,6 +62,11 @@
 						</th>
 						<td>
 							<span class="input-group mb-1">
+								<span class="input-group-text" style="width: 100px">Unix:</span>
+								<wo:textfield value="$appDefaults.unixOutputPath" class="form-control" />
+								<wo:link action="$pathPickerWizardClickedUnixOutput" class="btn">Pick...</wo:link>
+							</span>
+							<span class="input-group mb-1">
 								<span class="input-group-text" style="width: 100px">macOS:</span>
 								<wo:textfield value="$appDefaults.macOutputPath" class="form-control" />
 								<wo:link action="$pathPickerWizardClickedMacOutput" class="btn">Pick...</wo:link>
@@ -70,11 +75,6 @@
 								<span class="input-group-text" style="width: 100px">Windows:</span>
 								<wo:textfield value="$appDefaults.winOutputPath" class="form-control" />
 								<wo:link action="$pathPickerWizardClickedWindowsOutput" class="btn">Pick...</wo:link>
-							</span>
-							<span class="input-group mb-1">
-								<span class="input-group-text" style="width: 100px">Unix:</span>
-								<wo:textfield value="$appDefaults.unixOutputPath" class="form-control" />
-								<wo:link action="$pathPickerWizardClickedUnixOutput" class="btn">Pick...</wo:link>
 							</span>
 						</td>
 						<td><wo:submit action="$updateOutputOnly" value="Push" class="btn btn-sm btn-secondary" /></td>
