@@ -107,29 +107,24 @@
 			</tr>
 			<wo:repetition list="$displayGroup.allObjects" item="$currentInstance">
 				<tr>
-					<!-- Selection -->
 					<td class="InstanceSelect">
 						<wo:form action="$selectOne"><wo:AjaxObserveField action="$selectOne"><wo:checkbox checked="$isSelectedInstance"/></wo:AjaxObserveField></wo:form>
 					</td>
-					<!-- Instance Number -->
 					<td>
 						<wo:str value="$currentInstance.displayName" />
 						<wo:if condition="$currentInstance.isRunning_M">
 							<wo:link href="$hrefToInst" target="new" title="Open through proxy/adaptor/webserver"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
 					</td>
-					<!-- Host - Port -->
 					<td class="InstanceHostPort">
 						<wo:str value="$currentInstance.displayHostAndPort" />
 						<wo:if condition="$currentInstance.isRunning_M">
 							<wo:link href="$hrefToInstDirect" target="new" title="Open through direct connect"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
 					</td>
-					<!-- Status (On/Off/Starting/Stopping) -->
 					<td class="InstanceStatusColumn">
 						<wo:img filename="$instanceStatusImage" alt="$instanceStatusImageText" class="toggle-image" />
 					</td>
-					<!-- Start/Stop Buttons -->
 					<td class="InstanceStartStop">
 						<div class="Balls">
 							<wo:link action="$startInstance"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
@@ -137,7 +132,6 @@
 							<wo:link action="$stopInstance"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
-					<!-- Auto-Recover -->
 					<td class="InstanceAutoRecover">
 						<wo:if condition="$currentInstance.schedulingEnabled">
 							<div class="AppControl AppControlAutoRecoverSchedulingOn">On</div>
@@ -146,7 +140,6 @@
 							<wo:link action="$toggleAutoRecover"><wo:container elementName="div" class="$autoRecoverDivClass"><wo:str value="$autoRecoverLabel" /></wo:container></wo:link>
 						</wo:if>
 					</td>
-					<!-- Refuse New Sessions -->
 					<td class="InstanceRefuseNewSessions">
 						<wo:if condition="$currentInstance.schedulingEnabled">
 							<wo:container elementName="div" class="$refuseNewSessionsClass"><wo:str value="$refuseNewSessionsLabel" escapeHTML="$false" /></wo:container>
@@ -162,13 +155,11 @@
 							</wo:if>
 						</wo:if>
 					</td>
-					<!-- Schedule -->
 					<td class="InstanceSchedule">
 						<wo:link action="$toggleScheduling" class="AppControlLink">
 							<wo:container elementName="div" class="$schedulingDivClass"><wo:str value="$schedulingLabel" escapeHTML="$false" /></wo:container>
 						</wo:link>
 					</td>
-					<!-- Next Scheduled Shutdown -->
 					<td class="NextShutDown">
 						<wo:str value="$nextShutdown" />
 					</td>
@@ -179,7 +170,6 @@
 						</wo:if>
 						<wo:if condition="$shouldDisplayDeathDetailLink" negate="$true">-</wo:if>
 					</td>
-					<!-- Statistics -->
 					<wo:if condition="$showDetailStatistics">
 						<td class="TransactionsCount">
 							<wo:str value="$currentInstance.transactions" />
@@ -202,11 +192,9 @@
 							<wo:if condition="$currentInstance.isRunning_M" negate="$true"><div class="WOStatsOff">Off</div></wo:if>
 						</td>
 					</wo:if>
-					<!-- Configure -->
 					<td>
 						<wo:link action="$configureInstanceClicked" class="btn btn-sm btn-secondary">Config</wo:link>
 					</td>
-					<!-- Delete -->
 					<td>
 						<wo:link action="$deleteInstanceClicked" class="btn btn-sm btn-danger">Delete</wo:link>
 					</td>
@@ -214,18 +202,6 @@
 			</wo:repetition>
 
 			<wo:if condition="$hasInstances">
-				<!-- FIXME: We can probably just throw these rows out. Keeping them in just for now while we try out the layout
-				<wo:if condition="$showDetailStatistics">
-					<tr class="SpacerTableRow">
-						<td colSpan = "16">&nbsp</td>
-					</tr>
-				</wo:if>
-				<wo:if condition="$showDetailStatistics" negate="$true">
-					<tr class="SpacerTableRow">
-						<td colSpan = "13">&nbsp</td>
-					</tr>
-				</wo:if>
-				  -->
 				<tr style="background-color: rgb(240,240,240)">
 					<td colspan="4">
 						<strong>Select instances:</strong><br>
@@ -241,7 +217,6 @@
 							<wo:str value="$filterErrorMessage"></wo:str>
 						</div>
 					</td>
-					<!-- Start / Stop All -->
 					<td class="AllStartStop">
 						<div class="Balls">
 							<wo:link action="$startAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
@@ -249,7 +224,6 @@
 							<wo:link action="$stopAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
-					<!-- AutoRecover All -->
 					<td class="AllAutoRecover">
 						<div class="Balls">
 							<wo:link action="$autoRecoverEnableAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
@@ -257,7 +231,6 @@
 							<wo:link action="$autoRecoverDisableAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
-					<!--  Refuse New Sessions All -->
 					<td class="AllRefuseNewSessions">
 						<div class="Balls">
 							<wo:link action="$refuseNewSessionsAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
@@ -265,7 +238,6 @@
 							<wo:link action="$acceptNewSessionsAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
-					<!-- Scheduling All -->
 					<td class="AllScheduling">
 						<div class="Balls">
 							<wo:link action="$schedulingEnableAllClicked"><wo:img filename="start.png" alt="Start" height="19" width="19" /></wo:link>
@@ -273,10 +245,8 @@
 							<wo:link action="$schedulingDisableAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
-					<!-- Next Scheduled Shutdown -->
 					<td class="AllBounce"><wo:link action="$bounceClicked" class="btn btn-sm btn-secondary">Bounce</wo:link>&nbsp;<wo:link pageName="HelpPage" fragmentIdentifier="18"><wo:img filename="help.png" height="24" width="24" /></wo:link></td>
 					<td class="AllClearDeaths"><wo:link action="$clearAllDeathsClicked" class="btn btn-sm btn-secondary">Clear Deaths</wo:link></td>
-					<!-- Statistics All -->
 					<wo:if condition="$showDetailStatistics">
 						<td class="TotalTransactionCount">
 							<wo:str value="$totalTransactions" numberformat="0" />
