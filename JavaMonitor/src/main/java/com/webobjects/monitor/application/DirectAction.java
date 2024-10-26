@@ -57,22 +57,28 @@ public class DirectAction extends ERXDirectAction {
 		return loginPage;
 	}
 
-	private static Object nonNull( Object value ) {
-		if( value == null ) {
-			return "";
+	public WOResponse statisticsAction() {
+		final WOResponse response = new WOResponse();
+		final String pw = context().request().stringFormValueForKey( "pw" );
+		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
+
+		if( siteConfig.compareStringWithPassword( pw ) ) {
+			response.appendContentString( NSPropertyListSerialization.stringFromPropertyList( statistics() ) );
 		}
-		return value;
+
+		return response;
 	}
 
-	private static NSDictionary historyEntry( MApplication app ) {
-		NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
+	private static NSDictionary statisticsHistoryEntry( MApplication app ) {
+		final NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
 		result.setObjectForKey( app.name(), "applicationName" );
-		NSArray<MInstance> allInstances = app.instanceArray();
+		final NSArray<MInstance> allInstances = app.instanceArray();
 		result.setObjectForKey( Integer.valueOf( allInstances.count() ), "configuredInstances" );
 
 		int runningInstances = 0;
 		int refusingInstances = 0;
-		NSMutableArray instances = new NSMutableArray();
+		final NSMutableArray instances = new NSMutableArray();
+
 		for( MInstance instance : allInstances ) {
 			if( instance.isRunning_M() ) {
 				runningInstances++;
@@ -82,6 +88,7 @@ public class DirectAction extends ERXDirectAction {
 				refusingInstances++;
 			}
 		}
+
 		result.setObjectForKey( Integer.valueOf( runningInstances ), "runningInstances" );
 		result.setObjectForKey( Integer.valueOf( refusingInstances ), "refusingInstances" );
 
@@ -102,32 +109,33 @@ public class DirectAction extends ERXDirectAction {
 		return result;
 	}
 
-	public WOResponse statisticsAction() {
-		WOResponse response = new WOResponse();
-		String pw = context().request().stringFormValueForKey( "pw" );
-		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
+	private static NSArray statistics() {
+		final WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
+			public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
 
-		if( siteConfig.compareStringWithPassword( pw ) ) {
-			WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
-
-				public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
-
-				}
-			} );
-			handler.startReading();
-			try {
-				NSMutableArray stats = new NSMutableArray();
-				for( MApplication app : siteConfig.applicationArray() ) {
-					handler.getInstanceStatusForHosts( app.hostArray() );
-					NSDictionary appStats = historyEntry( app );
-					stats.addObject( appStats );
-				}
-				response.appendContentString( NSPropertyListSerialization.stringFromPropertyList( stats ) );
 			}
-			finally {
-				handler.endReading();
+		} );
+
+		final NSMutableArray stats = new NSMutableArray();
+
+		handler.startReading();
+
+		try {
+			for( final MApplication app : WOTaskdHandler.siteConfig().applicationArray() ) {
+				handler.getInstanceStatusForHosts( app.hostArray() );
+
+				final NSDictionary appStats = statisticsHistoryEntry( app );
+				stats.addObject( appStats );
 			}
 		}
-		return response;
+		finally {
+			handler.endReading();
+		}
+
+		return stats;
+	}
+	
+	private static Object nonNull( Object value ) {
+		return value != null ? value : "";
 	}
 }
