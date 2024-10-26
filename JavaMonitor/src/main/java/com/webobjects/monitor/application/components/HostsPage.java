@@ -38,7 +38,7 @@ public class HostsPage extends MonitorComponent {
 
 	public MHost currentHost;
 	public String newHostName;
-	public String hostTypeSelection;
+	public String hostTypeSelection = "Unix";
 	public NSArray hostTypeList = MObject.hostTypeArray;
 
 	public HostsPage( WOContext aWocontext ) {
