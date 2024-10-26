@@ -43,14 +43,6 @@ public abstract class MonitorComponent extends ERXComponent {
 		return _message;
 	}
 
-	public NSMutableArray allHosts() {
-		return siteConfig().hostArray();
-	}
-
-	public MSiteConfig siteConfig() {
-		return WOTaskdHandler.siteConfig();
-	}
-	
 	public Application application() {
 		return (Application)super.application();
 	}
@@ -59,6 +51,14 @@ public abstract class MonitorComponent extends ERXComponent {
 		return (Session)super.session();
 	}
 
+	public NSMutableArray allHosts() {
+		return siteConfig().hostArray();
+	}
+
+	public MSiteConfig siteConfig() {
+		return WOTaskdHandler.siteConfig();
+	}
+	
 	public WOTaskdHandler handler() {
 		return _handler;
 	}

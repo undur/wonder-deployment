@@ -63,7 +63,11 @@ public class Session extends ERXSession implements ErrorCollector {
 		_isLoggedIn = value;
 	}
 
-	public MSiteConfig siteConfig() {
+	/**
+	 * FIXME: Should be deleted // Hugi 2024-10-25 
+	 */
+	@Deprecated
+	private static MSiteConfig siteConfig() {
 		return WOTaskdHandler.siteConfig();
 	}
 
