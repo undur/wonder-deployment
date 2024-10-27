@@ -54,6 +54,7 @@ public class HostsPage extends MonitorComponent {
 				InetAddress anAddress = InetAddress.getByName( newHostName );
 
 				handler().startWriting();
+
 				try {
 					if( newHostName.equalsIgnoreCase( "localhost" ) || newHostName.equals( "127.0.0.1" ) ) {
 						// only allow this to happen if we have no other hosts!
@@ -64,8 +65,7 @@ public class HostsPage extends MonitorComponent {
 					}
 					else {
 						// this is for non-localhost hosts
-						// only allow this to happen if localhost/127.0.0.1
-						// doesn't already exist!
+						// only allow this to happen if localhost/127.0.0.1 doesn't already exist!
 						if( siteConfig().localhostOrLoopbackHostExists() ) {
 							nullOrError = "Additional hosts may not be added while a host named localhost or 127.0.0.1 is configured.";
 						}
@@ -88,11 +88,8 @@ public class HostsPage extends MonitorComponent {
 
 						}
 						else {
-							session().addErrorIfAbsent(
-									"The wotaskd on " + newHostName
-											+ " is an older version, please upgrade before adding..." );
+							session().addErrorIfAbsent( "The wotaskd on " + newHostName + " is an older version, please upgrade before adding..." );
 						}
-
 					}
 					else {
 						if( nullOrError != null ) {
@@ -155,7 +152,6 @@ public class HostsPage extends MonitorComponent {
 			public String question() {
 				return "Are you sure you want to delete the host <I>" + host.name() + "</I>?";
 			}
-
 		} );
 	}
 
@@ -197,10 +193,9 @@ public class HostsPage extends MonitorComponent {
 		return aPage;
 	}
 
-	private boolean hostMeetsMinimumVersion( InetAddress anAddress ) {
+	private static boolean hostMeetsMinimumVersion( InetAddress anAddress ) {
 		byte[] versionRequest = ("womp://queryVersion").getBytes( StandardCharsets.UTF_8 );
-		DatagramPacket outgoingPacket = new DatagramPacket( versionRequest, versionRequest.length, anAddress,
-				WOApplication.application().lifebeatDestinationPort() );
+		DatagramPacket outgoingPacket = new DatagramPacket( versionRequest, versionRequest.length, anAddress, WOApplication.application().lifebeatDestinationPort() );
 
 		byte[] mbuffer = new byte[1000];
 		DatagramPacket incomingPacket = new DatagramPacket( mbuffer, mbuffer.length );
