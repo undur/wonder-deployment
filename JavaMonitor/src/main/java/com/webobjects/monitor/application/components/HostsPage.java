@@ -31,6 +31,7 @@ import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
+import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
 
@@ -160,19 +161,27 @@ public class HostsPage extends MonitorComponent {
 	}
 
 	public WOComponent displayWotaskdInfoClicked() {
+		final String hostName = currentHost.name();
+		final int port = application().lifebeatDestinationPort();
+		final MSiteConfig siteConfig = siteConfig();
+		
+		final WotaskdInfoPage aPage = pageWithName( WotaskdInfoPage.class );
+		aPage.wotaskdText = fetchWotaskdConfigurationString( hostName, port, siteConfig );
+		return aPage;
+	}
+
+	public static String fetchWotaskdConfigurationString( final String hostName, final int port, final MSiteConfig siteConfig ) {
 
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "!@#$!@#$ displayWotaskdInfoClicked creates a WOHTTPConnection" );
 		}
 
-		final WotaskdInfoPage aPage = pageWithName( WotaskdInfoPage.class );
-
-		final WORequest aRequest = new WORequest( MObject._POST, "/", MObject._HTTP1, siteConfig().passwordDictionary(), null, null );
+		final WORequest aRequest = new WORequest( MObject._POST, "/", MObject._HTTP1, siteConfig.passwordDictionary(), null, null );
 
 		WOResponse aResponse = null;
 
 		try {
-			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( currentHost.name(), application().lifebeatDestinationPort() );
+			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( hostName, port );
 			anHTTPConnection.setReceiveTimeout( 10000 );
 
 			if( anHTTPConnection.sendRequest( aRequest ) ) {
@@ -184,13 +193,10 @@ public class HostsPage extends MonitorComponent {
 		}
 
 		if( aResponse == null ) {
-			aPage.wotaskdText = "Failed to get response from wotaskd " + currentHost.name() + ": " + WOApplication.application().lifebeatDestinationPort();
-		}
-		else {
-			aPage.wotaskdText = aResponse.contentString();
+			return "Failed to get response from wotaskd " + hostName + ": " + WOApplication.application().lifebeatDestinationPort();
 		}
 
-		return aPage;
+		return aResponse.contentString();
 	}
 
 	private static boolean hostMeetsMinimumVersion( InetAddress anAddress ) {
