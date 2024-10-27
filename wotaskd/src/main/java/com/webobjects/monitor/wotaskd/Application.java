@@ -19,7 +19,6 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.management.InstanceAlreadyExistsException;
@@ -31,16 +30,6 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
-
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.command.ScpCommandFactory;
-import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.server.sftp.SftpSubsystem;
-import org.apache.sshd.server.shell.ProcessShellFactory;
 
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WORequest;
@@ -55,7 +44,6 @@ import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.StringExtensions;
 
 import er.extensions.appserver.ERXApplication;
-import er.extensions.foundation.ERXProperties;
 
 public class Application extends ERXApplication {
 	private LocalMonitor _localMonitor;
@@ -225,33 +213,6 @@ public class Application extends ERXApplication {
 
 		// Set up multicast listen thread
 		createRequestListenerThread();
-
-		boolean isSSHServerEnabled = ERXProperties.booleanForKeyWithDefault( "er.wotaskd.sshd.enabled", false );
-
-		if( isSSHServerEnabled ) {
-			SshServer sshd = SshServer.setUpDefaultServer();
-			sshd.setPort( ERXProperties.intForKeyWithDefault( "er.wotaskd.sshd.port", 6022 ) );
-			sshd.setPasswordAuthenticator( new SshPasswordAuthenticator() );
-			sshd.setKeyPairProvider( new SimpleGeneratorHostKeyProvider( "hostkey.ser" ) );
-			sshd.setCommandFactory( new ScpCommandFactory() );
-			sshd.setSubsystemFactories( Arrays.<NamedFactory<Command>>asList( new SftpSubsystem.Factory() ) );
-			sshd.setShellFactory( new ProcessShellFactory( new String[] { "/bin/bash", "-i", "-l" } ) );
-			try {
-				sshd.start();
-			}
-			catch( IOException e ) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public class SshPasswordAuthenticator implements PasswordAuthenticator {
-
-		public boolean authenticate( String username, String password, ServerSession serversession ) {
-			return (siteConfig().compareStringWithPassword( password )) ? true : false;
-		}
-
 	}
 
 	/**

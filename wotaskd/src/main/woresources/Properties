@@ -65,13 +65,6 @@ WOShouldUseSpawn=true
 # The number of milliseconds before a timeout occurs for requests sent from WOTaskD to WOApplication instances. 
 #WOTaskd.receiveTimeout=5000
 
-
-# The TCP port on which the built-in SSH/SCP server will run on
-er.wotaskd.sshd.port=6022
-
-# Enable or disable the built-in SSH/SCP server
-er.wotaskd.sshd.enabled=false
-
 log4j.rootCategory=INFO, A1
 
 # A1 is set to be a FileAppender which outputs to System.out.
