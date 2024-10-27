@@ -133,24 +133,27 @@ public class WOTaskdHandler {
 	}
 
 	/* ******** Common Functionality ********* */
-	private static NSMutableDictionary createUpdateRequestDictionary( MSiteConfig _Config, MHost _Host,
-			MApplication _Application, NSArray _InstanceArray, String requestType ) {
-		NSMutableDictionary monitorRequest = new NSMutableDictionary( 1 );
-		NSMutableDictionary updateWotaskd = new NSMutableDictionary( 1 );
-		NSMutableDictionary requestTypeDict = new NSMutableDictionary();
+	private static NSMutableDictionary createUpdateRequestDictionary( MSiteConfig _Config, MHost _Host, MApplication _Application, NSArray _InstanceArray, String requestType ) {
+
+		final NSMutableDictionary monitorRequest = new NSMutableDictionary( 1 );
+		final NSMutableDictionary updateWotaskd = new NSMutableDictionary( 1 );
+		final NSMutableDictionary requestTypeDict = new NSMutableDictionary();
 
 		if( _Config != null ) {
 			NSDictionary site = new NSDictionary( _Config.values() );
 			requestTypeDict.takeValueForKey( site, "site" );
 		}
+
 		if( _Host != null ) {
 			NSArray hostArray = new NSArray( _Host.values() );
 			requestTypeDict.takeValueForKey( hostArray, "hostArray" );
 		}
+
 		if( _Application != null ) {
 			NSArray applicationArray = new NSArray( _Application.values() );
 			requestTypeDict.takeValueForKey( applicationArray, "applicationArray" );
 		}
+
 		if( _InstanceArray != null ) {
 			int instanceCount = _InstanceArray.count();
 			NSMutableArray instanceArray = new NSMutableArray( instanceCount );
@@ -167,10 +170,9 @@ public class WOTaskdHandler {
 		return monitorRequest;
 	}
 
-	public WOResponse[] sendRequest( NSDictionary monitorRequest, NSArray wotaskdArray, boolean willChange ) {
-		String encodedRootObjectForKey = (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorRequest,
-				"monitorRequest" );
-		NSData content = new NSData( encodedRootObjectForKey.getBytes() );
+	private WOResponse[] sendRequest( NSDictionary monitorRequest, NSArray wotaskdArray, boolean willChange ) {
+		final String encodedRootObjectForKey = new _JavaMonitorCoder().encodeRootObjectForKey( monitorRequest, "monitorRequest" );
+		final NSData content = new NSData( encodedRootObjectForKey.getBytes() );
 		return MHost.sendRequestToWotaskdArray( content, wotaskdArray, willChange );
 	}
 
@@ -178,23 +180,20 @@ public class WOTaskdHandler {
 
 	/* ******** ADDING (UPDATE) ********* */
 	public void sendAddInstancesToWotaskds( NSArray newInstancesArray, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, newInstancesArray, "add" ),
-				wotaskdArray, true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, newInstancesArray, "add" ), wotaskdArray, true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "add", false, false, true, false );
 	}
 
 	public void sendAddApplicationToWotaskds( MApplication newApplication, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, newApplication, null, "add" ),
-				wotaskdArray, true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, newApplication, null, "add" ), wotaskdArray, true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "add", false, true, false, false );
 	}
 
 	public void sendAddHostToWotaskds( MHost newHost, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, newHost, null, null, "add" ),
-				wotaskdArray, true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, newHost, null, null, "add" ), wotaskdArray, true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "add", true, false, false, false );
 	}
 
@@ -202,23 +201,20 @@ public class WOTaskdHandler {
 
 	/* ******** REMOVING (UPDATE) ********* */
 	public void sendRemoveInstancesToWotaskds( NSArray exInstanceArray, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest(
-				createUpdateRequestDictionary( null, null, null, exInstanceArray, "remove" ), wotaskdArray, true );
+		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, exInstanceArray, "remove" ), wotaskdArray, true );
 		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "remove", false, false, true, false );
 	}
 
 	public void sendRemoveApplicationToWotaskds( MApplication exApplication, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, exApplication, null, "remove" ),
-				wotaskdArray, true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, exApplication, null, "remove" ), wotaskdArray, true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "remove", false, true, false, false );
 	}
 
 	public void sendRemoveHostToWotaskds( MHost exHost, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, exHost, null, null, "remove" ),
-				wotaskdArray, true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, exHost, null, null, "remove" ), wotaskdArray, true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "remove", true, false, false, false );
 	}
 
@@ -227,45 +223,41 @@ public class WOTaskdHandler {
 	/* ******** CONFIGURE (UPDATE) ********* */
 	public void sendUpdateInstancesToWotaskds( NSArray<MInstance> changedInstanceArray, NSArray wotaskdArray ) {
 		if( wotaskdArray.count() != 0 && changedInstanceArray.count() != 0 ) {
-			WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, changedInstanceArray,
-					"configure" ), wotaskdArray, true );
-			NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+			final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, changedInstanceArray, "configure" ), wotaskdArray, true );
+			final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 			getUpdateErrors( responseDicts, "configure", false, false, true, false );
 		}
 	}
 
 	public void sendUpdateApplicationToWotaskds( MApplication changedApplication, NSArray wotaskdArray ) {
 		if( wotaskdArray.count() != 0 ) {
-			WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, changedApplication, null,
-					"configure" ), wotaskdArray, true );
-			NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+			final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, changedApplication, null, "configure" ), wotaskdArray, true );
+			final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 			getUpdateErrors( responseDicts, "configure", false, true, false, false );
 		}
 	}
 
 	public void sendUpdateApplicationAndInstancesToWotaskds( MApplication changedApplication, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, changedApplication,
-				changedApplication.instanceArray(), "configure" ), wotaskdArray, true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, changedApplication, changedApplication.instanceArray(), "configure" ), wotaskdArray, true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "configure", false, true, true, false );
 	}
 
 	public void sendUpdateHostToWotaskds( MHost changedHost, NSArray wotaskdArray ) {
-		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, changedHost, null, null, "configure" ),
-				wotaskdArray, true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, changedHost, null, null, "configure" ), wotaskdArray, true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "configure", true, false, false, false );
 	}
 
 	public void sendUpdateSiteToWotaskds() {
 		startReading();
 		try {
-			NSMutableArray hostArray = siteConfig().hostArray();
+			final NSMutableArray hostArray = siteConfig().hostArray();
+
 			if( hostArray.count() != 0 ) {
-				NSMutableDictionary updateRequestDictionary = createUpdateRequestDictionary( siteConfig(), null, null,
-						null, "configure" );
-				WOResponse[] responses = sendRequest( updateRequestDictionary, hostArray, true );
-				NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+				final NSMutableDictionary updateRequestDictionary = createUpdateRequestDictionary( siteConfig(), null, null, null, "configure" );
+				final WOResponse[] responses = sendRequest( updateRequestDictionary, hostArray, true );
+				final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 				getUpdateErrors( responseDicts, "configure", false, false, false, true );
 			}
 		}
@@ -278,22 +270,22 @@ public class WOTaskdHandler {
 
 	/* ******** OVERWRITE / CLEAR (UPDATE) ********* */
 	public void sendOverwriteToWotaskd( MHost aHost ) {
-		NSDictionary SiteConfig = siteConfig().dictionaryForArchive();
-		NSMutableDictionary data = new NSMutableDictionary( SiteConfig, "SiteConfig" );
+		final NSDictionary SiteConfig = siteConfig().dictionaryForArchive();
+		final NSMutableDictionary data = new NSMutableDictionary( SiteConfig, "SiteConfig" );
 		_sendOverwriteClearToWotaskd( aHost, "overwrite", data );
 	}
 
 	protected void sendClearToWotaskd( MHost aHost ) {
-		String data = new String( "SITE" );
+		final String data = new String( "SITE" );
 		_sendOverwriteClearToWotaskd( aHost, "clear", data );
 	}
 
 	private void _sendOverwriteClearToWotaskd( MHost aHost, String type, Object data ) {
-		NSMutableDictionary updateWotaskd = new NSMutableDictionary( data, type );
-		NSMutableDictionary monitorRequest = new NSMutableDictionary( updateWotaskd, "updateWotaskd" );
+		final NSMutableDictionary updateWotaskd = new NSMutableDictionary( data, type );
+		final NSMutableDictionary monitorRequest = new NSMutableDictionary( updateWotaskd, "updateWotaskd" );
 
-		WOResponse[] responses = sendRequest( monitorRequest, new NSArray( aHost ), true );
-		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
+		final WOResponse[] responses = sendRequest( monitorRequest, new NSArray( aHost ), true );
+		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, type, false, false, false, false );
 	}
 
@@ -302,34 +294,35 @@ public class WOTaskdHandler {
 	/* ******** COMMANDING ********* */
 	private static Object[] commandInstanceKeys = new Object[] { "applicationName", "id", "hostName", "port" };
 
-	public static void sendCommandInstancesToWotaskds( String command, NSArray instanceArray, NSArray wotaskdArray,
-			WOTaskdHandler collector ) {
-		if( instanceArray.count() > 0 && wotaskdArray.count() > 0 ) {
-			int instanceCount = instanceArray.count();
+	public static void sendCommandInstancesToWotaskds( String command, NSArray instanceArray, NSArray wotaskdArray, WOTaskdHandler collector ) {
 
-			NSMutableDictionary monitorRequest = new NSMutableDictionary( 1 );
-			NSMutableArray commandWotaskd = new NSMutableArray( instanceArray.count() + 1 );
+		if( instanceArray.count() > 0 && wotaskdArray.count() > 0 ) {
+			final int instanceCount = instanceArray.count();
+
+			final NSMutableDictionary monitorRequest = new NSMutableDictionary( 1 );
+			final NSMutableArray commandWotaskd = new NSMutableArray( instanceArray.count() + 1 );
 
 			commandWotaskd.addObject( command );
 
 			for( int i = 0; i < instanceCount; i++ ) {
 				MInstance anInst = (MInstance)instanceArray.objectAtIndex( i );
-				commandWotaskd.addObject( new NSDictionary( new Object[] { anInst.applicationName(), anInst.id(),
-						anInst.hostName(), anInst.port() }, commandInstanceKeys ) );
+				commandWotaskd.addObject( new NSDictionary( new Object[] { anInst.applicationName(), anInst.id(), anInst.hostName(), anInst.port() }, commandInstanceKeys ) );
 			}
+
 			monitorRequest.takeValueForKey( commandWotaskd, "commandWotaskd" );
 
-			WOResponse[] responses = collector.sendRequest( monitorRequest, wotaskdArray, false );
-			NSDictionary[] responseDicts = collector.generateResponseDictionaries( responses );
+			final WOResponse[] responses = collector.sendRequest( monitorRequest, wotaskdArray, false );
+			final NSDictionary[] responseDicts = collector.generateResponseDictionaries( responses );
+
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "OUT: " + NSPropertyListSerialization.stringFromPropertyList( monitorRequest ) + "\n\nIN: " + NSPropertyListSerialization.stringFromPropertyList( new NSArray( responseDicts ) ) );
 			}
+
 			collector.getCommandErrors( responseDicts );
 		}
 	}
 
-	public void sendCommandInstancesToWotaskds( String command, NSArray<MInstance> instanceArray,
-			NSArray<MHost> wotaskdArray ) {
+	public void sendCommandInstancesToWotaskds( String command, NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( command, instanceArray, wotaskdArray, this );
 	}
 
@@ -349,11 +342,12 @@ public class WOTaskdHandler {
 		sendCommandInstancesToWotaskds( "STOP", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendRefuseSessionToWotaskds( NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray,
-			boolean doRefuse ) {
+	public void sendRefuseSessionToWotaskds( NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray, boolean doRefuse ) {
+
 		for( MInstance instance : instanceArray ) {
 			instance.setRefusingNewSessions( doRefuse );
 		}
+
 		sendCommandInstancesToWotaskds( (doRefuse ? "REFUSE" : "ACCEPT"), instanceArray, wotaskdArray );
 	}
 
@@ -361,7 +355,7 @@ public class WOTaskdHandler {
 
 	/* ******** QUERIES ********* */
 	private NSMutableDictionary createQuery( String queryString ) {
-		NSMutableDictionary monitorRequest = new NSMutableDictionary( queryString, "queryWotaskd" );
+		final NSMutableDictionary monitorRequest = new NSMutableDictionary( queryString, "queryWotaskd" );
 		return monitorRequest;
 	}
 
@@ -372,19 +366,18 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** Response Handling ********* */
-	public static NSDictionary responseParsingFailed = new NSDictionary( new NSDictionary( new NSArray(
-			"INTERNAL ERROR: Failed to parse response XML" ), "errorResponse" ), "monitorResponse" );
+	public static NSDictionary responseParsingFailed = new NSDictionary( new NSDictionary( new NSArray( "INTERNAL ERROR: Failed to parse response XML" ), "errorResponse" ), "monitorResponse" );
 
-	public static NSDictionary emptyResponse = new NSDictionary( new NSDictionary( new NSArray(
-			"INTERNAL ERROR: Response returned was null or empty" ), "errorResponse" ), "monitorResponse" );
+	public static NSDictionary emptyResponse = new NSDictionary( new NSDictionary( new NSArray( "INTERNAL ERROR: Response returned was null or empty" ), "errorResponse" ), "monitorResponse" );
 
 	private NSDictionary[] generateResponseDictionaries( WOResponse[] responses ) {
-		NSDictionary[] responseDicts = new NSDictionary[responses.length];
+
+		final NSDictionary[] responseDicts = new NSDictionary[responses.length];
+
 		for( int i = 0; i < responses.length; i++ ) {
 			if( (responses[i] != null) && (responses[i].content() != null) ) {
 				try {
-					responseDicts[i] = (NSDictionary)(new _JavaMonitorDecoder()).decodeRootObject( responses[i]
-							.content() );
+					responseDicts[i] = (NSDictionary)(new _JavaMonitorDecoder()).decodeRootObject( responses[i].content() );
 				}
 				catch( WOXMLException wxe ) {
 					responseDicts[i] = responseParsingFailed;
@@ -400,63 +393,75 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** Error Handling ********* */
-	public NSMutableArray getUpdateErrors( NSDictionary[] responseDicts, String updateType, boolean hasHosts,
-			boolean hasApplications, boolean hasInstances, boolean hasSite ) {
-		NSMutableArray errorArray = new NSMutableArray();
+	public NSMutableArray getUpdateErrors( NSDictionary[] responseDicts, String updateType, boolean hasHosts, boolean hasApplications, boolean hasInstances, boolean hasSite ) {
+
+		final NSMutableArray errorArray = new NSMutableArray();
 
 		boolean clearOverwrite = false;
-		if( (updateType.equals( "overwrite" )) || (updateType.equals( "clear" )) )
+
+		if( (updateType.equals( "overwrite" )) || (updateType.equals( "clear" )) ) {
 			clearOverwrite = true;
+		}
 
 		for( int i = 0; i < responseDicts.length; i++ ) {
 			if( responseDicts[i] != null ) {
-				NSDictionary responseDict = responseDicts[i];
+				final NSDictionary responseDict = responseDicts[i];
 				getGlobalErrorFromResponse( responseDict, errorArray );
 
-				NSDictionary updateWotaskdResponseDict = (NSDictionary)responseDict
-						.valueForKey( "updateWotaskdResponse" );
+				final NSDictionary updateWotaskdResponseDict = (NSDictionary)responseDict.valueForKey( "updateWotaskdResponse" );
 
 				if( updateWotaskdResponseDict != null ) {
-					NSDictionary updateTypeResponse = (NSDictionary)updateWotaskdResponseDict.valueForKey( updateType );
+					final NSDictionary updateTypeResponse = (NSDictionary)updateWotaskdResponseDict.valueForKey( updateType );
+
 					if( updateTypeResponse != null ) {
 						if( clearOverwrite ) {
-							String errorMessage = (String)updateTypeResponse.valueForKey( "errorMessage" );
+							final String errorMessage = (String)updateTypeResponse.valueForKey( "errorMessage" );
+
 							if( errorMessage != null ) {
 								errorArray.addObject( errorMessage );
 							}
 						}
 						else {
 							if( hasSite ) {
-								NSDictionary aDict = (NSDictionary)updateTypeResponse.valueForKey( "site" );
-								String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+								final NSDictionary aDict = (NSDictionary)updateTypeResponse.valueForKey( "site" );
+								final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+
 								if( errorMessage != null ) {
 									errorArray.addObject( errorMessage );
 								}
 							}
-							if( hasHosts )
+							if( hasHosts ) {
 								_addUpdateResponseToErrorArray( updateTypeResponse, "hostArray", errorArray );
-							if( hasApplications )
+							}
+							if( hasApplications ) {
 								_addUpdateResponseToErrorArray( updateTypeResponse, "applicationArray", errorArray );
-							if( hasInstances )
+							}
+							if( hasInstances ) {
 								_addUpdateResponseToErrorArray( updateTypeResponse, "instanceArray", errorArray );
+							}
 						}
 					}
 				}
 			}
 		}
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "##### getUpdateErrors: " + errorArray );
+		}
+
 		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		return errorArray;
 	}
 
-	protected void _addUpdateResponseToErrorArray( NSDictionary updateTypeResponse, String responseKey,
-			NSMutableArray errorArray ) {
-		NSArray aResponse = (NSArray)updateTypeResponse.valueForKey( responseKey );
+	protected void _addUpdateResponseToErrorArray( NSDictionary updateTypeResponse, String responseKey, NSMutableArray errorArray ) {
+
+		final NSArray aResponse = (NSArray)updateTypeResponse.valueForKey( responseKey );
+
 		if( aResponse != null ) {
 			for( Enumeration e = aResponse.objectEnumerator(); e.hasMoreElements(); ) {
-				NSDictionary aDict = (NSDictionary)e.nextElement();
-				String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+				final NSDictionary aDict = (NSDictionary)e.nextElement();
+				final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+
 				if( errorMessage != null ) {
 					errorArray.addObject( errorMessage );
 				}
@@ -465,67 +470,83 @@ public class WOTaskdHandler {
 	}
 
 	public NSMutableArray getCommandErrors( NSDictionary[] responseDicts ) {
-		NSMutableArray errorArray = new NSMutableArray();
+		final NSMutableArray errorArray = new NSMutableArray();
 
 		for( int i = 0; i < responseDicts.length; i++ ) {
 			if( responseDicts[i] != null ) {
-				NSDictionary responseDict = responseDicts[i];
+				final NSDictionary responseDict = responseDicts[i];
 				getGlobalErrorFromResponse( responseDict, errorArray );
 
-				NSArray commandWotaskdResponse = (NSArray)responseDict.valueForKey( "commandWotaskdResponse" );
+				final NSArray commandWotaskdResponse = (NSArray)responseDict.valueForKey( "commandWotaskdResponse" );
+
 				if( (commandWotaskdResponse != null) && (commandWotaskdResponse.count() > 0) ) {
 					int count = commandWotaskdResponse.count();
+
 					for( int j = 1; j < count; j++ ) {
-						NSDictionary aDict = (NSDictionary)commandWotaskdResponse.objectAtIndex( j );
-						String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+						final NSDictionary aDict = (NSDictionary)commandWotaskdResponse.objectAtIndex( j );
+						final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+
 						if( errorMessage != null ) {
 							errorArray.addObject( errorMessage );
-							if( j == 0 )
+							if( j == 0 ) {
 								break; // the command produced an error,
-							// parsing didn't finish
+								// parsing didn't finish
+							}
 						}
 					}
 				}
 			}
 		}
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "##### getCommandErrors: " + errorArray );
+		}
+
 		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		return errorArray;
 	}
 
 	protected NSMutableArray getQueryErrors( NSDictionary[] responseDicts ) {
-		NSMutableArray errorArray = new NSMutableArray();
+
+		final NSMutableArray errorArray = new NSMutableArray();
 
 		for( int i = 0; i < responseDicts.length; i++ ) {
 			if( responseDicts[i] != null ) {
-				NSDictionary responseDict = responseDicts[i];
+				final NSDictionary responseDict = responseDicts[i];
 				getGlobalErrorFromResponse( responseDict, errorArray );
 
-				NSArray commandWotaskdResponse = (NSArray)responseDict.valueForKey( "commandWotaskdResponse" );
+				final NSArray commandWotaskdResponse = (NSArray)responseDict.valueForKey( "commandWotaskdResponse" );
+
 				if( (commandWotaskdResponse != null) && (commandWotaskdResponse.count() > 0) ) {
 					int count = commandWotaskdResponse.count();
+
 					for( int j = 1; j < count; j++ ) {
-						NSDictionary aDict = (NSDictionary)commandWotaskdResponse.objectAtIndex( j );
-						String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+						final NSDictionary aDict = (NSDictionary)commandWotaskdResponse.objectAtIndex( j );
+						final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+
 						if( errorMessage != null ) {
 							errorArray.addObject( errorMessage );
-							if( j == 0 )
+							if( j == 0 ) {
 								break; // the command produced an error,
-							// parsing didn't finish
+								// parsing didn't finish
+							}
 						}
 					}
 				}
 			}
 		}
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "##### getQueryErrors: " + errorArray );
+		}
+
 		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		return errorArray;
 	}
 
 	protected void getGlobalErrorFromResponse( NSDictionary responseDict, NSMutableArray errorArray ) {
-		NSArray errorResponse = (NSArray)responseDict.valueForKey( "errorResponse" );
+		final NSArray errorResponse = (NSArray)responseDict.valueForKey( "errorResponse" );
+
 		if( errorResponse != null ) {
 			errorArray.addObjectsFromArray( errorResponse );
 		}
@@ -534,46 +555,47 @@ public class WOTaskdHandler {
 	public void getInstanceStatusForHosts( NSArray<MHost> hostArray ) {
 		if( hostArray.count() != 0 ) {
 
-			WOResponse[] responses = sendQueryToWotaskds( "INSTANCE", hostArray );
+			final WOResponse[] responses = sendQueryToWotaskds( "INSTANCE", hostArray );
 
-			NSMutableArray errorArray = new NSMutableArray();
+			final NSMutableArray errorArray = new NSMutableArray();
 			NSArray responseArray = null;
 			NSDictionary responseDictionary = null;
 			NSDictionary queryResponseDictionary = null;
+
 			for( int i = 0; i < responses.length; i++ ) {
 				if( (responses[i] == null) || (responses[i].content() == null) ) {
 					responseDictionary = emptyResponse;
 				}
 				else {
 					try {
-						responseDictionary = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i]
-								.content() );
+						responseDictionary = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i].content() );
 					}
 					catch( WOXMLException wxe ) {
-						NSLog.err.appendln( "MonitorComponent pageWithName(AppDetailPage) Error decoding response: "
-								+ responses[i].contentString() );
+						NSLog.err.appendln( "MonitorComponent pageWithName(AppDetailPage) Error decoding response: " + responses[i].contentString() );
 						responseDictionary = responseParsingFailed;
 					}
 				}
 				getGlobalErrorFromResponse( responseDictionary, errorArray );
 
 				queryResponseDictionary = (NSDictionary)responseDictionary.valueForKey( "queryWotaskdResponse" );
+
 				if( queryResponseDictionary != null ) {
 					responseArray = (NSArray)queryResponseDictionary.valueForKey( "instanceResponse" );
+
 					if( responseArray != null ) {
 						for( int j = 0; j < responseArray.count(); j++ ) {
 							responseDictionary = (NSDictionary)responseArray.objectAtIndex( j );
 
-							String host = (String)responseDictionary.valueForKey( "host" );
-							Integer port = (Integer)responseDictionary.valueForKey( "port" );
-							String runningState = (String)responseDictionary.valueForKey( "runningState" );
-							Boolean refusingNewSessions = (Boolean)responseDictionary
-									.valueForKey( "refusingNewSessions" );
-							NSDictionary statistics = (NSDictionary)responseDictionary.valueForKey( "statistics" );
-							NSArray deaths = (NSArray)responseDictionary.valueForKey( "deaths" );
-							String nextShutdown = (String)responseDictionary.valueForKey( "nextShutdown" );
+							final String host = (String)responseDictionary.valueForKey( "host" );
+							final Integer port = (Integer)responseDictionary.valueForKey( "port" );
+							final String runningState = (String)responseDictionary.valueForKey( "runningState" );
+							final Boolean refusingNewSessions = (Boolean)responseDictionary.valueForKey( "refusingNewSessions" );
+							final NSDictionary statistics = (NSDictionary)responseDictionary.valueForKey( "statistics" );
+							final NSArray deaths = (NSArray)responseDictionary.valueForKey( "deaths" );
+							final String nextShutdown = (String)responseDictionary.valueForKey( "nextShutdown" );
 
-							MInstance anInstance = siteConfig().instanceWithHostnameAndPort( host, port );
+							final MInstance anInstance = siteConfig().instanceWithHostnameAndPort( host, port );
+
 							if( anInstance != null ) {
 								for( int k = 0; k < MObject.stateArray.length; k++ ) {
 									if( MObject.stateArray[k].equals( runningState ) ) {
@@ -589,21 +611,24 @@ public class WOTaskdHandler {
 						}
 					}
 				}
-			} // For Loop
-			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+			}
+
+			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "##### pageWithName(AppDetailPage) errors: " + errorArray );
+			}
+
 			errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		}
-
 	}
 
 	public void getHostStatusForHosts( NSArray<MHost> hostArray ) {
-		WOResponse[] responses = sendQueryToWotaskds( "HOST", hostArray );
+		final WOResponse[] responses = sendQueryToWotaskds( "HOST", hostArray );
 
-		NSMutableArray errorArray = new NSMutableArray();
+		final NSMutableArray errorArray = new NSMutableArray();
 		NSDictionary responseDict = null;
+
 		for( int i = 0; i < responses.length; i++ ) {
-			MHost aHost = siteConfig().hostArray().objectAtIndex( i );
+			final MHost aHost = siteConfig().hostArray().objectAtIndex( i );
 
 			if( (responses[i] == null) || (responses[i].content() == null) ) {
 				responseDict = emptyResponse;
@@ -613,58 +638,63 @@ public class WOTaskdHandler {
 					responseDict = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i].content() );
 				}
 				catch( WOXMLException wxe ) {
-					NSLog.err.appendln( "MonitorComponent pageWithName(HostsPage) Error decoding response: "
-							+ responses[i].contentString() );
+					NSLog.err.appendln( "MonitorComponent pageWithName(HostsPage) Error decoding response: " + responses[i].contentString() );
 					responseDict = responseParsingFailed;
 				}
 			}
+
 			getGlobalErrorFromResponse( responseDict, errorArray );
 
-			NSDictionary queryResponse = (NSDictionary)responseDict.valueForKey( "queryWotaskdResponse" );
+			final NSDictionary queryResponse = (NSDictionary)responseDict.valueForKey( "queryWotaskdResponse" );
+
 			if( queryResponse != null ) {
-				NSDictionary hostResponse = (NSDictionary)queryResponse.valueForKey( "hostResponse" );
+				final NSDictionary hostResponse = (NSDictionary)queryResponse.valueForKey( "hostResponse" );
 				aHost._setHostInfo( hostResponse );
 				aHost.isAvailable = true;
 			}
 			else {
 				aHost.isAvailable = false;
 			}
-		} // for
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
-			NSLog.debug.appendln( "##### pageWithName(HostsPage) errors: " + errorArray );
-		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
+		}
 
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
+			NSLog.debug.appendln( "##### pageWithName(HostsPage) errors: " + errorArray );
+		}
+
+		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 	}
 
 	public void getApplicationStatusForHosts( NSArray<MHost> hostArray ) {
 
-		WOResponse[] responses = sendQueryToWotaskds( "APPLICATION", hostArray );
+		final WOResponse[] responses = sendQueryToWotaskds( "APPLICATION", hostArray );
 
-		NSMutableArray errorArray = new NSMutableArray();
+		final NSMutableArray errorArray = new NSMutableArray();
 		NSDictionary applicationResponseDictionary;
 		NSDictionary queryResponseDictionary;
 		NSArray responseArray = null;
 		NSDictionary responseDictionary = null;
+
 		for( int i = 0; i < responses.length; i++ ) {
 			if( (responses[i] == null) || (responses[i].content() == null) ) {
 				queryResponseDictionary = emptyResponse;
 			}
 			else {
 				try {
-					queryResponseDictionary = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i]
-							.content() );
+					queryResponseDictionary = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i].content() );
 				}
 				catch( WOXMLException wxe ) {
-					NSLog.err.appendln( "MonitorComponent pageWithName(ApplicationsPage) Error decoding response: "
-							+ responses[i].contentString() );
+					NSLog.err.appendln( "MonitorComponent pageWithName(ApplicationsPage) Error decoding response: " + responses[i].contentString() );
 					queryResponseDictionary = responseParsingFailed;
 				}
 			}
+
 			getGlobalErrorFromResponse( queryResponseDictionary, errorArray );
 
 			applicationResponseDictionary = (NSDictionary)queryResponseDictionary.valueForKey( "queryWotaskdResponse" );
+
 			if( applicationResponseDictionary != null ) {
 				responseArray = (NSArray)applicationResponseDictionary.valueForKey( "applicationResponse" );
+
 				if( responseArray != null ) {
 					for( int j = 0; j < responseArray.count(); j++ ) {
 						responseDictionary = (NSDictionary)responseArray.objectAtIndex( j );
@@ -677,9 +707,12 @@ public class WOTaskdHandler {
 					}
 				}
 			}
-		} // for
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
+		}
+
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "##### pageWithName(ApplicationsPage) errors: " + errorArray );
+		}
+
 		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 	}
 }
