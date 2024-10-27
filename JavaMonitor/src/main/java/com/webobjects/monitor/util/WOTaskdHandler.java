@@ -6,7 +6,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.xml.WOXMLException;
 import com.webobjects.appserver.xml._JavaMonitorCoder;
@@ -25,7 +24,6 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.StringExtensions;
-import com.webobjects.monitor.application.Application;
 import com.webobjects.monitor.application.components.AppDetailPage;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 import com.webobjects.monitor.application.components.HostsPage;
@@ -41,6 +39,8 @@ public class WOTaskdHandler {
 	private static _NSCollectionReaderWriterLock _lock = new _NSCollectionReaderWriterLock();
 
 	private static MSiteConfig _siteConfig;
+
+	private final ErrorCollector _errorCollector;
 
 	public static MSiteConfig siteConfig() {
 		return _siteConfig;
@@ -64,16 +64,13 @@ public class WOTaskdHandler {
 		}
 	}
 
-	public Application _theApplication = (Application)WOApplication.application();
 
-	ErrorCollector _session;
-
-	public WOTaskdHandler( ErrorCollector session ) {
-		_session = session;
+	public WOTaskdHandler( ErrorCollector errorCollector ) {
+		_errorCollector = errorCollector;
 	}
 
-	private ErrorCollector mySession() {
-		return _session;
+	private ErrorCollector errorCollector() {
+		return _errorCollector;
 	}
 
 	private static _NSCollectionReaderWriterLock lock() {
@@ -445,7 +442,7 @@ public class WOTaskdHandler {
 		}
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 			NSLog.debug.appendln( "##### getUpdateErrors: " + errorArray );
-		mySession().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
+		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		return errorArray;
 	}
 
@@ -489,7 +486,7 @@ public class WOTaskdHandler {
 		}
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 			NSLog.debug.appendln( "##### getCommandErrors: " + errorArray );
-		mySession().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
+		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		return errorArray;
 	}
 
@@ -519,7 +516,7 @@ public class WOTaskdHandler {
 		}
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 			NSLog.debug.appendln( "##### getQueryErrors: " + errorArray );
-		mySession().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
+		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		return errorArray;
 	}
 
@@ -591,7 +588,7 @@ public class WOTaskdHandler {
 			} // For Loop
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 				NSLog.debug.appendln( "##### pageWithName(AppDetailPage) errors: " + errorArray );
-			mySession().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
+			errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 		}
 
 	}
@@ -631,7 +628,7 @@ public class WOTaskdHandler {
 		} // for
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 			NSLog.debug.appendln( "##### pageWithName(HostsPage) errors: " + errorArray );
-		mySession().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
+		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 
 	}
 
@@ -679,6 +676,6 @@ public class WOTaskdHandler {
 		} // for
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 			NSLog.debug.appendln( "##### pageWithName(ApplicationsPage) errors: " + errorArray );
-		mySession().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
+		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 	}
 }
