@@ -195,7 +195,7 @@ public class HostsPage extends MonitorComponent {
 		}
 		catch( IOException | InterruptedException e ) {
 			e.printStackTrace();
-			return "Failed to get response from wotaskd " + hostName + ": " + WOApplication.application().lifebeatDestinationPort();
+			return "Failed to get response from wotaskd %s:%s".formatted( hostName, port );
 		}
 	}
 
