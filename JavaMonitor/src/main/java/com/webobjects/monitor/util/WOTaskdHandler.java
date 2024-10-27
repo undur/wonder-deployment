@@ -93,6 +93,10 @@ public class WOTaskdHandler {
 		lock().endWriting();
 	}
 
+	/**
+	 * FIXME: OK, this is not nice. It's checking which page is invoking this method and then updating status accordingly // Hugi 2024-10-27
+	 */
+	@Deprecated
 	public void updateForPage( String aName ) {
 		// KH - we should probably set the instance information as we get the
 		// responses, to avoid waiting, then doing it in serial! (not that it's
