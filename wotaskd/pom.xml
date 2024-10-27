@@ -43,6 +43,11 @@
 			<version>${wonder.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${wonder.core.group}</groupId>
+			<artifactId>ERLoggingReload4j</artifactId>
+			<version>${wonder.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>undur</groupId>
 			<artifactId>JavaMonitorFramework</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
