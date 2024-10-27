@@ -142,6 +142,12 @@ public class Application extends ERXApplication {
 
 	public Application() {
 		super();
+		
+		// FIXME: I know.
+		if( "hugi".equals( System.getProperty( "user.name" ) ) ) {
+			System.setProperty( "WODeploymentConfigurationDirectory", "/Users/hugi/Desktop/woconfig" );
+		}
+
 		_lock = new _NSCollectionReaderWriterLock();
 
 		String dd = System.getProperties().getProperty( "_DeploymentDebugging" );
