@@ -185,10 +185,13 @@ public class AppDetailPage extends MonitorComponent {
 		aPage.isNewInstanceSectionVisible = true;
 		return aPage;
 	}
+	
+	public WOComponent instanceDetailClicked() {
+		return InstDetailPage.create( context(), currentInstance );
+	}
 
 	public WOComponent configureInstanceClicked() {
-		InstConfigurePage aPage = InstConfigurePage.create( context(), currentInstance );
-		return aPage;
+		return InstConfigurePage.create( context(), currentInstance );
 	}
 
 	public WOComponent deleteInstanceClicked() {

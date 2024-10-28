@@ -1,0 +1,15 @@
+<wo:JMTablerLook>
+
+	<div class="card p-3 pb-1 mb-3">
+		<div class="row">
+			<div class="col">
+				<h1>Instance <wo:str value="$myInstance.displayName" /> on <wo:str value="$myInstance.hostName" /></h1>
+			</div>
+			<div class="col" align="right">
+				<wo:link action="$returnClicked" class="btn btn-primary">All instances</wo:link>
+			</div>
+		</div>
+	</div>
+
+	<wo:link action="$jstack" class="btn btn-primary">jstack</wo:link>
+</wo:JMTablerLook>

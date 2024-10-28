@@ -55,7 +55,7 @@
 				</h1>
 			</div>
 			<div class="col" align="right">		
-				<wo:link action="$configureApplicationClicked" class="btn btn-primary">Configuration</wo:link>
+				<wo:link action="$configureApplicationClicked" class="btn btn-primary">Application configuration</wo:link>
 			</div>
 		</div>
 	</div>
@@ -102,6 +102,7 @@
 				<wo:if condition = "$showDetailStatistics" negate="$true">
 					<th>WOStats</th>
 				</wo:if>
+				<th>Details</th>
 				<th>Configure</th>
 				<th>Delete</th>
 			</tr>
@@ -111,7 +112,7 @@
 						<wo:form action="$selectOne"><wo:AjaxObserveField action="$selectOne"><wo:checkbox checked="$isSelectedInstance"/></wo:AjaxObserveField></wo:form>
 					</td>
 					<td>
-						<wo:str value="$currentInstance.displayName" />
+						<wo:link action="$instanceDetailClicked"><wo:str value="$currentInstance.displayName" /></wo:link>
 						<wo:if condition="$currentInstance.isRunning_M">
 							<wo:link href="$hrefToInst" target="new" title="Open through proxy/adaptor/webserver"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
@@ -193,6 +194,9 @@
 						</td>
 					</wo:if>
 					<td>
+						<wo:link action="$instanceDetailClicked" class="btn btn-sm btn-secondary">Details</wo:link>
+					</td>
+					<td>
 						<wo:link action="$configureInstanceClicked" class="btn btn-sm btn-secondary">Config</wo:link>
 					</td>
 					<td>
@@ -266,8 +270,8 @@
 							<wo:str value="$actualRatePerMinute" numberformat="0.00" /> TPM
 						</td>
 					</wo:if>
-					<!-- Configure -->
-					<td><wo:link action="$configureApplicationClicked"  class="btn btn-sm btn-secondary"><span>Config</span></wo:link></td>
+					<td></td>
+					<td><wo:link action="$configureApplicationClicked"  class="btn btn-sm btn-secondary"><span>App Config</span></wo:link></td>
 					<td><wo:link action="$deleteAllInstancesClicked"  class="btn btn-sm btn-danger"><span>Delete</span></wo:link></td>
 				</tr>
 			
