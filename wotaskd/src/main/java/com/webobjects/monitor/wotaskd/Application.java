@@ -31,6 +31,9 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WORequestHandler;
@@ -46,6 +49,9 @@ import com.webobjects.monitor._private.StringExtensions;
 import er.extensions.appserver.ERXApplication;
 
 public class Application extends ERXApplication {
+	
+	private static final Logger logger = LoggerFactory.getLogger( Application.class );
+	
 	private LocalMonitor _localMonitor;
 	private MSiteConfig _siteConfig;
 	private ListenThread listenThread;
@@ -395,13 +401,28 @@ public class Application extends ERXApplication {
 	// overridden dispatch of requests, for faster lifebeat checking
 	// if it's a lifebeat, we return a null response, and that should close the socket immediately
 	@Override
-	public WOResponse dispatchRequest( WORequest aRequest ) {
-		WORequestHandler aHandler = handlerForRequest( aRequest );
-		if( (aHandler != null) && (aHandler == _lifebeatRequestHandler) ) {
+	public WOResponse dispatchRequest( WORequest request ) {
+
+//		logger.info( " ======= >> REQUEST ========" );
+//		logger.info( "{}", request );
+
+		final WORequestHandler handler = handlerForRequest( request );
+
+		if( (handler != null) && (handler == _lifebeatRequestHandler) ) {
 			_TheLastApplicationAccessTime = System.currentTimeMillis();
-			return aHandler.handleRequest( aRequest );
+			final WOResponse response = handler.handleRequest( request );
+
+//			logger.info( " ======= >> RESPONSE (lifebeat) ========" );
+//			logger.info( "{}", response );
+			return response;
 		}
-		return super.dispatchRequest( aRequest );
+
+		final WOResponse response = super.dispatchRequest( request );
+//		logger.info( " ======= >> RESPONSE ========" );
+//		logger.info( "{}", response );
+//		logger.info( "{}", response.contentString() );
+		
+		return response;
 	}
 
 	// Inner class used to listen to Multicast Queries and UDP queries
