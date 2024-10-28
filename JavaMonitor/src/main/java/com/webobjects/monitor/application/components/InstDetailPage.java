@@ -11,12 +11,14 @@ import er.extensions.appserver.ERXApplication;
 
 public class InstDetailPage extends MonitorComponent {
 
+	public String jstackString;
+
 	public InstDetailPage( WOContext context ) {
 		super( context );
 	}
 
 	public WOActionResults jstack() {
-		ExperimentalUtilities.jstack( myInstance() );
+		jstackString = ExperimentalUtilities.jstack( myInstance() );
 		return null;
 	}
 

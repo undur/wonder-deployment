@@ -1,5 +1,4 @@
-<wo:JMTablerLook>
-
+<wo:JMTablerLook currentPage="$APP_PAGE">
 	<div class="card p-3 pb-1 mb-3">
 		<div class="row">
 			<div class="col">
@@ -12,4 +11,8 @@
 	</div>
 
 	<wo:link action="$jstack" class="btn btn-primary">jstack</wo:link>
+	
+	<wo:if condition="$jstackString.length">
+		<pre><wo:str value="$jstackString" /></pre>
+	</wo:if>
 </wo:JMTablerLook>
