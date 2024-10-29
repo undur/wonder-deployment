@@ -35,6 +35,7 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.components.ConfirmationPage.ConfirmationDelegate;
 
 public class HostsPage extends MonitorComponent {
 
@@ -122,39 +123,25 @@ public class HostsPage extends MonitorComponent {
 
 		final MHost host = currentHost;
 
-		return ConfirmationPage.create( context(), new ConfirmationPage.Delegate() {
+		return ConfirmationPage.create( context(), new ConfirmationDelegate(
+				HOST_PAGE,
+				"Are you sure you want to delete the host <I>" + host.name() + "</I>?",
+				"Selecting 'Yes' will shutdown any running instances of this host, and remove those instance configurations.",
+				() -> {
+					handler().startWriting();
+					try {
+						siteConfig().removeHost_M( host );
+						NSMutableArray tempHostArray = new NSMutableArray( siteConfig().hostArray() );
+						tempHostArray.addObject( host );
 
-			public WOComponent cancel() {
-				return HostsPage.create( context() );
-			}
-
-			public WOComponent confirm() {
-				handler().startWriting();
-				try {
-					siteConfig().removeHost_M( host );
-					NSMutableArray tempHostArray = new NSMutableArray( siteConfig().hostArray() );
-					tempHostArray.addObject( host );
-
-					handler().sendRemoveHostToWotaskds( host, tempHostArray );
-				}
-				finally {
-					handler().endWriting();
-				}
-				return HostsPage.create( context() );
-			}
-
-			public String explaination() {
-				return "Selecting 'Yes' will shutdown any running instances of this host, and remove those instance configurations.";
-			}
-
-			public int pageType() {
-				return HOST_PAGE;
-			}
-
-			public String question() {
-				return "Are you sure you want to delete the host <I>" + host.name() + "</I>?";
-			}
-		} );
+						handler().sendRemoveHostToWotaskds( host, tempHostArray );
+					}
+					finally {
+						handler().endWriting();
+					}
+					return HostsPage.create( context() );
+				},
+				() -> HostsPage.create( context() ) ) );
 	}
 
 	public WOComponent configureHostClicked() {

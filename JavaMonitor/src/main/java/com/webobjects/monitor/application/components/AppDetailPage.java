@@ -31,6 +31,7 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.components.ConfirmationPage.ConfirmationDelegate;
 import com.webobjects.monitor.application.starter.ApplicationStarter;
 import com.webobjects.monitor.application.starter.GracefulBouncer;
 import com.webobjects.monitor.application.starter.RollingShutdownBouncer;
@@ -185,7 +186,7 @@ public class AppDetailPage extends MonitorComponent {
 		aPage.isNewInstanceSectionVisible = true;
 		return aPage;
 	}
-	
+
 	public WOComponent instanceDetailClicked() {
 		return InstDetailPage.create( context(), currentInstance );
 	}
@@ -198,40 +199,25 @@ public class AppDetailPage extends MonitorComponent {
 
 		final MInstance instance = currentInstance;
 
-		return ConfirmationPage.create( context(), new ConfirmationPage.Delegate() {
+		return ConfirmationPage.create( context(), new ConfirmationDelegate(
+				APP_PAGE,
+				"Are you sure you want to delete this instance (" + instance.displayName() + " running on " + instance.hostName() + ")",
+				"Selecting 'Yes' will shutdown the selected instance of this application and delete its instance configuration.",
+				() -> {
+					handler().startWriting();
+					try {
+						siteConfig().removeInstance_M( instance );
 
-			public WOComponent cancel() {
-				return AppDetailPage.create( context(), instance.application() );
-			}
-
-			public WOComponent confirm() {
-				handler().startWriting();
-				try {
-					siteConfig().removeInstance_M( instance );
-
-					if( siteConfig().hostArray().count() != 0 ) {
-						handler().sendRemoveInstancesToWotaskds( new NSArray( instance ), siteConfig().hostArray() );
+						if( siteConfig().hostArray().count() != 0 ) {
+							handler().sendRemoveInstancesToWotaskds( new NSArray( instance ), siteConfig().hostArray() );
+						}
 					}
-				}
-				finally {
-					handler().endWriting();
-				}
-				return AppDetailPage.create( context(), instance.application() );
-			}
-
-			public String explaination() {
-				return "Selecting 'Yes' will shutdown the selected instance of this application and delete its instance configuration.";
-			}
-
-			public int pageType() {
-				return APP_PAGE;
-			}
-
-			public String question() {
-				return "Are you sure you want to delete this instance (" + instance.displayName() + " running on " + instance.hostName() + ")";
-			}
-
-		} );
+					finally {
+						handler().endWriting();
+					}
+					return AppDetailPage.create( context(), instance.application() );
+				},
+				() -> AppDetailPage.create( context(), instance.application() ) ) );
 	}
 
 	public String linkToWOStats() {
@@ -417,45 +403,30 @@ public class AppDetailPage extends MonitorComponent {
 		final NSArray instances = selectedInstances().immutableClone();
 		final MApplication application = myApplication();
 
-		return ConfirmationPage.create( context(), new ConfirmationPage.Delegate() {
+		return ConfirmationPage.create( context(), new ConfirmationDelegate(
+				APP_PAGE,
+				"Are you sure you want to stop the " + instances.count() + " instances of " + application.name() + "?",
+				"Selecting 'Yes' will shutdown the selected instances of this application.",
+				() -> {
+					handler().startReading();
+					try {
+						if( application.hostArray().count() != 0 ) {
+							handler().sendStopInstancesToWotaskds( instances, application.hostArray() );
+						}
 
-			public WOComponent cancel() {
-				return AppDetailPage.create( context(), application, instances );
-			}
-
-			public WOComponent confirm() {
-				handler().startReading();
-				try {
-					if( application.hostArray().count() != 0 ) {
-						handler().sendStopInstancesToWotaskds( instances, application.hostArray() );
-					}
-
-					for( int i = 0; i < instances.count(); i++ ) {
-						MInstance anInst = (MInstance)instances.objectAtIndex( i );
-						if( anInst.state != MObject.DEAD ) {
-							anInst.state = MObject.STOPPING;
+						for( int i = 0; i < instances.count(); i++ ) {
+							MInstance anInst = (MInstance)instances.objectAtIndex( i );
+							if( anInst.state != MObject.DEAD ) {
+								anInst.state = MObject.STOPPING;
+							}
 						}
 					}
-				}
-				finally {
-					handler().endReading();
-				}
-				return AppDetailPage.create( context(), application, instances );
-			}
-
-			public String explaination() {
-				return "Selecting 'Yes' will shutdown the selected instances of this application.";
-			}
-
-			public int pageType() {
-				return APP_PAGE;
-			}
-
-			public String question() {
-				return "Are you sure you want to stop the " + instances.count() + " instances of " + application.name() + "?";
-			}
-
-		} );
+					finally {
+						handler().endReading();
+					}
+					return AppDetailPage.create( context(), application, instances );
+				},
+				() -> AppDetailPage.create( context(), application, instances ) ) );
 	}
 
 	public WOComponent deleteAllInstancesClicked() {
@@ -463,40 +434,25 @@ public class AppDetailPage extends MonitorComponent {
 		final NSArray instances = selectedInstances().immutableClone();
 		final MApplication application = myApplication();
 
-		return ConfirmationPage.create( context(), new ConfirmationPage.Delegate() {
-
-			public WOComponent cancel() {
-				return AppDetailPage.create( context(), application, instances );
-			}
-
-			public WOComponent confirm() {
-				handler().startWriting();
-				try {
-					siteConfig().removeInstances_M( application, instances );
-
-					if( siteConfig().hostArray().count() != 0 ) {
-						handler().sendRemoveInstancesToWotaskds( instances, siteConfig().hostArray() );
+		return ConfirmationPage.create( context(), new ConfirmationDelegate(
+				APP_PAGE,
+				"Are you sure you want to delete the selected <i>" + instances.count() + "</i> instances of application " + application.name() + "?",
+				"Selecting 'Yes' will shutdown any shutdown the selected instances of this application, and delete all matching instance configurations.",
+				() -> {
+					handler().startWriting();
+					try {
+						siteConfig().removeInstances_M( application, instances );
+						
+						if( siteConfig().hostArray().count() != 0 ) {
+							handler().sendRemoveInstancesToWotaskds( instances, siteConfig().hostArray() );
+						}
 					}
-				}
-				finally {
-					handler().endWriting();
-				}
-				return AppDetailPage.create( context(), application, instances );
-			}
-
-			public String explaination() {
-				return "Selecting 'Yes' will shutdown any shutdown the selected instances of this application, and delete all matching instance configurations.";
-			}
-
-			public int pageType() {
-				return APP_PAGE;
-			}
-
-			public String question() {
-				return "Are you sure you want to delete the selected <i>" + instances.count() + "</i> instances of application " + application.name() + "?";
-			}
-
-		} );
+					finally {
+						handler().endWriting();
+					}
+					return AppDetailPage.create( context(), application, instances );
+				},
+				() -> AppDetailPage.create( context(), application, instances ) ) );
 	}
 
 	public WOComponent autoRecoverEnableAllClicked() {

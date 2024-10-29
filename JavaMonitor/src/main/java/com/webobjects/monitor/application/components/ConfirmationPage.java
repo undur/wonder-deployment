@@ -11,53 +11,33 @@ import er.extensions.appserver.ERXApplication;
 
 public class ConfirmationPage extends MonitorComponent {
 
-	/**
-	 * FIXME: Delete once we've replaced all occurrences with ConfirmationDelegate
-	 */
-	@Deprecated
-	public interface Delegate {
-
-		public int pageType();
-
-		public String question();
-
-		// FIXME: Tackle that lovely typo here // Hugi 2024-10-28
-		public String explaination();
-
-		public WOActionResults confirm();
-
-		public WOActionResults cancel();
-	}
-
 	public record ConfirmationDelegate(
 			int pageType,
 			String question,
 			String explaination,
-			Supplier<WOActionResults> confirmFunction,
-			Supplier<WOActionResults> cancelFunction ) implements Delegate {
+			Supplier<WOActionResults> confirmSupplier,
+			Supplier<WOActionResults> cancelSupplier) {
 
-		@Override
 		public WOActionResults confirm() {
-			return confirmFunction().get();
+			return confirmSupplier().get();
 		}
-
-		@Override
+		
 		public WOActionResults cancel() {
-			return cancelFunction().get();
+			return cancelSupplier().get();
 		}
 	}
 
-	private Delegate _delegate;
+	private ConfirmationDelegate _delegate;
 
 	public ConfirmationPage( WOContext context ) {
 		super( context );
 	}
 
-	public Delegate delegate() {
+	public ConfirmationDelegate delegate() {
 		return _delegate;
 	}
 
-	public static ConfirmationPage create( WOContext context, Delegate delegate ) {
+	public static ConfirmationPage create( WOContext context, ConfirmationDelegate delegate ) {
 		Objects.requireNonNull( context );
 		Objects.requireNonNull( delegate );
 
