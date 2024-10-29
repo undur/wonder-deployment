@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
+import com.webobjects.appserver.WOActionResults;
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -22,6 +24,7 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.components.ConfirmationPage.ConfirmationDelegate;
 
 public class ApplicationsPage extends MonitorComponent {
 
@@ -90,40 +93,32 @@ public class ApplicationsPage extends MonitorComponent {
 
 		final MApplication application = currentApplication;
 
-		return ConfirmationPage.create( context(), new ConfirmationPage.Delegate() {
+		final Supplier<WOActionResults> confirm = () -> {
+			handler().startWriting();
+			try {
+				siteConfig().removeApplication_M( application );
 
-			public WOComponent cancel() {
-				return ApplicationsPage.create( context() );
-			}
-
-			public WOComponent confirm() {
-				handler().startWriting();
-				try {
-					siteConfig().removeApplication_M( application );
-
-					if( siteConfig().hostArray().count() != 0 ) {
-						handler().sendRemoveApplicationToWotaskds( application, siteConfig().hostArray() );
-					}
+				if( siteConfig().hostArray().count() != 0 ) {
+					handler().sendRemoveApplicationToWotaskds( application, siteConfig().hostArray() );
 				}
-				finally {
-					handler().endWriting();
-				}
-				return ApplicationsPage.create( context() );
 			}
-
-			public String explaination() {
-				return "Selecting 'Yes' will shutdown any running instances of this application, delete all instance configurations, and remove this application from the Application page.";
+			finally {
+				handler().endWriting();
 			}
+			return ApplicationsPage.create( context() );
+		};
 
-			public int pageType() {
-				return APP_PAGE;
-			}
+		final Supplier<WOActionResults> cancel = () -> {
+			return ApplicationsPage.create( context() );
+		};
 
-			public String question() {
-				return "Are you sure you want to delete the <I>" + application.name() + "</I> Application?";
-			}
-
-		} );
+		return ConfirmationPage.create( context(), new ConfirmationDelegate(
+				APP_PAGE,
+				"Are you sure you want to delete the <I>" + application.name() + "</I> Application?",
+				"Selecting 'Yes' will shutdown any running instances of this application, delete all instance configurations, and remove this application from the Application page.",
+				confirm,
+				cancel
+				) );
 	}
 
 	public WOComponent bounceClicked() {
