@@ -28,9 +28,14 @@ import com.webobjects.monitor.application.components.ConfirmationPage.Confirmati
 
 public class ApplicationsPage extends MonitorComponent {
 
-	private int _totalInstancesConfigured = 0;
-	private int _totalInstancesRunning = 0;
+	/**
+	 * Application currently being iterated over in the UI
+	 */
 	public MApplication currentApplication;
+	
+	/**
+	 * Name of new application (when adding an application)
+	 */
 	public String newApplicationName;
 
 	public ApplicationsPage( WOContext aWocontext ) {
@@ -38,20 +43,26 @@ public class ApplicationsPage extends MonitorComponent {
 		handler().updateForPage( name() );
 	}
 
+	/**
+	 * @return A sorted list of all configured applications
+	 */
 	public List<MApplication> applications() {
-		final List<MApplication> applications = new ArrayList<>();
-		applications.addAll( siteConfig().applicationArray() );
+		final List<MApplication> applications = new ArrayList<>( siteConfig().applicationArray() );
 		Collections.sort( applications, Comparator.comparing( MApplication::name ) );
-		calculateTotals( applications );
 		return applications;
 	}
 
+	/**
+	 * @return a link to the application, through the adaptor
+	 */
 	public String hrefToApp() {
-		String aURL = siteConfig().woAdaptor();
-		if( aURL != null ) {
-			aURL = aURL + "/" + currentApplication.name();
+		String url = siteConfig().woAdaptor();
+
+		if( url != null ) {
+			url = url + "/" + currentApplication.name();
 		}
-		return aURL;
+
+		return url;
 	}
 
 	public WOComponent appDetailsClicked() {
@@ -134,51 +145,29 @@ public class ApplicationsPage extends MonitorComponent {
 	}
 
 	/**
-	 * Calculates and sets the {@link #totalInstancesConfigured()} and {@link #totalInstancesRunning()}
-	 * for the given array of applications
-	 * 
-	 * @param applications
-	 */
-	public void calculateTotals( List<MApplication> applications ) {
-		int totalRunningInstances = 0;
-		int totalConfiguredInstances = 0;
-
-		// use for-loop to preserve compile-time error-checking instead of using valueForKey("runningInstancesCount.@sum")
-		for( MApplication mApplication : applications ) {
-			totalRunningInstances = totalRunningInstances + mApplication.runningInstancesCount();
-			totalConfiguredInstances = totalConfiguredInstances + mApplication.instanceArray().count();
-		}
-		setTotalInstancesConfigured( totalConfiguredInstances );
-		setTotalInstancesRunning( totalRunningInstances );
-	}
-
-	/**
-	 * @return the total number of instances configured for all applications
+	 * @return the total number of configured instances for all applications
 	 */
 	public int totalInstancesConfigured() {
-		return _totalInstancesConfigured;
-	}
+		int total = 0;
 
-	/**
-	 * Sets the total number of instances configured for all applications
-	 * @param totalInstancesConfigured 
-	 */
-	public void setTotalInstancesConfigured( int totalInstancesConfigured ) {
-		_totalInstancesConfigured = totalInstancesConfigured;
+		for( MApplication mApplication : applications() ) {
+			total += mApplication.instanceArray().size();
+		}
+
+		return total;
 	}
 
 	/**
 	 * @return the total number of running instances for all applications
 	 */
 	public int totalInstancesRunning() {
-		return _totalInstancesRunning;
-	}
+		int total = 0;
 
-	/**
-	 * Sets the total number of running instances for all applications
-	 * @param totalInstancesRunning
-	 */
-	public void setTotalInstancesRunning( int totalInstancesRunning ) {
-		_totalInstancesRunning = totalInstancesRunning;
+		// use for-loop to preserve compile-time error-checking instead of using valueForKey("runningInstancesCount.@sum")
+		for( MApplication mApplication : applications() ) {
+			total += mApplication.runningInstancesCount();
+		}
+
+		return total;
 	}
 }
