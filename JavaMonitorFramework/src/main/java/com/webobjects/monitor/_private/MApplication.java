@@ -532,8 +532,8 @@ public class MApplication extends MObject {
 			Integer.valueOf( 30 ),
 			"",
 			Boolean.FALSE,
-			"/Library/WebObjects/Logs",
-			"/Library/WebObjects/Applications" },
+			"",
+			"" },
 			new Object[] {
 					"startingPort",
 					"timeForStartup",
