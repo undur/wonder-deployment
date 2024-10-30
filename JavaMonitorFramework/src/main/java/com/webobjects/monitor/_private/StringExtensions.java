@@ -36,14 +36,14 @@ public class StringExtensions {
 		if( o == null ) {
 			return false;
 		}
-		else if( o instanceof Boolean ) {
-			return ((Boolean)o).booleanValue();
+		else if( o instanceof Boolean b ) {
+			return b.booleanValue();
 		}
-		else if( o instanceof Number ) {
-			return ((Number)o).intValue() != 0;
+		else if( o instanceof Number n ) {
+			return n.intValue() != 0;
 		}
-		else if( o instanceof String ) {
-			return boolValue( (String)o );
+		else if( o instanceof String s ) {
+			return boolValue( s );
 		}
 
 		return false;
