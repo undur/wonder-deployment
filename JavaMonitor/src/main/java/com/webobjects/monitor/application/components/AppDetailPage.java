@@ -92,18 +92,6 @@ public class AppDetailPage extends MonitorComponent {
 		return currentInstance;
 	}
 
-	/**
-	 * FIXME: Doesn't appear to be used
-	 */
-//	public void selectAll() {
-//		if( "on".equals( context().request().stringFormValueForKey( "deselectall" ) ) ) {
-//			displayGroup.setSelectedObjects( new NSMutableArray() );
-//		}
-//		else {
-//			displayGroup.setSelectedObjects( displayGroup.allObjects() );
-//		}
-//	}
-
 	public WOActionResults selectAllAction() {
 		setSelectedInstances( allInstances() );
 		return null;
