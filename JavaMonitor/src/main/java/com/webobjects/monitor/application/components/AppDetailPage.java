@@ -285,20 +285,22 @@ public class AppDetailPage extends MonitorComponent {
 
 	/* ******** Individual Controls ********* */
 	public WOComponent startInstance() {
-		if( (currentInstance.state == MObject.DEAD) || (currentInstance.state == MObject.STOPPING) || (currentInstance.state == MObject.CRASHING)
-				|| (currentInstance.state == MObject.UNKNOWN) ) {
+
+		if( (currentInstance.state == MObject.DEAD) || (currentInstance.state == MObject.STOPPING) || (currentInstance.state == MObject.CRASHING) || (currentInstance.state == MObject.UNKNOWN) ) {
 			handler().sendStartInstancesToWotaskds( new NSArray( currentInstance ), new NSArray( currentInstance.host() ) );
 			currentInstance.state = MObject.STARTING;
 		}
+
 		return newDetailPage();
 	}
 
 	public WOComponent stopInstance() {
-		if( (currentInstance.state == MObject.ALIVE) || (currentInstance.state == MObject.STARTING) ) {
 
+		if( (currentInstance.state == MObject.ALIVE) || (currentInstance.state == MObject.STARTING) ) {
 			handler().sendStopInstancesToWotaskds( new NSArray( currentInstance ), new NSArray( currentInstance.host() ) );
 			currentInstance.state = MObject.STOPPING;
 		}
+
 		return newDetailPage();
 	}
 
@@ -309,6 +311,7 @@ public class AppDetailPage extends MonitorComponent {
 		else {
 			currentInstance.setAutoRecover( Boolean.TRUE );
 		}
+
 		sendUpdateInstances( new NSArray( currentInstance ) );
 
 		return newDetailPage();
@@ -316,11 +319,14 @@ public class AppDetailPage extends MonitorComponent {
 
 	private void sendUpdateInstances( NSArray<MInstance> instances ) {
 		handler().startReading();
+
 		try {
-			NSMutableSet<MHost> hosts = new NSMutableSet<>();
+			final NSMutableSet<MHost> hosts = new NSMutableSet<>();
+
 			for( MInstance instance : instances ) {
 				hosts.addObject( instance.host() );
 			}
+
 			handler().sendUpdateInstancesToWotaskds( instances, hosts.allObjects() );
 		}
 		finally {
@@ -384,9 +390,7 @@ public class AppDetailPage extends MonitorComponent {
 	private void startInstances( NSArray<MInstance> possibleInstances ) {
 		NSMutableArray<MInstance> instances = new NSMutableArray<>();
 		for( MInstance anInstance : possibleInstances ) {
-			if( (anInstance.state == MObject.DEAD) || (anInstance.state == MObject.STOPPING) || (anInstance.state == MObject.CRASHING)
-					|| (anInstance.state == MObject.UNKNOWN) ) {
-
+			if( (anInstance.state == MObject.DEAD) || (anInstance.state == MObject.STOPPING) || (anInstance.state == MObject.CRASHING) || (anInstance.state == MObject.UNKNOWN) ) {
 				instances.addObject( anInstance );
 			}
 		}
@@ -417,7 +421,8 @@ public class AppDetailPage extends MonitorComponent {
 						}
 
 						for( int i = 0; i < instances.count(); i++ ) {
-							MInstance anInst = (MInstance)instances.objectAtIndex( i );
+							final MInstance anInst = (MInstance)instances.objectAtIndex( i );
+
 							if( anInst.state != MObject.DEAD ) {
 								anInst.state = MObject.STOPPING;
 							}
