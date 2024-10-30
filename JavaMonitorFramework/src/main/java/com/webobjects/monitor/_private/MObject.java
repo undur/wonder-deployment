@@ -22,44 +22,44 @@ import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 public class MObject implements NSKeyValueCoding {
 
 	/********** Useful Statics **********/
-	public static NSArray<Object> loadSchedulerArray = new NSArray<>( new Object[] { "Default", "Round Robin", "Random", "Load Average", "Custom" } );
-	public static NSArray<Object> loadSchedulerArrayValues = new NSArray<>( new Object[] { "DEFAULT", "ROUNDROBIN", "RANDOM", "LOADAVERAGE", "CUSTOM" } );
+	public static final NSArray<Object> loadSchedulerArray = new NSArray<>( new Object[] { "Default", "Round Robin", "Random", "Load Average", "Custom" } );
+	public static final NSArray<Object> loadSchedulerArrayValues = new NSArray<>( new Object[] { "DEFAULT", "ROUNDROBIN", "RANDOM", "LOADAVERAGE", "CUSTOM" } );
 
-	public static NSArray<Object> hostTypeArray = new NSArray<>( new Object[] { "MacOSX", "Windows", "Unix" } );
+	public static final NSArray<Object> hostTypeArray = new NSArray<>( new Object[] { "MacOSX", "Windows", "Unix" } );
 
-	public static NSArray<Object> urlVersionArray = new NSArray<>( new Object[] { Integer.valueOf( 4 ), Integer.valueOf( 3 ) } );
+	public static final NSArray<Object> urlVersionArray = new NSArray<>( new Object[] { Integer.valueOf( 4 ), Integer.valueOf( 3 ) } );
 
-	protected static String[] weekNames = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-	public static NSArray<String> weekArray = new NSArray<>( weekNames );
+	protected static final String[] weekNames = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+	public static final NSArray<String> weekArray = new NSArray<>( weekNames );
 
-	public static String[] timesOfDay = new String[] { "0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300" };
-	public static NSArray<String> timeOfDayArray = new NSArray<>( timesOfDay );
+	public static final String[] timesOfDay = new String[] { "0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300" };
+	public static final NSArray<String> timeOfDayArray = new NSArray<>( timesOfDay );
 
-	protected static Integer[] schedulingIntervals = new Integer[] { Integer.valueOf( 1 ), Integer.valueOf( 2 ), Integer.valueOf( 3 ), Integer.valueOf( 4 ), Integer.valueOf( 6 ), Integer.valueOf( 8 ), Integer.valueOf( 12 ) };
-	public static NSArray<Integer> schedulingIntervalArray = new NSArray<>( schedulingIntervals );
+	protected static final Integer[] schedulingIntervals = new Integer[] { Integer.valueOf( 1 ), Integer.valueOf( 2 ), Integer.valueOf( 3 ), Integer.valueOf( 4 ), Integer.valueOf( 6 ), Integer.valueOf( 8 ), Integer.valueOf( 12 ) };
+	public static final NSArray<Integer> schedulingIntervalArray = new NSArray<>( schedulingIntervals );
 
-	public static NSArray<Object> schedulingTypeArray = new NSArray<>( new Object[] { "HOURLY", "DAILY", "WEEKLY" } );
+	public static final NSArray<Object> schedulingTypeArray = new NSArray<>( new Object[] { "HOURLY", "DAILY", "WEEKLY" } );
 
-	public static long halfHourAsSeconds = 1800;
+	public static final long halfHourAsSeconds = 1800;
 
-	public static String _POST = "POST";
-	public static String _GET = "GET";
-	public static String _HTTP1 = "HTTP/1.0";
+	public static final String _POST = "POST";
+	public static final String _GET = "GET";
+	public static final String _HTTP1 = "HTTP/1.0";
 
-	public static String[] stateArray = new String[] { "UNKNOWN", "STARTING", "ALIVE", "STOPPING", "DEAD", "CRASHING" };
-	public static int UNKNOWN = 0;
-	public static int STARTING = 1;
-	public static int ALIVE = 2;
-	public static int STOPPING = 3;
-	public static int DEAD = 4;
-	public static int CRASHING = 5;
+	public static final String[] stateArray = new String[] { "UNKNOWN", "STARTING", "ALIVE", "STOPPING", "DEAD", "CRASHING" };
+	public static final int UNKNOWN = 0;
+	public static final int STARTING = 1;
+	public static final int ALIVE = 2;
+	public static final int STOPPING = 3;
+	public static final int DEAD = 4;
+	public static final int CRASHING = 5;
 
-	public static String _emptyString = "";
-	public static Integer _zeroInteger = Integer.valueOf( 0 );
+	public static final String _emptyString = "";
+	public static final Integer _zeroInteger = Integer.valueOf( 0 );
 
-	public static String directActionString = "/cgi-bin/WebObjects/wotaskd.woa/wa/monitorRequest";
-	public static String adminActionStringPrefix = "/cgi-bin/WebObjects/";
-	public static String adminActionStringPostfix = ".woa/womp/instanceRequest";
+	public static final String directActionString = "/cgi-bin/WebObjects/wotaskd.woa/wa/monitorRequest";
+	public static final String adminActionStringPrefix = "/cgi-bin/WebObjects/";
+	public static final String adminActionStringPostfix = ".woa/womp/instanceRequest";
 
 	MSiteConfig _siteConfig;
 
