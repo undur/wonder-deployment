@@ -581,33 +581,25 @@ public class AppDetailPage extends MonitorComponent {
 
 	/* ******** Display Methods ********* */
 	public String instanceStatusImage() {
-		if( currentInstance.state == MObject.DEAD )
-			return "PowerSwitch_Off.gif";
-		else if( currentInstance.state == MObject.ALIVE )
-			return "PowerSwitch_On.gif";
-		else if( currentInstance.state == MObject.STOPPING )
-			return "Turning_Off.gif";
-		else if( currentInstance.state == MObject.CRASHING )
-			return "Turning_Off.gif";
-		else if( currentInstance.state == MObject.STARTING )
-			return "Turning_On.gif";
-		else
-			return "PowerSwitch_Off.gif";
+		return switch( currentInstance.state ) {
+			case MObject.DEAD -> "PowerSwitch_Off.gif";
+			case MObject.ALIVE -> "PowerSwitch_On.gif";
+			case MObject.STOPPING -> "Turning_Off.gif";
+			case MObject.CRASHING -> "Turning_Off.gif";
+			case MObject.STARTING -> "Turning_On.gif";
+			default -> throw new IllegalStateException( "Unknown instance state: " + currentInstance.state );
+		};
 	}
 
 	public String instanceStatusImageText() {
-		if( currentInstance.state == MObject.DEAD )
-			return "OFF";
-		else if( currentInstance.state == MObject.ALIVE )
-			return "ON";
-		else if( currentInstance.state == MObject.STOPPING )
-			return "STOPPING";
-		else if( currentInstance.state == MObject.CRASHING )
-			return "CRASHING";
-		else if( currentInstance.state == MObject.STARTING )
-			return "STARTING";
-		else
-			return "UNKNOWN";
+		return switch( currentInstance.state ) {
+			case MObject.DEAD -> "OFF";
+			case MObject.ALIVE -> "ON";
+			case MObject.STOPPING -> "STOPPING";
+			case MObject.CRASHING -> "CRASHING";
+			case MObject.STARTING -> "STARTING";
+			default -> throw new IllegalStateException( "Unknown instance state: " + currentInstance.state );
+		};
 	}
 
 	public String autoRecoverLabel() {
