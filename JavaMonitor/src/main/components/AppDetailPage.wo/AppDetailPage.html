@@ -298,7 +298,7 @@
 	<wo:if condition="$hasHosts">
 		<div class="card p-3">
 			<wo:form class="mb-0">
-				Add: <wo:textfield value="$numberToAdd" numberformat="0" size="3" /> instance(s) on host: <wo:popUpButton list="$application.siteConfig.hostArray" item="$aHost" displayString="$aHost.name" selection="$selectedHost" /> <wo:submit action="$addInstanceClicked" value="Add" />
+				Add: <wo:textfield value="$numberOfInstancesToAdd" numberformat="0" size="3" /> instance(s) on host: <wo:popUpButton list="$application.siteConfig.hostArray" item="$currentHost" displayString="$currentHost.name" selection="$selectedHost" /> <wo:submit action="$addInstanceClicked" value="Add" />
 			</wo:form>
 		</div>
 	</wo:if>

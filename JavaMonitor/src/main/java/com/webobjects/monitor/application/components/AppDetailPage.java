@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +11,6 @@ import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WODisplayGroup;
 import com.webobjects.appserver._private.WOProperties;
-import com.webobjects.eocontrol.EOSortOrdering;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableSet;
@@ -30,12 +31,19 @@ import er.extensions.appserver.ERXApplication;
 public class AppDetailPage extends MonitorComponent {
 
 	public MInstance currentInstance;
-	public boolean isClearDeathSectionVisible = false;
-	public boolean showDetailStatistics = false;
-	
+	public boolean isClearDeathSectionVisible;
+	public boolean showDetailStatistics;
+
+	public MHost currentHost;
+	public MHost selectedHost;
+	public int numberOfInstancesToAdd = 1;
+	public String instanceNameFilterValue;
+
+	private String _hrefToApp;
+
 	@Deprecated
 	private WODisplayGroup _displayGroup;
-	public String filterErrorMessage = null;
+	public String filterErrorMessage;
 
 	public AppDetailPage( WOContext aWocontext ) {
 		super( aWocontext );
@@ -124,6 +132,36 @@ public class AppDetailPage extends MonitorComponent {
 		}
 
 		setSelectedInstances( selected );
+	}
+
+	public WOActionResults selectInstanceNamesMatchingFilter() {
+		filterErrorMessage = null;
+		final NSMutableArray<MInstance> selected = new NSMutableArray<>();
+
+		if( instanceNameFilterValue != null ) {
+			try {
+				final Pattern p = Pattern.compile( instanceNameFilterValue );
+
+				for( final MInstance instance : allInstances() ) {
+					final Matcher matcherForInstanceName = p.matcher( instance.displayName() );
+
+					if( matcherForInstanceName.matches() ) {
+						selected.addObject( instance );
+					}
+				}
+			}
+			catch( java.util.regex.PatternSyntaxException pse ) {
+				if( pse.getMessage() != null ) {
+					filterErrorMessage = pse.getMessage();
+				}
+				else {
+					filterErrorMessage = "PatternSyntaxException";
+				}
+			}
+
+			setSelectedInstances( selected );
+		}
+		return null;
 	}
 
 	public void selectOne() {
@@ -228,8 +266,6 @@ public class AppDetailPage extends MonitorComponent {
 		return aURL.toString();
 	}
 
-	public String _hrefToApp = null;
-
 	public String hrefToApp() {
 		if( _hrefToApp == null ) {
 			String adaptorURL = siteConfig().woAdaptor();
@@ -254,17 +290,12 @@ public class AppDetailPage extends MonitorComponent {
 		return "http://" + currentInstance.hostName() + ":" + currentInstance.port();
 	}
 
-	/* ******** Deaths ********* */
 	public boolean shouldDisplayDeathDetailLink() {
-		if( currentInstance.deathCount() > 0 ) {
-			return true;
-		}
-		return false;
+		return currentInstance.deathCount() > 0;
 	}
 
 	public WOComponent instanceDeathDetailClicked() {
-		AppDeathPage aPage = AppDeathPage.create( context(), currentInstance );
-		return aPage;
+		return AppDeathPage.create( context(), currentInstance );
 	}
 
 	public WOComponent clearAllDeathsClicked() {
@@ -281,9 +312,6 @@ public class AppDetailPage extends MonitorComponent {
 		return newDetailPage();
 	}
 
-	/* ******* */
-
-	/* ******** Individual Controls ********* */
 	public WOComponent startInstance() {
 
 		if( (currentInstance.state == MObject.DEAD) || (currentInstance.state == MObject.STOPPING) || (currentInstance.state == MObject.CRASHING) || (currentInstance.state == MObject.UNKNOWN) ) {
@@ -305,7 +333,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent toggleAutoRecover() {
-		if( (currentInstance.autoRecover() != null) && (currentInstance.autoRecover().booleanValue()) ) {
+		if( isTrueNullSafe( currentInstance.autoRecover() ) ) {
 			currentInstance.setAutoRecover( Boolean.FALSE );
 		}
 		else {
@@ -341,7 +369,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent toggleScheduling() {
-		if( (currentInstance.schedulingEnabled() != null) && (currentInstance.schedulingEnabled().booleanValue()) ) {
+		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
 			currentInstance.setSchedulingEnabled( Boolean.FALSE );
 		}
 		else {
@@ -351,8 +379,6 @@ public class AppDetailPage extends MonitorComponent {
 
 		return newDetailPage();
 	}
-
-	/* ******* */
 
 	public NSArray<MInstance> allInstances() {
 		return _displayGroup.allObjects();
@@ -374,9 +400,10 @@ public class AppDetailPage extends MonitorComponent {
 		return myApplication().runningInstances_M();
 	}
 
-	/* ******** Group Controls ********* */
 	public WOComponent startAllClicked() {
+
 		handler().startReading();
+
 		try {
 			startInstances( selectedInstances() );
 		}
@@ -388,14 +415,17 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	private void startInstances( NSArray<MInstance> possibleInstances ) {
-		NSMutableArray<MInstance> instances = new NSMutableArray<>();
+		final NSMutableArray<MInstance> instances = new NSMutableArray<>();
+
 		for( MInstance anInstance : possibleInstances ) {
 			if( (anInstance.state == MObject.DEAD) || (anInstance.state == MObject.STOPPING) || (anInstance.state == MObject.CRASHING) || (anInstance.state == MObject.UNKNOWN) ) {
 				instances.addObject( anInstance );
 			}
 		}
+
 		if( instances.count() != 0 ) {
 			handler().sendStartInstancesToWotaskds( instances, myApplication().hostArray() );
+
 			for( MInstance anInstance : instances ) {
 				if( anInstance.state != MObject.ALIVE ) {
 					anInstance.state = MObject.STARTING;
@@ -463,13 +493,17 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent autoRecoverEnableAllClicked() {
+
 		handler().startReading();
+
 		try {
-			NSArray instancesArray = selectedInstances();
+			final NSArray instancesArray = selectedInstances();
+
 			for( int i = 0; i < instancesArray.count(); i++ ) {
 				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
 				anInst.setAutoRecover( Boolean.TRUE );
 			}
+
 			handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
 		}
 		finally {
@@ -480,13 +514,17 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent autoRecoverDisableAllClicked() {
+
 		handler().startReading();
+
 		try {
-			NSArray instancesArray = selectedInstances();
+			final NSArray instancesArray = selectedInstances();
+
 			for( int i = 0; i < instancesArray.count(); i++ ) {
 				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
 				anInst.setAutoRecover( Boolean.FALSE );
 			}
+
 			handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
 		}
 		finally {
@@ -497,18 +535,23 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent acceptNewSessionsAllClicked() {
+
 		handler().startReading();
+		
 		try {
 			handler().sendRefuseSessionToWotaskds( selectedInstances(), myApplication().hostArray(), false );
 		}
 		finally {
 			handler().endReading();
 		}
+		
 		return newDetailPage();
 	}
 
 	public WOComponent refuseNewSessionsAllClicked() {
+		
 		handler().startReading();
+		
 		try {
 			handler().sendRefuseSessionToWotaskds( selectedInstances(), myApplication().hostArray(), true );
 
@@ -518,17 +561,22 @@ public class AppDetailPage extends MonitorComponent {
 		finally {
 			handler().endReading();
 		}
+
 		return newDetailPage();
 	}
 
 	public WOComponent schedulingEnableAllClicked() {
+		
 		handler().startReading();
+
 		try {
 			NSArray instancesArray = selectedInstances();
+
 			for( int i = 0; i < instancesArray.count(); i++ ) {
 				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
 				anInst.setSchedulingEnabled( Boolean.TRUE );
 			}
+
 			if( allHosts().count() != 0 ) {
 				handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
 			}
@@ -554,13 +602,17 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent schedulingDisableAllClicked() {
+
 		handler().startReading();
+
 		try {
-			NSArray instancesArray = selectedInstances();
+			final NSArray instancesArray = selectedInstances();
+
 			for( int i = 0; i < instancesArray.count(); i++ ) {
 				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
 				anInst.setSchedulingEnabled( Boolean.FALSE );
 			}
+
 			handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
 		}
 		finally {
@@ -570,9 +622,6 @@ public class AppDetailPage extends MonitorComponent {
 		return newDetailPage();
 	}
 
-	/* ******* */
-
-	/* ******** Display Methods ********* */
 	public String instanceStatusImage() {
 		return switch( currentInstance.state ) {
 			case MObject.DEAD -> "PowerSwitch_Off.gif";
@@ -596,19 +645,22 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public String autoRecoverLabel() {
-		String results = "Off";
-		if( (currentInstance.autoRecover() != null) && (currentInstance.autoRecover().booleanValue()) ) {
-			results = "On";
+
+		if( isTrueNullSafe( currentInstance.autoRecover() ) ) {
+			return "On";
 		}
-		return results;
+
+		return "Off";
 	}
 
 	public String autoRecoverDivClass() {
 		String base = "AppControl";
 		String results = base + " " + base + "AutoRecoverOff";
-		if( (currentInstance.autoRecover() != null) && (currentInstance.autoRecover().booleanValue()) ) {
+
+		if( isTrueNullSafe( currentInstance.autoRecover() ) ) {
 			results = base + " " + base + "AutoRecoverOn";
 		}
+
 		return results;
 	}
 
@@ -618,7 +670,8 @@ public class AppDetailPage extends MonitorComponent {
 	public String refuseNewSessionsClass() {
 		String base = "AppControl";
 		String result = base + " " + base + "NotRefusingNewSessions";
-		if( (currentInstance.schedulingEnabled() != null) && (currentInstance.schedulingEnabled().booleanValue()) ) {
+
+		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
 			if( currentInstance.isRefusingNewSessions() ) {
 				result = base + " " + base + "ScheduleEnabledRefusingNewSessions";
 			}
@@ -631,47 +684,61 @@ public class AppDetailPage extends MonitorComponent {
 				result = base + " " + base + "RefusingNewSessions";
 			}
 		}
+
 		return result;
 	}
 
 	public String refuseNewSessionsLabel() {
-		String results = "Off";
+
 		if( currentInstance.isRefusingNewSessions() ) {
-			results = "On";
+			return "On";
 		}
-		return results;
+
+		return "Off";
 	}
 
 	public String schedulingLabel() {
-		String result = "Off";
-		if( (currentInstance.schedulingEnabled() != null) && (currentInstance.schedulingEnabled().booleanValue()) ) {
-			result = "On";
+
+		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
+			return "On";
 		}
-		return result;
+
+		return "Off";
 	}
 
 	public String schedulingDivClass() {
 		String base = "AppControl";
 		String result = base + " " + base + "ScheduleOff";
-		if( (currentInstance.schedulingEnabled() != null) && (currentInstance.schedulingEnabled().booleanValue()) ) {
+
+		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
 			result = base + " " + base + "ScheduleOn";
 		}
+
 		return result;
 	}
 
 	public String nextShutdown() {
 		String result = "N/A";
 
-		if( (currentInstance.schedulingEnabled() != null) && (currentInstance.schedulingEnabled().booleanValue()) ) {
+		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
 			result = currentInstance.nextScheduledShutdownString();
 		}
 
 		return result;
 	}
 
-	/* ******* */
+	/**
+	 * @return Value of the boolean, false if null
+	 */
+	private static boolean isTrueNullSafe( final Boolean value ) {
 
-	/* ******** Statistics Display ********* */
+		if( value == null ) {
+			return false;
+		}
+		
+		return value.booleanValue();
+	}
+
 	public Integer totalTransactions() {
 		return StatsUtilities.totalTransactionsForApplication( myApplication() );
 	}
@@ -705,28 +772,19 @@ public class AppDetailPage extends MonitorComponent {
 		return Float.valueOf( (aNumber.floatValue() * 60) );
 	}
 
-	/** ******* */
-
-	// Start of Add Instance Stuff
-	public MHost aHost;
-
-	public MHost selectedHost;
-
-	public int numberToAdd = 1;
-
-	private String _instanceNameFilterValue;
-
 	public WOComponent hostsPageClicked() {
 		return HostsPage.create( context() );
 	}
 
 	public WOComponent addInstanceClicked() {
-		if( numberToAdd < 1 )
+
+		if( numberOfInstancesToAdd < 1 ) {
 			return newDetailPage();
+		}
 
 		handler().startWriting();
 		try {
-			NSMutableArray newInstanceArray = siteConfig().addInstances_M( selectedHost, myApplication(), numberToAdd );
+			NSMutableArray newInstanceArray = siteConfig().addInstances_M( selectedHost, myApplication(), numberOfInstancesToAdd );
 
 			if( allHosts().count() != 0 ) {
 				handler().sendAddInstancesToWotaskds( newInstanceArray, allHosts() );
@@ -757,18 +815,14 @@ public class AppDetailPage extends MonitorComponent {
 		final AppDetailPage page = ERXApplication.erxApplication().pageWithName( AppDetailPage.class, context );
 		page.setMyApplication( mApplication );
 
-		NSArray instancesArray = mApplication.instanceArray();
+		NSArray<MInstance> instancesArray = mApplication.instanceArray();
 
 		if( instancesArray == null ) {
 			instancesArray = NSArray.EmptyArray;
 		}
 
-		final NSMutableArray<MInstance> result = new NSMutableArray<>();
-		result.addObjectsFromArray( mApplication.instanceArray() );
-
-		final EOSortOrdering order = new EOSortOrdering( "id", EOSortOrdering.CompareAscending );
-		EOSortOrdering.sortArrayUsingKeyOrderArray( result, new NSArray( order ) );
-
+		final NSMutableArray<MInstance> result = new NSMutableArray<>( mApplication.instanceArray() );
+		Collections.sort( result, Comparator.comparing( MInstance::id ) );
 		instancesArray = result;
 
 		// AK: the MInstances don't really support equals()...
@@ -778,12 +832,14 @@ public class AppDetailPage extends MonitorComponent {
 		}
 
 		if( selected != null ) {
-			NSMutableArray<MInstance> active = new NSMutableArray<>();
+			final NSMutableArray<MInstance> active = new NSMutableArray<>();
+
 			for( MInstance instance : selected ) {
 				if( instancesArray.containsObject( instance ) ) {
 					active.addObject( instance );
 				}
 			}
+
 			page.setSelectedInstances( active );
 		}
 		else {
@@ -799,50 +855,5 @@ public class AppDetailPage extends MonitorComponent {
 	public static AppDetailPage create( WOContext context, MApplication currentApplication ) {
 		NSArray selected = (context.page() instanceof AppDetailPage ? ((AppDetailPage)context.page()).selectedInstances() : null);
 		return create( context, currentApplication, selected );
-	}
-
-	/**
-	 * @return the _instanceNameFilterValue
-	 */
-	public String instanceNameFilterValue() {
-		return _instanceNameFilterValue;
-	}
-
-	/**
-	 * @param instanceNameFilterValue the instanceNameFilterValue to set
-	 */
-	public void setInstanceNameFilterValue( String instanceNameFilterValue ) {
-		_instanceNameFilterValue = instanceNameFilterValue;
-	}
-
-	public WOActionResults selectInstanceNamesMatchingFilter() {
-		filterErrorMessage = null;
-		final NSMutableArray<MInstance> selected = new NSMutableArray<>();
-		final String instanceNameFilterValue = instanceNameFilterValue();
-
-		if( instanceNameFilterValue != null ) {
-			try {
-				final Pattern p = Pattern.compile( instanceNameFilterValue );
-
-				for( final MInstance instance : allInstances() ) {
-					final Matcher matcherForInstanceName = p.matcher( instance.displayName() );
-
-					if( matcherForInstanceName.matches() ) {
-						selected.addObject( instance );
-					}
-				}
-			}
-			catch( java.util.regex.PatternSyntaxException pse ) {
-				if( pse.getMessage() != null ) {
-					filterErrorMessage = pse.getMessage();
-				}
-				else {
-					filterErrorMessage = "PatternSyntaxException";
-				}
-			}
-
-			setSelectedInstances( selected );
-		}
-		return null;
 	}
 }

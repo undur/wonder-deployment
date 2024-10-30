@@ -58,11 +58,11 @@ public class ApplicationsPage extends MonitorComponent {
 	public String hrefToApp() {
 		String url = siteConfig().woAdaptor();
 
-		if( url != null ) {
-			url = url + "/" + currentApplication.name();
+		if( url == null ) {
+			return null;
 		}
 
-		return url;
+		return url + "/" + currentApplication.name();
 	}
 
 	public WOComponent appDetailsClicked() {
