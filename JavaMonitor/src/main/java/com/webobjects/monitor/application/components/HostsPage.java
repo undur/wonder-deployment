@@ -166,19 +166,22 @@ public class HostsPage extends MonitorComponent {
 	 */
 	private static String fetchWotaskdConfigurationString( final String hostName, final int port, final String password ) {
 
-		final HttpClient client = HttpClient
-				.newBuilder()
-				.build();
-
-		final HttpRequest request = HttpRequest
+		final HttpRequest.Builder requestBuilder = HttpRequest
 				.newBuilder()
 				.uri( URI.create( "http://%s:%s/".formatted( hostName, port ) ) )
-				.timeout( Duration.ofSeconds( 10 ) )
-				.header( "password", password )
-				.build();
+				.timeout( Duration.ofSeconds( 10 ) );
+		
+		if( password != null ) {
+			requestBuilder.header( "password", password );
+		}
+
+		final HttpRequest request = requestBuilder.build();
 
 		try {
-			return client.send( request, BodyHandlers.ofString() ).body();
+			return HttpClient
+					.newHttpClient()
+					.send( request, BodyHandlers.ofString() )
+					.body();
 		}
 		catch( IOException | InterruptedException e ) {
 			e.printStackTrace();
