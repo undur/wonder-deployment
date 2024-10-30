@@ -102,9 +102,9 @@
 				<wo:if condition="$showDetailStatistics" negate="$true">
 					<th>WOStats</th>
 				</wo:if>
-				<th>Details</th>
-				<th>Configure</th>
-				<th>Delete</th>
+				<th width="70">Details</th>
+				<th width="70">Configure</th>
+				<th width="70">Delete</th>
 			</tr>
 			<wo:repetition list="$allInstances" item="$currentInstance">
 				<tr>
@@ -114,13 +114,13 @@
 					<td>
 						<wo:link action="$instanceDetailClicked"><wo:str value="$currentInstance.displayName" /></wo:link>
 						<wo:if condition="$currentInstance.isRunning_M">
-							<wo:link href="$hrefToInst" target="new" title="Open through proxy/adaptor/webserver"><wo:JMIcon name="Link" /></wo:link>
+							<wo:link href="$hrefToInst" target="new" title="Open through proxy/adaptor/webserver" style="float: right"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
 					</td>
 					<td class="InstanceHostPort">
 						<wo:str value="$currentInstance.displayHostAndPort" />
 						<wo:if condition="$currentInstance.isRunning_M">
-							<wo:link href="$hrefToInstDirect" target="new" title="Open through direct connect"><wo:JMIcon name="Link" /></wo:link>
+							<wo:link href="$hrefToInstDirect" target="new" title="Open through direct connect" style="float: right"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
 					</td>
 					<td class="InstanceStatusColumn">
