@@ -31,24 +31,6 @@ public class StringExtensions {
 		return (b != null && b.booleanValue()) ? "YES" : "NO";
 	}
 
-	public static boolean boolValue( final Object o ) {
-
-		if( o == null ) {
-			return false;
-		}
-		else if( o instanceof Boolean b ) {
-			return b.booleanValue();
-		}
-		else if( o instanceof Number n ) {
-			return n.intValue() != 0;
-		}
-		else if( o instanceof String s ) {
-			return boolValue( s );
-		}
-
-		return false;
-	}
-
 	public static boolean isValidXMLString( final String s ) {
 
 		if( s == null || s.length() == 0 ) {

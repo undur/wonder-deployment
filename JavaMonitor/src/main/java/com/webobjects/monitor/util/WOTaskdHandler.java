@@ -601,7 +601,15 @@ public class WOTaskdHandler {
 										break;
 									}
 								}
-								anInstance.setRefusingNewSessions( StringExtensions.boolValue( refusingNewSessions ) );
+								
+								// FIXME: Null check added as a precaution, we can probably throw this check away.
+								// That Boolean used to be converted to a boolean in a null-safe way, which I believe is redundant.
+								// Hugi 2024-10-30
+								if( refusingNewSessions == null ) {
+									throw new IllegalStateException( "RefusingNewSessions is null" );
+								}
+
+								anInstance.setRefusingNewSessions( refusingNewSessions );
 								anInstance.setStatistics( statistics );
 								anInstance.setDeaths( new NSMutableArray( deaths ) );
 								anInstance.setNextScheduledShutdownString_M( nextShutdown );
