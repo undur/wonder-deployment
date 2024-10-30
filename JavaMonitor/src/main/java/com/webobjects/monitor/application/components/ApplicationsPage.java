@@ -40,7 +40,7 @@ public class ApplicationsPage extends MonitorComponent {
 
 	public ApplicationsPage( WOContext aWocontext ) {
 		super( aWocontext );
-		handler().updateForPage( name() );
+		handler().updateForPage( getClass() );
 	}
 
 	/**

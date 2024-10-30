@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.xml.WOXMLException;
 import com.webobjects.appserver.xml._JavaMonitorCoder;
@@ -97,32 +98,29 @@ public class WOTaskdHandler {
 	 * FIXME: OK, this is not nice. It's checking which page is invoking this method and then updating status accordingly // Hugi 2024-10-27
 	 */
 	@Deprecated
-	public void updateForPage( String aName ) {
+	public void updateForPage( Class<? extends WOComponent> pageClass ) {
 		// KH - we should probably set the instance information as we get the
 		// responses, to avoid waiting, then doing it in serial! (not that it's
 		// _that_ slow)
 		MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
 		startReading();
 		try {
-			aName = StringExtensions.lastPropertyKeyInKeyPath( aName );
 			if( siteConfig.hostArray().count() != 0 ) {
-				if( ApplicationsPage.class.getName().endsWith( aName ) && (siteConfig.applicationArray().count() != 0) ) {
+				if( ApplicationsPage.class.equals( pageClass ) && (siteConfig.applicationArray().count() != 0) ) {
 
-					for( Enumeration e = siteConfig.applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
-						MApplication anApp = (MApplication)e.nextElement();
+					for( MApplication anApp : siteConfig.applicationArray() ) {
 						anApp.setRunningInstancesCount( 0 );
 					}
+
 					NSArray<MHost> hostArray = siteConfig.hostArray();
 					getApplicationStatusForHosts( hostArray );
 				}
-				else if( AppDetailPage.class.getName().endsWith( aName ) ) {
+				else if( AppDetailPage.class.equals( pageClass ) ) {
 					NSArray<MHost> hostArray = siteConfig.hostArray();
-
 					getInstanceStatusForHosts( hostArray );
 				}
-				else if( HostsPage.class.getName().endsWith( aName ) ) {
+				else if( HostsPage.class.equals( pageClass ) ) {
 					NSArray<MHost> hostArray = siteConfig.hostArray();
-
 					getHostStatusForHosts( hostArray );
 				}
 			}

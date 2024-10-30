@@ -39,7 +39,7 @@ public class AppDetailPage extends MonitorComponent {
 
 	public AppDetailPage( WOContext aWocontext ) {
 		super( aWocontext );
-		handler().updateForPage( name() );
+		handler().updateForPage( getClass() );
 
 		_displayGroup = new WODisplayGroup();
 		_displayGroup.setFetchesOnLoad( false );
