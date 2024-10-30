@@ -22,10 +22,6 @@ public class JMLoginPage extends MonitorComponent {
 	private String _password;
 	private String _message;
 
-	public WOComponent appPageClicked() {
-		return ApplicationsPage.create( context() );
-	}
-
 	public JMLoginPage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
@@ -36,14 +32,6 @@ public class JMLoginPage extends MonitorComponent {
 
 	public void setPassword( String aString ) {
 		_password = aString;
-	}
-
-	public boolean loginRequired() {
-		boolean result = false;
-		if( siteConfig() != null ) {
-			result = (!session().isLoggedIn() && siteConfig().isPasswordRequired());
-		}
-		return result;
 	}
 
 	public WOComponent loginClicked() {

@@ -1,25 +1,19 @@
-<wo:if condition="$loginRequired" negate="$true">
-	<wo:WOMetaRefresh action="$appPageClicked" seconds="0" />
-</wo:if>
-
-<wo:if condition="$loginRequired">
-	<html>
-		<head>
-			<title>Monitor</title>
-			<wo:ERXStyleSheet filename="javamonitor.css" />
-		</head>
-		<body id ="LoginPage" onload="document.getElementById('password').focus()">
-			<h1 style="text-align: center;">JavaMonitor for WebObjects</h1>
-			<wo:if condition="$message.length">
-				<p class="Box ErrorBox LoginErrorBox"><wo:str value="$message" escapeHTML="$false" /></p>
-			</wo:if>
-			<div class="Box LoginBox">
-				<wo:form>
-					<h4>A password is required to access this application</h4>
-			      	<p><label for="password">Password:</label><wo:password value="$password" id="password" /></p>
-		        	<p class="button_bar"><wo:submit action="$loginClicked" value="Login" /></p>
-				</wo:form>
-			</div>
-		</body>
-	</html>
-</wo:if>
+<html>
+	<head>
+		<title>Monitor</title>
+		<wo:ERXStyleSheet filename="javamonitor.css" />
+	</head>
+	<body id ="LoginPage" onload="document.getElementById('password').focus()">
+		<h1 style="text-align: center;">JavaMonitor for WebObjects</h1>
+		<wo:if condition="$message.length">
+			<p class="Box ErrorBox LoginErrorBox"><wo:str value="$message" escapeHTML="$false" /></p>
+		</wo:if>
+		<div class="Box LoginBox">
+			<wo:form>
+				<h4>A password is required to access this application</h4>
+		      	<p><label for="password">Password:</label><wo:password value="$password" id="password" /></p>
+	        	<p class="button_bar"><wo:submit action="$loginClicked" value="Login" /></p>
+			</wo:form>
+		</div>
+	</body>
+</html>

@@ -33,8 +33,9 @@ public class DirectAction extends ERXDirectAction {
 	public WOActionResults defaultAction() {
 
 		final Session session = (Session)existingSession();
+		final boolean loginRequired = WOTaskdHandler.siteConfig().isPasswordRequired();
 
-		if( session != null && session.isLoggedIn() ) {
+		if( !loginRequired || (session != null && session.isLoggedIn() ) ) {
 			return pageWithName( ApplicationsPage.class );
 		}
 
