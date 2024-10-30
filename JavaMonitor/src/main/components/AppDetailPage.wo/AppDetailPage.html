@@ -106,7 +106,7 @@
 				<th>Configure</th>
 				<th>Delete</th>
 			</tr>
-			<wo:repetition list="$displayGroup.allObjects" item="$currentInstance">
+			<wo:repetition list="$allInstances" item="$currentInstance">
 				<tr>
 					<td class="InstanceSelect">
 						<wo:form action="$selectOne"><wo:AjaxObserveField action="$selectOne"><wo:checkbox checked="$isSelectedInstance"/></wo:AjaxObserveField></wo:form>

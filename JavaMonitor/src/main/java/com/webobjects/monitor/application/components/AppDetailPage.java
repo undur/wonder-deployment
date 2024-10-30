@@ -1,6 +1,5 @@
 package com.webobjects.monitor.application.components;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,15 +32,17 @@ public class AppDetailPage extends MonitorComponent {
 	public MInstance currentInstance;
 	public boolean isClearDeathSectionVisible = false;
 	public boolean showDetailStatistics = false;
-	public WODisplayGroup displayGroup;
+	
+	@Deprecated
+	private WODisplayGroup _displayGroup;
 	public String filterErrorMessage = null;
 
 	public AppDetailPage( WOContext aWocontext ) {
 		super( aWocontext );
 		handler().updateForPage( name() );
 
-		displayGroup = new WODisplayGroup();
-		displayGroup.setFetchesOnLoad( false );
+		_displayGroup = new WODisplayGroup();
+		_displayGroup.setFetchesOnLoad( false );
 	}
 
 	public WOComponent showStatisticsClicked() {
@@ -104,37 +105,37 @@ public class AppDetailPage extends MonitorComponent {
 //	}
 
 	public WOActionResults selectAllAction() {
-		displayGroup.setSelectedObjects( displayGroup.allObjects() );
+		setSelectedInstances( allInstances() );
 		return null;
 	}
 
 	public WOActionResults selectNoneAction() {
-		displayGroup.setSelectedObjects( new NSMutableArray() );
+		setSelectedInstances( new NSMutableArray() );
 		return null;
 	}
 
 	public void selectRunning() {
 		final NSMutableArray<MInstance> selected = new NSMutableArray<>();
 
-		for( final MInstance instance : (List<MInstance>)displayGroup.allObjects() ) {
+		for( final MInstance instance : allInstances() ) {
 			if( instance.isRunning_M() ) {
 				selected.addObject( instance );
 			}
 		}
 
-		displayGroup.setSelectedObjects( selected );
+		setSelectedInstances( selected );
 	}
 
 	public void selectNotRunning() {
 		final NSMutableArray<MInstance> selected = new NSMutableArray<>();
 
-		for( final MInstance instance : (List<MInstance>)displayGroup.allObjects() ) {
+		for( final MInstance instance : allInstances() ) {
 			if( !instance.isRunning_M() ) {
 				selected.addObject( instance );
 			}
 		}
 
-		displayGroup.setSelectedObjects( selected );
+		setSelectedInstances( selected );
 	}
 
 	public void selectOne() {
@@ -142,14 +143,16 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public void _setIsSelectedInstance( boolean selected ) {
-		NSMutableArray selectedObjects = displayGroup.selectedObjects().mutableClone();
+		final NSMutableArray selectedObjects = selectedInstances().mutableClone();
+
 		if( selected && !selectedObjects.containsObject( currentInstance ) ) {
 			selectedObjects.addObject( currentInstance );
 		}
 		else if( !selected && selectedObjects.containsObject( currentInstance ) ) {
 			selectedObjects.removeObject( currentInstance );
 		}
-		displayGroup.setSelectedObjects( selectedObjects );
+
+		setSelectedInstances( selectedObjects );
 	}
 
 	public void setIsSelectedInstance( boolean selected ) {
@@ -157,20 +160,26 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public boolean isSelectedInstance() {
-		return displayGroup.selectedObjects().contains( currentInstance );
+		return selectedInstances().contains( currentInstance );
 	}
 
 	public boolean hasInstances() {
-		NSArray instancesArray = myApplication().instanceArray();
-		if( instancesArray == null || instancesArray.count() == 0 )
+		final NSArray instancesArray = myApplication().instanceArray();
+
+		if( instancesArray == null || instancesArray.count() == 0 ) {
 			return false;
+		}
+
 		return true;
 	}
 
 	public boolean isRefreshEnabled() {
-		NSArray instancesArray = myApplication().instanceArray();
-		if( instancesArray == null || instancesArray.count() == 0 )
+		final NSArray instancesArray = myApplication().instanceArray();
+
+		if( instancesArray == null || instancesArray.count() == 0 ) {
 			return false;
+		}
+
 		return siteConfig().viewRefreshEnabled().booleanValue();
 	}
 
@@ -351,8 +360,20 @@ public class AppDetailPage extends MonitorComponent {
 
 	/* ******* */
 
-	public NSArray<MInstance> selectedInstances() {
-		return displayGroup.selectedObjects();
+	public NSArray<MInstance> allInstances() {
+		return _displayGroup.allObjects();
+	}
+	
+	private void setAllInstances( NSArray<MInstance> allInstances ) {
+		_displayGroup.setObjectArray( allInstances );
+	}
+
+	private NSArray<MInstance> selectedInstances() {
+		return _displayGroup.selectedObjects();
+	}
+	
+	private void setSelectedInstances( NSArray array ) {
+		_displayGroup.setSelectedObjects( array );
 	}
 
 	public NSArray<MInstance> runningInstances() {
@@ -527,15 +548,15 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	private WOComponent newDetailPage() {
-		AppDetailPage nextPage = AppDetailPage.create( context(), myApplication() );
-		nextPage.displayGroup.setSelectedObjects( displayGroup.selectedObjects() );
+		final AppDetailPage nextPage = AppDetailPage.create( context(), myApplication() );
+		nextPage.setSelectedInstances( selectedInstances() );
 		nextPage.showDetailStatistics = showDetailStatistics;
-		if( currentBouncer() != null &&
-				!"Finished".equals( currentBouncer().status() ) &&
-				!currentBouncer().errors().isEmpty() ) {
+
+		if( currentBouncer() != null && !"Finished".equals( currentBouncer().status() ) && !currentBouncer().errors().isEmpty() ) {
 			session().addObjectsFromArrayIfAbsentToErrorMessageArray( currentBouncer().errors() );
 			session().removeObjectForKey( bouncerName() );
 		}
+
 		return nextPage;
 	}
 
@@ -764,8 +785,9 @@ public class AppDetailPage extends MonitorComponent {
 		instancesArray = result;
 
 		// AK: the MInstances don't really support equals()...
-		if( !page.displayGroup.allObjects().equals( instancesArray ) ) {
-			page.displayGroup.setObjectArray( instancesArray );
+		// FIXME: Why are we...? // Hugi 2024-10-30
+		if( !page.allInstances().equals( instancesArray ) ) {
+			page.setAllInstances( instancesArray );
 		}
 
 		if( selected != null ) {
@@ -775,10 +797,10 @@ public class AppDetailPage extends MonitorComponent {
 					active.addObject( instance );
 				}
 			}
-			page.displayGroup.setSelectedObjects( active );
+			page.setSelectedInstances( active );
 		}
 		else {
-			page.displayGroup.setSelectedObjects( page.displayGroup.allObjects() );
+			page.setSelectedInstances( page.allInstances() );
 		}
 
 		return page;
@@ -815,7 +837,7 @@ public class AppDetailPage extends MonitorComponent {
 			try {
 				final Pattern p = Pattern.compile( instanceNameFilterValue );
 
-				for( final MInstance instance : (List<MInstance>)displayGroup.allObjects() ) {
+				for( final MInstance instance : allInstances() ) {
 					final Matcher matcherForInstanceName = p.matcher( instance.displayName() );
 
 					if( matcherForInstanceName.matches() ) {
@@ -832,7 +854,7 @@ public class AppDetailPage extends MonitorComponent {
 				}
 			}
 
-			displayGroup.setSelectedObjects( selected );
+			setSelectedInstances( selected );
 		}
 		return null;
 	}
