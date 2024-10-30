@@ -16,7 +16,7 @@
 			</tr>
 			<wo:repetition list="$application.siteConfig.hostArray" item="$currentHost">
 				<tr>
-					<td><wo:str value="$currentHost.name" /> / <wo:str value="$currentHost.addressAsString" /></td>
+					<td><wo:link action="$configureHostClicked"><wo:str value="$currentHost.name" /> / <wo:str value="$currentHost.addressAsString" /></wo:link></td>
 					<td>
 						<wo:if condition="$currentHost.isAvailable">YES | <wo:link action="$displayWotaskdInfoClicked" target="_blank">View Config</wo:link></wo:if>
 						<wo:if condition="$currentHost.isAvailable" negate="$true"> <span class="HostNotAvailable">NO</span></wo:if>
