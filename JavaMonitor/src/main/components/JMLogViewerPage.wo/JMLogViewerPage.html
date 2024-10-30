@@ -37,13 +37,24 @@
 			background-color: rgb(255,200,200);
 		}
 	</style>
+	<script>
+		// Register "update" button for presses of the return button
+		// FIXME: We should really have some standard way to do this... // Hugi 2024-10-30
+		document.addEventListener("DOMContentLoaded", async () => {
+			document.getElementById('updateForm').onkeypress=function(e){
+			    if(e.keyCode==13){
+			        document.getElementById('updateButton').click();
+			    }
+			}
+		})
+	</script>
 	<div class="row mb-3">
 		<div class="col-4">
 			<div class="card p-3">
 				<h2><wo:str value="$file.absolutePath" size="100" /></h2>
 				<p><wo:link action="$download" class="btn">Download file</wo:link></p>
 		
-				<wo:form>
+				<wo:form id="updateForm">
 					<wo:AjaxUpdateContainer id="regexUC">
 						<div class="row mb-3">
 							<span class="input-group">
@@ -76,7 +87,7 @@
 						</label> 
 					</div>
 					<div class="row">
-						<label>&nbsp;</label> <wo:AjaxSubmitButton updateContainerID="logfile" action="$read" value="Update" class="btn btn-primary" />
+						<label>&nbsp;</label> <wo:AjaxSubmitButton updateContainerID="logfile" action="$read" value="Update" id="updateButton" class="btn btn-primary" />
 					</div>
 				</wo:form>
 			</div>
