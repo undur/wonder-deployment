@@ -1,0 +1,93 @@
+<wo:JMTablerLook>
+	<style>	
+		#logfile {
+		  font-family: courier, monospace;
+		  font-size: 12px;
+		  white-space: nowrap;
+		  line-height: 130%;
+		}
+		
+		#logfile>span {
+			white-space: pre;
+			display: block;
+		}
+		
+		#logfile span:nth-child(even) {
+			background: rgb(253,253,253)
+		}
+
+		#logfile span:nth-child(odd) {
+			background: rgb(245,245,245)
+		}
+
+		#logfile>span>span {
+		  color: gray;
+		  background-color: rgb(230,230,230);
+		  border-bottom: 1px solid rgb(220,220,220);
+		  text-align: right;
+		  display: inline-block;
+		  width: 50px;
+		}
+	
+		#logfile>span.nl>span {
+			background-color: #c8ffcd;
+		}
+
+		#logfile>span.ex {
+			background-color: rgb(255,200,200);
+		}
+	</style>
+	<div class="row mb-3">
+		<div class="col-4">
+			<div class="card p-3">
+				<h2><wo:str value="$file.absolutePath" size="100" /></h2>
+				<p><wo:link action="$download" class="btn">Download file</wo:link></p>
+		
+				<wo:form>
+					<wo:AjaxUpdateContainer id="regexUC">
+						<div class="row mb-3">
+							<span class="input-group">
+								<span class="input-group-text">Filter/search:</span>
+								<wo:textfield value="$filter" class="form-control" />
+							</span>
+						</div>
+					</wo:AjaxUpdateContainer>
+		
+					<div class="row mb-3">
+						<span class="input-group">
+							<span class="input-group-text">Starting line:</span>
+							<wo:textfield value="$startLine" numberformat="0" class="form-control" />
+							<span class="input-group-text">Ending line:</span>
+							<wo:textfield value="$endLine" numberformat="0" class="form-control" />
+						</span>
+					</div>
+		
+					<div class="row">
+						<label>
+							<wo:checkbox checked="$reverseLines" />
+							Reverse line order
+						</label>  
+					</div>
+					<br>
+					<div class="row">
+						<label>
+							<wo:checkbox checked="$showLineNumbers" />
+							Show line numbers
+						</label> 
+					</div>
+					<div class="row">
+						<label>&nbsp;</label> <wo:AjaxSubmitButton updateContainerID="logfile" action="$read" value="Update" class="btn btn-primary" />
+					</div>
+				</wo:form>
+			</div>
+		</div>
+	</div>
+	<div class="card">
+		<span class="card-header">
+			<h3>Log contains <wo:str value="$numberOfLines" numberformat="#,00" /> lines. Showing <wo:str value="$lines.size" numberformat="#,00" /></h3>
+		</span>
+		<wo:AjaxUpdateContainer id="logfile">
+	 		<wo:repetition list="$lines" item="$currentLine" index="$currentIndex"><wo:container elementName="span" class="$currentLineClass"><wo:if condition="$showLineNumbers"><span><wo:str value="$currentLine.number" /></span> </wo:if><wo:str value="$currentLine.text" /><br /></wo:container></wo:repetition>
+		</wo:AjaxUpdateContainer>
+	</div>
+</wo:JMTablerLook>
