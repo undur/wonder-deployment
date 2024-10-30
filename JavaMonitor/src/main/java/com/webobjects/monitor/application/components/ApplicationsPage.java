@@ -48,7 +48,7 @@ public class ApplicationsPage extends MonitorComponent {
 	 */
 	public List<MApplication> applications() {
 		final List<MApplication> applications = new ArrayList<>( siteConfig().applicationArray() );
-		Collections.sort( applications, Comparator.comparing( MApplication::name ) );
+		Collections.sort( applications, Comparator.comparing( MApplication::name, String.CASE_INSENSITIVE_ORDER ) );
 		return applications;
 	}
 
