@@ -83,23 +83,23 @@
 		
 		<table class="table table-sm table-bordered mb-0">
 			<tr>
-				<th>Select</th>
+				<th width="50">Select</th>
 				<th>Name</th>
 				<th>Host: Port</th>
-				<th>Status</th>
-				<th>Start / Stop</th>
-				<th>Auto- Recover</th>
-				<th>Refuse New Sessions</th>
-				<th>Scheduled</th>
-				<th>Next shutdown</th>
-				<th>Deaths</th>
+				<th width="120">Status</th>
+				<th width="120">Start / Stop</th>
+				<th width="120">Auto Recover</th>
+				<th width="120">Refuse New Sessions</th>
+				<th width="120">Scheduled</th>
+				<th width="120">Next shutdown</th>
+				<th width="120">Deaths</th>
 				<wo:if condition="$showDetailStatistics">
 					<th>Transactions</th>
 					<th>Active Sessions</th>
 					<th>Average Transactions</th>
 					<th>Average Idle Period</th>
 				</wo:if>
-				<wo:if condition = "$showDetailStatistics" negate="$true">
+				<wo:if condition="$showDetailStatistics" negate="$true">
 					<th>WOStats</th>
 				</wo:if>
 				<th>Details</th>
@@ -188,25 +188,27 @@
 					<wo:if condition="$showDetailStatistics" negate="$true">
 						<td class="InstanceWOStats">
 							<wo:if condition="$currentInstance.isRunning_M">
-								<wo:link href="$linkToWOStats" target="_blank" class="Button WOStatsButton"><span>WOStats</span></wo:link>
+								<wo:link href="$linkToWOStats" target="_blank">WOStats</wo:link>
 							</wo:if>
-							<wo:if condition="$currentInstance.isRunning_M" negate="$true"><div class="WOStatsOff">Off</div></wo:if>
+							<wo:if condition="$currentInstance.isRunning_M" negate="$true">
+								-
+							</wo:if>
 						</td>
 					</wo:if>
 					<td>
-						<wo:link action="$instanceDetailClicked" class="btn btn-sm btn-secondary">Details</wo:link>
+						<wo:link action="$instanceDetailClicked" class="btn btn-sm">Details</wo:link>
 					</td>
 					<td>
-						<wo:link action="$configureInstanceClicked" class="btn btn-sm btn-secondary">Config</wo:link>
+						<wo:link action="$configureInstanceClicked" class="btn btn-sm">Config</wo:link>
 					</td>
 					<td>
-						<wo:link action="$deleteInstanceClicked" class="btn btn-sm btn-danger">Delete</wo:link>
+						<wo:link action="$deleteInstanceClicked" class="btn btn-sm btn-outline-danger">Delete</wo:link>
 					</td>
 				</tr>
 			</wo:repetition>
 
 			<wo:if condition="$hasInstances">
-				<tr style="background-color: rgb(240,240,240)">
+				<tr style="background-color: rgb(245,245,245)">
 					<td colspan="4">
 						<strong>Select instances:</strong><br>
 						<br>
@@ -249,8 +251,12 @@
 							<wo:link action="$schedulingDisableAllClicked"><wo:img filename="stop.png" alt="Stop" height="19" width="19" /></wo:link>
 						</div>
 					</td>
-					<td class="AllBounce"><wo:link action="$bounceClicked" class="btn btn-sm btn-secondary">Bounce</wo:link>&nbsp;<wo:link pageName="HelpPage" fragmentIdentifier="18"><wo:img filename="help.png" height="24" width="24" /></wo:link></td>
-					<td class="AllClearDeaths"><wo:link action="$clearAllDeathsClicked" class="btn btn-sm btn-secondary">Clear Deaths</wo:link></td>
+					<td class="AllBounce">
+						<wo:link action="$bounceClicked" class="btn btn-sm">Bounce</wo:link><br>
+						<br>
+						<wo:link pageName="HelpPage" fragmentIdentifier="18"><wo:img filename="help.png" height="24" width="24" /></wo:link>
+					</td>
+					<td class="AllClearDeaths"><wo:link action="$clearAllDeathsClicked" class="btn btn-sm">Clear Deaths</wo:link></td>
 					<wo:if condition="$showDetailStatistics">
 						<td class="TotalTransactionCount">
 							<wo:str value="$totalTransactions" numberformat="0" />
@@ -271,8 +277,8 @@
 						</td>
 					</wo:if>
 					<td></td>
-					<td><wo:link action="$configureApplicationClicked"  class="btn btn-sm btn-secondary"><span>App Config</span></wo:link></td>
-					<td><wo:link action="$deleteAllInstancesClicked"  class="btn btn-sm btn-danger"><span>Delete</span></wo:link></td>
+					<td><wo:link action="$configureApplicationClicked"  class="btn btn-sm"><span>App Config</span></wo:link></td>
+					<td><wo:link action="$deleteAllInstancesClicked"  class="btn btn-sm btn-outline-danger"><span>Delete</span></wo:link></td>
 				</tr>
 			
 				<wo:if condition="$showDetailStatistics">

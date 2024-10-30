@@ -676,9 +676,11 @@ public class AppDetailPage extends MonitorComponent {
 
 	public String nextShutdown() {
 		String result = "N/A";
+
 		if( (currentInstance.schedulingEnabled() != null) && (currentInstance.schedulingEnabled().booleanValue()) ) {
 			result = currentInstance.nextScheduledShutdownString();
 		}
+
 		return result;
 	}
 
