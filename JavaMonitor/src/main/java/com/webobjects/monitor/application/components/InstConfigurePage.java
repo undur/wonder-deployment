@@ -135,12 +135,10 @@ public class InstConfigurePage extends MonitorComponent {
 	 */
 	private static String DIFF = "<span class=\"Warning\">**</span>";
 
-	private static String EMPTY_STRING = "";
-
 	/**
 	 * FIXME: OK. This is actually required it treats an empty string and null as equals. That's... bad and should really be fixed at the configuration side // Hugi 2024-10-31
 	 */
-	private boolean safeEquals( Object a, Object b ) {
+	private static boolean safeEquals( Object a, Object b ) {
 		if( (a == null) && (b == null) ) {
 			return true;
 		}
@@ -156,6 +154,16 @@ public class InstConfigurePage extends MonitorComponent {
 		return false;
 	}
 
+	/**
+	 * @return The difference indicator HTML marker string, if the two objects are not considered "equal" (in Monitor's sense)
+	 */
+	private static String diffString( Object a, Object b ) {
+		return !safeEquals( a, b ) ? DIFF : "";
+	}
+
+	/**
+	 * FIXME: Introduce an enum in MHost for the type, so we can use an exhaustive switch for those things // Hugi 2024-10-31
+	 */
 	public String pathDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
@@ -172,30 +180,12 @@ public class InstConfigurePage extends MonitorComponent {
 			appPath = myApplication.macPath();
 		}
 
-		if( !safeEquals( myInstance.path(), appPath ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
+		return diffString( myInstance.path(), appPath );
 	}
 
-	public String minDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		if( !safeEquals( myInstance.minimumActiveSessionsCount(), myApplication.minimumActiveSessionsCount() ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
-	}
-
-	public String cachingDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		if( !safeEquals( myInstance.cachingEnabled(), myApplication.cachingEnabled() ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
-	}
-
+	/**
+	 * FIXME: Introduce an enum in MHost for the type, so we can use an exhaustive switch for those things // Hugi 2024-10-31
+	 */
 	public String outputDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
@@ -212,51 +202,32 @@ public class InstConfigurePage extends MonitorComponent {
 			appOutputPath = myInstance.generateOutputPath( myApplication.macOutputPath() );
 		}
 
-		if( !safeEquals( myInstance.outputPath(), appOutputPath ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
+		return diffString( myInstance.outputPath(), appOutputPath );
 	}
 
+	public String minDiff() {
+		return diffString( myInstance().minimumActiveSessionsCount(), myInstance().application().minimumActiveSessionsCount() );
+	}
+
+	public String cachingDiff() {
+		return diffString( myInstance().cachingEnabled(), myInstance().application().cachingEnabled() );
+	}
 	public String browserDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		if( !safeEquals( myInstance.autoOpenInBrowser(), myApplication.autoOpenInBrowser() ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
+		return diffString( myInstance().autoOpenInBrowser(), myInstance().application().autoOpenInBrowser() );
 	}
 
 	public String debugDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		if( !safeEquals( myInstance.debuggingEnabled(), myApplication.debuggingEnabled() ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
+		return diffString( myInstance().debuggingEnabled(), myInstance().application().debuggingEnabled() );
 	}
 
 	public String lifebeatDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		if( !safeEquals( myInstance.lifebeatInterval(), myApplication.lifebeatInterval() ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
+		return diffString( myInstance().lifebeatInterval(), myInstance().application().lifebeatInterval() );
 	}
 
 	public String argsDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		if( !safeEquals( myInstance.additionalArgs(), myApplication.additionalArgs() ) ) {
-			return DIFF;
-		}
-		return EMPTY_STRING;
+		return diffString( myInstance().additionalArgs(), myInstance().application().additionalArgs() );
 	}
 
-	/* ******* */
-
-	/* ******** Force Quit support ********* */
 	public WOComponent forceQuitClicked() {
 		handler().sendQuitInstancesToWotaskds( new NSArray( myInstance() ), new NSArray( myInstance().host() ) );
 		return null;
@@ -265,8 +236,6 @@ public class InstConfigurePage extends MonitorComponent {
 	public String instanceLifebeatInterval() {
 		return myInstance().lifebeatInterval().toString();
 	}
-	/*
-	 * @param instance TODO ******* */
 
 	public static InstConfigurePage create( WOContext context, MInstance instance ) {
 		InstConfigurePage page = (InstConfigurePage)context.page().pageWithName( InstConfigurePage.class.getName() );

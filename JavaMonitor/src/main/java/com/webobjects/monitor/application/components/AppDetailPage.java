@@ -687,21 +687,11 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public String refuseNewSessionsLabel() {
-
-		if( currentInstance.isRefusingNewSessions() ) {
-			return "On";
-		}
-
-		return "Off";
+		return currentInstance.isRefusingNewSessions() ?"On" : "Off";
 	}
 
 	public String schedulingLabel() {
-
-		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
-			return "On";
-		}
-
-		return "Off";
+		return isTrueNullSafe( currentInstance.schedulingEnabled() ) ? "On" : "Off";
 	}
 
 	public String schedulingDivClass() {
