@@ -53,12 +53,15 @@ public class JMUtil {
 		}
 	}
 
+	/**
+	 * FIXME: Document, clean up // Hugi 2024-10-31
+	 */
 	public static boolean hostMeetsMinimumVersion( InetAddress anAddress ) {
-		byte[] versionRequest = ("womp://queryVersion").getBytes( StandardCharsets.UTF_8 );
-		DatagramPacket outgoingPacket = new DatagramPacket( versionRequest, versionRequest.length, anAddress, WOApplication.application().lifebeatDestinationPort() );
+		final byte[] versionRequest = ("womp://queryVersion").getBytes( StandardCharsets.UTF_8 );
+		final DatagramPacket outgoingPacket = new DatagramPacket( versionRequest, versionRequest.length, anAddress, WOApplication.application().lifebeatDestinationPort() );
 	
-		byte[] mbuffer = new byte[1000];
-		DatagramPacket incomingPacket = new DatagramPacket( mbuffer, mbuffer.length );
+		final byte[] mbuffer = new byte[1000];
+		final DatagramPacket incomingPacket = new DatagramPacket( mbuffer, mbuffer.length );
 		DatagramSocket socket = null;
 	
 		try {
