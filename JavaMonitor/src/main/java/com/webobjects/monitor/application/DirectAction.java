@@ -32,21 +32,25 @@ public class DirectAction extends ERXDirectAction {
 	@Override
 	public WOActionResults defaultAction() {
 
-		final Session session = (Session)existingSession();
 		final boolean loginRequired = WOTaskdHandler.siteConfig().isPasswordRequired();
 
-		if( !loginRequired || (session != null && session.isLoggedIn() ) ) {
+		if( !loginRequired ) {
 			return pageWithName( ApplicationsPage.class );
 		}
 
-		final JMLoginPage loginPage = pageWithName( JMLoginPage.class );
+		final Session session = (Session)existingSession();
 
-		if( request().stringFormValueForKey( "pw" ) != null ) {
-			loginPage.setPassword( request().stringFormValueForKey( "pw" ) );
-			return loginPage.loginClicked();
+		if( session != null && session.isLoggedIn() ) {
+			return pageWithName( ApplicationsPage.class );
 		}
 
-		return loginPage;
+		final String password = request().stringFormValueForKey( "pw" );
+
+		if( password != null && WOTaskdHandler.siteConfig().compareStringWithPassword( password )) {
+			return pageWithName( ApplicationsPage.class );
+		}
+
+		return pageWithName( JMLoginPage.class );
 	}
 
 	public WOResponse statisticsAction() {

@@ -1,19 +1,29 @@
 <html>
 	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
 		<title>Monitor</title>
-		<wo:ERXStyleSheet filename="javamonitor.css" />
+		<wo:ERXStyleSheet filename="tabler/css/tabler.min.css" />
 	</head>
-	<body id ="LoginPage" onload="document.getElementById('password').focus()">
-		<h1 style="text-align: center;">JavaMonitor for WebObjects</h1>
-		<wo:if condition="$message.length">
-			<p class="Box ErrorBox LoginErrorBox"><wo:str value="$message" escapeHTML="$false" /></p>
-		</wo:if>
-		<div class="Box LoginBox">
-			<wo:form>
-				<h4>A password is required to access this application</h4>
-		      	<p><label for="password">Password:</label><wo:password value="$password" id="password" /></p>
-	        	<p class="button_bar"><wo:submit action="$loginClicked" value="Login" /></p>
-			</wo:form>
+	<body class="d-flex flex-column" onload="document.getElementById('password').focus()">
+		<div class="text-center mb-4">
+			<div clas="row">
+				<div class="col">
+					<div class="container container-tight py-4">
+						<div class="card p-3">
+							<h1>Monitor Login</h1>
+							<wo:if condition="$message.length">
+								<div class="alert alert-danger"><wo:str value="$message" /></div>
+							</wo:if>
+							<wo:form>
+								<h4>A password is required to access this application</h4>
+								<p><wo:password value="$password" placeholder="Password" id="password" class="form-control" /></p>
+					        	<p class="button_bar"><wo:submit action="$login" value="Login" class="btn" /></p>
+							</wo:form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
