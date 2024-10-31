@@ -168,7 +168,7 @@ public class WOTaskdHandler {
 		return monitorRequest;
 	}
 
-	private WOResponse[] sendRequest( NSDictionary monitorRequest, NSArray wotaskdArray, boolean willChange ) {
+	private WOResponse[] sendRequest( NSDictionary monitorRequest, List<MHost> wotaskdArray, boolean willChange ) {
 		final String encodedRootObjectForKey = new _JavaMonitorCoder().encodeRootObjectForKey( monitorRequest, "monitorRequest" );
 		final NSData content = new NSData( encodedRootObjectForKey.getBytes() );
 		return MHost.sendRequestToWotaskdArray( content, wotaskdArray, willChange );
@@ -177,19 +177,19 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** ADDING (UPDATE) ********* */
-	public void sendAddInstancesToWotaskds( NSArray newInstancesArray, NSArray wotaskdArray ) {
+	public void sendAddInstancesToWotaskds( NSArray newInstancesArray, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, newInstancesArray, "add" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "add", false, false, true, false );
 	}
 
-	public void sendAddApplicationToWotaskds( MApplication newApplication, NSArray wotaskdArray ) {
+	public void sendAddApplicationToWotaskds( MApplication newApplication, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, newApplication, null, "add" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "add", false, true, false, false );
 	}
 
-	public void sendAddHostToWotaskds( MHost newHost, NSArray wotaskdArray ) {
+	public void sendAddHostToWotaskds( MHost newHost, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, newHost, null, null, "add" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "add", true, false, false, false );
@@ -198,19 +198,19 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** REMOVING (UPDATE) ********* */
-	public void sendRemoveInstancesToWotaskds( NSArray exInstanceArray, NSArray wotaskdArray ) {
+	public void sendRemoveInstancesToWotaskds( NSArray exInstanceArray, List<MHost> wotaskdArray ) {
 		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, exInstanceArray, "remove" ), wotaskdArray, true );
 		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "remove", false, false, true, false );
 	}
 
-	public void sendRemoveApplicationToWotaskds( MApplication exApplication, NSArray wotaskdArray ) {
+	public void sendRemoveApplicationToWotaskds( MApplication exApplication, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, exApplication, null, "remove" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "remove", false, true, false, false );
 	}
 
-	public void sendRemoveHostToWotaskds( MHost exHost, NSArray wotaskdArray ) {
+	public void sendRemoveHostToWotaskds( MHost exHost, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, exHost, null, null, "remove" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "remove", true, false, false, false );
@@ -219,29 +219,29 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** CONFIGURE (UPDATE) ********* */
-	public void sendUpdateInstancesToWotaskds( NSArray<MInstance> changedInstanceArray, NSArray wotaskdArray ) {
-		if( wotaskdArray.count() != 0 && changedInstanceArray.count() != 0 ) {
+	public void sendUpdateInstancesToWotaskds( NSArray<MInstance> changedInstanceArray, List<MHost> wotaskdArray ) {
+		if( wotaskdArray.size() != 0 && changedInstanceArray.count() != 0 ) {
 			final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, changedInstanceArray, "configure" ), wotaskdArray, true );
 			final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 			getUpdateErrors( responseDicts, "configure", false, false, true, false );
 		}
 	}
 
-	public void sendUpdateApplicationToWotaskds( MApplication changedApplication, NSArray wotaskdArray ) {
-		if( wotaskdArray.count() != 0 ) {
+	public void sendUpdateApplicationToWotaskds( MApplication changedApplication, List<MHost> wotaskdArray ) {
+		if( wotaskdArray.size() != 0 ) {
 			final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, changedApplication, null, "configure" ), wotaskdArray, true );
 			final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 			getUpdateErrors( responseDicts, "configure", false, true, false, false );
 		}
 	}
 
-	public void sendUpdateApplicationAndInstancesToWotaskds( MApplication changedApplication, NSArray wotaskdArray ) {
+	public void sendUpdateApplicationAndInstancesToWotaskds( MApplication changedApplication, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, changedApplication, changedApplication.instanceArray(), "configure" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "configure", false, true, true, false );
 	}
 
-	public void sendUpdateHostToWotaskds( MHost changedHost, NSArray wotaskdArray ) {
+	public void sendUpdateHostToWotaskds( MHost changedHost, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, changedHost, null, null, "configure" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "configure", true, false, false, false );
@@ -292,9 +292,9 @@ public class WOTaskdHandler {
 	/* ******** COMMANDING ********* */
 	private static Object[] commandInstanceKeys = new Object[] { "applicationName", "id", "hostName", "port" };
 
-	public static void sendCommandInstancesToWotaskds( String command, NSArray instanceArray, NSArray wotaskdArray, WOTaskdHandler collector ) {
+	public static void sendCommandInstancesToWotaskds( String command, NSArray instanceArray, List<MHost> wotaskdArray, WOTaskdHandler collector ) {
 
-		if( instanceArray.count() > 0 && wotaskdArray.count() > 0 ) {
+		if( instanceArray.count() > 0 && wotaskdArray.size() > 0 ) {
 			final int instanceCount = instanceArray.count();
 
 			final NSMutableDictionary monitorRequest = new NSMutableDictionary( 1 );
@@ -357,7 +357,7 @@ public class WOTaskdHandler {
 		return monitorRequest;
 	}
 
-	protected WOResponse[] sendQueryToWotaskds( String queryString, NSArray wotaskdArray ) {
+	protected WOResponse[] sendQueryToWotaskds( String queryString, List<MHost> wotaskdArray ) {
 		return sendRequest( createQuery( queryString ), wotaskdArray, false );
 	}
 

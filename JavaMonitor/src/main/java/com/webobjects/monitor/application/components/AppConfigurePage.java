@@ -119,7 +119,7 @@ public class AppConfigurePage extends MonitorComponent {
 	}
 
 	private void _defaultsPush() {
-		if( allHosts().count() != 0 ) {
+		if( allHosts().size() != 0 ) {
 			handler().sendUpdateApplicationAndInstancesToWotaskds( myApplication(), allHosts() );
 		}
 	}
@@ -432,7 +432,7 @@ public class AppConfigurePage extends MonitorComponent {
 	public WOComponent schedulingUpdateClicked() {
 		handler().startReading();
 		try {
-			if( (myApplication().instanceArray().count() != 0) && (allHosts().count() != 0) ) {
+			if( (myApplication().instanceArray().count() != 0) && (allHosts().size() != 0) ) {
 				handler().sendUpdateInstancesToWotaskds( myApplication().instanceArray(), allHosts() );
 			}
 		}

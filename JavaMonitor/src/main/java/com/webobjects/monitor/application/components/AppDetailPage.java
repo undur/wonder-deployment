@@ -2,6 +2,7 @@ package com.webobjects.monitor.application.components;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -574,7 +575,7 @@ public class AppDetailPage extends MonitorComponent {
 				anInst.setSchedulingEnabled( Boolean.TRUE );
 			}
 
-			if( allHosts().count() != 0 ) {
+			if( allHosts().size() != 0 ) {
 				handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
 			}
 		}
@@ -783,7 +784,7 @@ public class AppDetailPage extends MonitorComponent {
 		try {
 			NSMutableArray newInstanceArray = siteConfig().addInstances_M( selectedHost, myApplication(), numberOfInstancesToAdd );
 
-			if( allHosts().count() != 0 ) {
+			if( allHosts().size() != 0 ) {
 				handler().sendAddInstancesToWotaskds( newInstanceArray, allHosts() );
 			}
 		}
@@ -797,8 +798,8 @@ public class AppDetailPage extends MonitorComponent {
 	public boolean hasHosts() {
 		handler().startReading();
 		try {
-			NSArray hosts = allHosts();
-			return (hosts != null && (hosts.count() > 0));
+			List<MHost> hosts = allHosts();
+			return (hosts != null && (hosts.size() > 0));
 		}
 		finally {
 			handler().endReading();

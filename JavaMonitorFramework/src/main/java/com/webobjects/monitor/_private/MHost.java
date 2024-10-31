@@ -15,6 +15,7 @@ package com.webobjects.monitor._private;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -269,9 +270,9 @@ public class MHost extends MObject {
 	/** ******* */
 
 	/** ******** Communications Goop ********* */
-	public static WOResponse[] sendRequestToWotaskdArray( NSData content, NSArray wotaskdArray, boolean willChange ) {
+	public static WOResponse[] sendRequestToWotaskdArray( NSData content, List<MHost> wotaskdArray, boolean willChange ) {
 		MSiteConfig aConfig;
-		MHost aHost = (MHost)wotaskdArray.objectAtIndex( 0 );
+		MHost aHost = wotaskdArray.get( 0 );
 		if( aHost != null ) {
 			aConfig = aHost.siteConfig();
 		}
@@ -310,12 +311,11 @@ public class MHost extends MObject {
 			catch( InterruptedException ie ) {}
 		}
 
-		final WORequest aRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig
-				.passwordDictionary(), content, null );
-		final NSArray finalWotaskdArray = wotaskdArray;
+		final WORequest aRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig.passwordDictionary(), content, null );
+		final List<MHost> finalWotaskdArray = wotaskdArray;
 		final boolean wc = willChange;
 
-		Thread[] workers = new Thread[wotaskdArray.count()];
+		Thread[] workers = new Thread[wotaskdArray.size()];
 		final WOResponse[] responses = new WOResponse[workers.length];
 
 		for( int i = 0; i < workers.length; i++ ) {
@@ -323,7 +323,7 @@ public class MHost extends MObject {
 			Runnable work = new Runnable() {
 				@Override
 				public void run() {
-					responses[j] = ((MHost)finalWotaskdArray.objectAtIndex( j )).sendRequestToWotaskd( aRequest, wc, false );
+					responses[j] = finalWotaskdArray.get( j ).sendRequestToWotaskd( aRequest, wc, false );
 				}
 			};
 			workers[j] = new Thread( work );
