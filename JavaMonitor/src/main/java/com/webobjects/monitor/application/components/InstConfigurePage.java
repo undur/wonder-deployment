@@ -137,6 +137,9 @@ public class InstConfigurePage extends MonitorComponent {
 
 	private static String EMPTY_STRING = "";
 
+	/**
+	 * FIXME: OK. This is actually required it treats an empty string and null as equals. That's... bad and should really be fixed at the configuration side // Hugi 2024-10-31
+	 */
 	private boolean safeEquals( Object a, Object b ) {
 		if( (a == null) && (b == null) ) {
 			return true;
