@@ -9,7 +9,6 @@ import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.appserver.WODisplayGroup;
 import com.webobjects.appserver._private.WOProperties;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
@@ -41,16 +40,14 @@ public class AppDetailPage extends MonitorComponent {
 
 	private String _hrefToApp;
 
-	@Deprecated
-	private WODisplayGroup _displayGroup;
+	private NSArray<MInstance> _allInstances = new NSArray<>();
+	private NSArray<MInstance> _selectedInstances = new NSArray<>();
+	
 	public String filterErrorMessage;
 
 	public AppDetailPage( WOContext aWocontext ) {
 		super( aWocontext );
 		handler().updateForPage( getClass() );
-
-		_displayGroup = new WODisplayGroup();
-		_displayGroup.setFetchesOnLoad( false );
 	}
 
 	public WOComponent showStatisticsClicked() {
@@ -381,19 +378,19 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public NSArray<MInstance> allInstances() {
-		return _displayGroup.allObjects();
+		return _allInstances;
 	}
 	
-	private void setAllInstances( NSArray<MInstance> allInstances ) {
-		_displayGroup.setObjectArray( allInstances );
+	private void setAllInstances( NSArray<MInstance> value ) {
+		_allInstances = value;
 	}
 
 	private NSArray<MInstance> selectedInstances() {
-		return _displayGroup.selectedObjects();
+		return _selectedInstances;
 	}
 	
-	private void setSelectedInstances( NSArray array ) {
-		_displayGroup.setSelectedObjects( array );
+	private void setSelectedInstances( NSArray<MInstance> value ) {
+		_selectedInstances = value;
 	}
 
 	public NSArray<MInstance> runningInstances() {
