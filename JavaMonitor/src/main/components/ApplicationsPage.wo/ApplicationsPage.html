@@ -6,8 +6,9 @@
 		<table class="table table-sm table-striped mb-0">
 			<tr>
 				<th>Application</th>
-				<th>Instances Running</th>
-				<th>Instances Configured</th>
+				<th>
+					Instances<br>
+					Running / Configured</th>
 				<th></th>
 			</tr>
 			<wo:repetition list="$applications" item="$currentApplication">
@@ -18,8 +19,7 @@
 							<span style="float: right"><wo:link href="$hrefToApp" target="new"><wo:JMIcon name="Link" /></wo:link></span>
 						</wo:if>
 					</td>
-					<td><wo:str value="$currentApplication.runningInstancesCount" /></td>
-					<td><wo:str value="$currentApplication.instanceArray.count" /></td>
+					<td><wo:str value="$currentApplication.runningInstancesCount" /> / <wo:str value="$currentApplication.instanceArray.count" /></td>
 					<td>
 						<wo:link action="$appDetailsClicked" class="btn btn-sm">Instances</wo:link>
 						<wo:link action="$configureClicked" class="btn btn-sm">Configuration</wo:link>
@@ -30,8 +30,7 @@
 			</wo:repetition>
 			<tr style="color: gray">
 				<td></td>
-				<td><wo:str value="$totalInstancesRunning" numberformat="#,##0" /></td>
-				<td><wo:str value="$totalInstancesConfigured" numberformat="#,##0" /></td>
+				<td><wo:str value="$totalInstancesRunning" /> / <wo:str value="$totalInstancesConfigured" /></td>
 				<td></td>
 			</tr>
 		</table>
