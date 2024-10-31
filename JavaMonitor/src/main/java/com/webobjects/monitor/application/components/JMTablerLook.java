@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.webobjects.appserver.WOActionResults;
-import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor.application.MonitorComponent;
@@ -68,20 +67,20 @@ public class JMTablerLook extends MonitorComponent {
 	 * @return Display name for the <title> tag
 	 */
 	public String pageTitle() {
-		return "WOMonitor: " + title;
+		return "Monitor: " + title;
 	}
 
 	/**
 	 * @return true if logout is possible in the given context
 	 */
-	public boolean logoutRequired() {
+	private boolean showLogout() {
 		return siteConfig() != null && (session().isLoggedIn() && siteConfig().isPasswordRequired());
 	}
 
 	/**
 	 * FIXME: I have no idea why we'd ever like to keep this tab secret // Hugi 2024-10-24 
 	 */
-	public boolean showModProxyTab() {
+	private boolean showModProxy() {
 		return ERXProperties.booleanForKeyWithDefault( "er.javamonitor.showModProxyTab", false );
 	}
 
@@ -99,18 +98,21 @@ public class JMTablerLook extends MonitorComponent {
 	 */
 	public List<MenuItem> menuItems() {
 		final ArrayList<MenuItem> items = new ArrayList<>();
-		items.add( new MenuItem( 0, "Applications", Icon.Cube, this::ApplicationsPageClicked ) );
-		items.add( new MenuItem( 1, "Hosts", Icon.Server, this::HostsPageClicked ) );
-		items.add( new MenuItem( 2, "Site", Icon.Home, this::ConfigurePageClicked ) );
-		items.add( new MenuItem( 3, "Preferences", Icon.Adjustments, this::PrefsPageClicked ) );
-		items.add( new MenuItem( 4, "Help", Icon.Help, this::HelpPageClicked ) );
+		items.add( new MenuItem( 0, "Applications", Icon.Cube, () -> ApplicationsPage.create( context() ) ) );
+		items.add( new MenuItem( 1, "Hosts", Icon.Server, () -> HostsPage.create( context() ) ) );
+		items.add( new MenuItem( 2, "Site", Icon.Home, () -> ConfigurePage.create( context() ) ) );
+		items.add( new MenuItem( 3, "Preferences", Icon.Adjustments, () -> PrefsPage.create( context() ) ) );
+		items.add( new MenuItem( 4, "Help", Icon.Help, () -> pageWithName( HelpPage.class ) ) );
 
-		if( showModProxyTab() ) {
-			items.add( new MenuItem( 6, "mod_proxy", Icon.Polygon, this::ModProxyPageClicked) );
+		if( showModProxy() ) {
+			items.add( new MenuItem( 6, "mod_proxy", Icon.Polygon, () -> pageWithName( ModProxyPage.class )) );
 		}
 
-		if( logoutRequired() ) {
-			items.add( new MenuItem( 7, "Logout", Icon.Home, this::logoutClicked ) );
+		if( showLogout() ) {
+			items.add( new MenuItem( 7, "Logout", Icon.Home, () -> {
+				session().setIsLoggedIn( false );
+				return pageWithName( JMLoginPage.class );
+			}) );
 		}
 
 		return items;
@@ -119,41 +121,5 @@ public class JMTablerLook extends MonitorComponent {
 	/**
 	 * Represents a menuitem in the top menubar
 	 */
-	public record MenuItem( int id, String name, Icon icon, Supplier<WOComponent> supplier ) {}
-
-	@Deprecated
-	public WOComponent ApplicationsPageClicked() {
-		return ApplicationsPage.create( context() );
-	}
-
-	@Deprecated
-	public WOComponent HostsPageClicked() {
-		return HostsPage.create( context() );
-	}
-
-	@Deprecated
-	public WOComponent ConfigurePageClicked() {
-		return ConfigurePage.create( context() );
-	}
-
-	@Deprecated
-	public WOComponent PrefsPageClicked() {
-		return PrefsPage.create( context() );
-	}
-
-	@Deprecated
-	public WOComponent HelpPageClicked() {
-		return pageWithName( HelpPage.class );
-	}
-
-	@Deprecated
-	public WOComponent ModProxyPageClicked() {
-		return pageWithName( ModProxyPage.class );
-	}
-
-	@Deprecated
-	public WOComponent logoutClicked() {
-		session().setIsLoggedIn( false );
-		return pageWithName( JMLoginPage.class );
-	}
+	public record MenuItem( int id, String name, Icon icon, Supplier<WOActionResults> supplier ) {}
 }
