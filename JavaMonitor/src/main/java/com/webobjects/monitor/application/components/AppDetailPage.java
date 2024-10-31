@@ -813,27 +813,20 @@ public class AppDetailPage extends MonitorComponent {
 		final AppDetailPage page = ERXApplication.erxApplication().pageWithName( AppDetailPage.class, context );
 		page.setMyApplication( mApplication );
 
-		NSArray<MInstance> instancesArray = mApplication.instanceArray();
-
-		if( instancesArray == null ) {
-			instancesArray = NSArray.EmptyArray;
-		}
-
-		final NSMutableArray<MInstance> result = new NSMutableArray<>( mApplication.instanceArray() );
-		Collections.sort( result, Comparator.comparing( MInstance::id ) );
-		instancesArray = result;
+		final NSMutableArray<MInstance> instances = new NSMutableArray<>( mApplication.instanceArray() );
+		Collections.sort( instances, Comparator.comparing( MInstance::id ) );
 
 		// AK: the MInstances don't really support equals()...
 		// FIXME: Why are we...? // Hugi 2024-10-30
-		if( !page.allInstances().equals( instancesArray ) ) {
-			page.setAllInstances( instancesArray );
+		if( !page.allInstances().equals( instances ) ) {
+			page.setAllInstances( instances );
 		}
 
 		if( selected != null ) {
 			final NSMutableArray<MInstance> active = new NSMutableArray<>();
 
 			for( MInstance instance : selected ) {
-				if( instancesArray.containsObject( instance ) ) {
+				if( instances.containsObject( instance ) ) {
 					active.addObject( instance );
 				}
 			}
