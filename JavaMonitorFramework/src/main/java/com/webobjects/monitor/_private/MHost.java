@@ -36,14 +36,12 @@ import com.webobjects.foundation._NSThreadsafeMutableArray;
 import er.extensions.foundation.ERXProperties;
 
 public class MHost extends MObject {
-	private static final Logger log = LoggerFactory.getLogger( MHost.class );
+
+	private static final Logger logger = LoggerFactory.getLogger( MHost.class );
 
 	private final int _receiveTimeout = ERXProperties.intForKeyWithDefault( "JavaMonitor.receiveTimeout", 10000 );
 
-	/*
-	 * NSString name; NSString type; // WINDOWS | UNIX | MACOSX
-	 */
-
+	// FIXME: These seem unused
 	public static final String MAC_HOST_TYPE = "MACOSX";
 	public static final String WINDOWS_HOST_TYPE = "WINDOWS";
 	public static final String UNIX_HOST_TYPE = "UNIX";
@@ -106,12 +104,12 @@ public class MHost extends MObject {
 				// AK: From *my* POV, we should check if this is the localhost and exit if it is,
 				// as I had this happen when you set -WOHost something and DNS isn't available.
 				// As it stands now, wotaskd will launch, but not really register and app (or get weirdo exceptions)
-				log.error( "Error getting address for Host: {}", name() );
+				logger.error( "Error getting address for Host: {}", name() );
 				try {
 					Thread.sleep( 2000 );
 				}
 				catch( InterruptedException e ) {
-					log.error( "Interrupted" );
+					logger.error( "Interrupted" );
 				}
 			}
 		}
@@ -346,16 +344,11 @@ public class MHost extends MObject {
 
 	private static WORequest syncRequest( MSiteConfig aConfig ) {
 		if( _syncRequest == null ) {
-			NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( aConfig
-					.dictionaryForArchive(), "SiteConfig" );
-			NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>(
-					data, "sync" );
-			NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>(
-					updateWotaskd, "updateWotaskd" );
-			NSData content = new NSData( (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorRequest,
-					"monitorRequest" ) );
-			_syncRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig
-					.passwordDictionary(), content, null );
+			final NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( aConfig.dictionaryForArchive(), "SiteConfig" );
+			final NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>( data, "sync" );
+			final NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>( updateWotaskd, "updateWotaskd" );
+			final NSData content = new NSData( (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
+			_syncRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig.passwordDictionary(), content, null );
 		}
 		return _syncRequest;
 	}
@@ -363,6 +356,9 @@ public class MHost extends MObject {
 	private String errorResponse = null;
 
 	public WOResponse sendRequestToWotaskd( WORequest aRequest, boolean willChange, boolean isSync ) {
+
+		//		logger.info( "Sending request: {}", aRequest );
+
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "!@#$!@#$ sendRequestToWotaskd creates a WOHTTPConnection" );
 		}
