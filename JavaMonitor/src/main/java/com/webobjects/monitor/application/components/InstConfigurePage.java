@@ -130,12 +130,12 @@ public class InstConfigurePage extends MonitorComponent {
 		return null;
 	}
 
-	/* ******* */
+	/**
+	 * Settings differing from application defaults are marked with this HTML string
+	 */
+	private static String DIFF = "<span class=\"Warning\">**</span>";
 
-	/* ******** Diff returns ********* */
-	private static String _diffString = "<span class=\"Warning\">**</span>";
-
-	private static String _emptyString = "";
+	private static String EMPTY_STRING = "";
 
 	private boolean safeEquals( Object a, Object b ) {
 		if( (a == null) && (b == null) ) {
@@ -170,27 +170,27 @@ public class InstConfigurePage extends MonitorComponent {
 		}
 
 		if( !safeEquals( myInstance.path(), appPath ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	public String minDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
 		if( !safeEquals( myInstance.minimumActiveSessionsCount(), myApplication.minimumActiveSessionsCount() ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	public String cachingDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
 		if( !safeEquals( myInstance.cachingEnabled(), myApplication.cachingEnabled() ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	public String outputDiff() {
@@ -210,45 +210,45 @@ public class InstConfigurePage extends MonitorComponent {
 		}
 
 		if( !safeEquals( myInstance.outputPath(), appOutputPath ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	public String browserDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
 		if( !safeEquals( myInstance.autoOpenInBrowser(), myApplication.autoOpenInBrowser() ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	public String debugDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
 		if( !safeEquals( myInstance.debuggingEnabled(), myApplication.debuggingEnabled() ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	public String lifebeatDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
 		if( !safeEquals( myInstance.lifebeatInterval(), myApplication.lifebeatInterval() ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	public String argsDiff() {
 		MInstance myInstance = myInstance();
 		MApplication myApplication = myInstance.application();
 		if( !safeEquals( myInstance.additionalArgs(), myApplication.additionalArgs() ) ) {
-			return _diffString;
+			return DIFF;
 		}
-		return _emptyString;
+		return EMPTY_STRING;
 	}
 
 	/* ******* */
