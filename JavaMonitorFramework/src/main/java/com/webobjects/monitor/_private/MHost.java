@@ -14,7 +14,6 @@ package com.webobjects.monitor._private;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -46,7 +45,6 @@ public class MHost extends MObject {
 	public static final String WINDOWS_HOST_TYPE = "WINDOWS";
 	public static final String UNIX_HOST_TYPE = "UNIX";
 
-	/** ******** 'values' accessors ********* */
 	public String name() {
 		return (String)values.valueForKey( "name" );
 	}
@@ -65,24 +63,19 @@ public class MHost extends MObject {
 		_siteConfig.dataHasChanged();
 	}
 
-	/** ******* */
+	// FIXME: We should probably make this private and provide access through the accessor
+	NSMutableArray<MInstance> _instanceArray;
 
-	/** ******** Object Graph ********* */
-	NSMutableArray _instanceArray;
+	private NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
 
-	NSMutableArray _applicationArray = new NSMutableArray();
-
-	public NSMutableArray instanceArray() {
+	public NSMutableArray<MInstance> instanceArray() {
 		return _instanceArray;
 	}
 
-	public NSArray applicationArray() {
+	public NSArray<MApplication> applicationArray() {
 		return _applicationArray;
 	}
 
-	/** ******* */
-
-	/** ******** Constructors ********* */
 	// From the UI
 	public MHost( MSiteConfig aConfig, String name, String type ) {
 		this( new NSDictionary<Object, Object>( new Object[] { name, type }, new Object[] { "name", "type" } ), aConfig );
@@ -92,7 +85,7 @@ public class MHost extends MObject {
 	public MHost( NSDictionary aValuesDict, MSiteConfig aConfig ) {
 		values = new NSMutableDictionary( aValuesDict );
 		_siteConfig = aConfig;
-		_instanceArray = new NSMutableArray();
+		_instanceArray = new NSMutableArray<>();
 
 		int tries = 0;
 		while( tries++ < 5 ) {
@@ -114,15 +107,10 @@ public class MHost extends MObject {
 			}
 		}
 		// This is just for caching purposes
-		errorResponse = (new _JavaMonitorCoder()).encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray(
-				"Failed to contact " + name() + "-" + WOApplication.application().lifebeatDestinationPort() ),
-				"errorResponse" ), "instanceResponse" );
+		errorResponse = new _JavaMonitorCoder().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
 
 	}
 
-	/** ******* */
-
-	/** ******** Adding and Removing Instance Primitives ********* */
 	public void _addInstancePrimitive( MInstance anInstance ) {
 		_instanceArray.addObject( anInstance );
 		if( !_applicationArray.containsObject( anInstance._application ) ) {
@@ -136,21 +124,19 @@ public class MHost extends MObject {
 		// application has to see if any other ones have that host
 		// if not, remove it.
 		boolean uniqueApplication = true;
-		for( Enumeration e = _instanceArray.objectEnumerator(); e.hasMoreElements(); ) {
-			MInstance anInst = (MInstance)e.nextElement();
+
+		for( MInstance anInst : _instanceArray ) {
 			if( anInstance._application == anInst._application ) {
 				uniqueApplication = false;
 				break;
 			}
 		}
+
 		if( uniqueApplication ) {
 			_applicationArray.removeObject( anInstance._application );
 		}
 	}
 
-	/** ******* */
-
-	/** ******** InetAddress stuff ********* */
 	private InetAddress _address = null;
 
 	public InetAddress address() {
@@ -183,20 +169,19 @@ public class MHost extends MObject {
 
 	@Override
 	public String toString() {
+
 		if( false ) {
-			return values.toString() + " " + "address = " + _address + " " + "runningInstances = " + runningInstances
-					+ " " + "operatingSystem = " + operatingSystem + " " + "processorType = " + processorType + " ";
+			return values.toString() + " " + "address = " + _address + " " + "runningInstances = " + runningInstances + " " + "operatingSystem = " + operatingSystem + " " + "processorType = " + processorType + " ";
 		}
+
 		return "MHost@" + _address;
 	}
-
-	/** ******* */
 
 	public Integer runningInstancesCount_W() {
 		int runningInstances = 0;
 		int numInstances = _instanceArray.count();
 		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInstance = _instanceArray.objectAtIndex( i );
 			if( anInstance.isRunning_W() ) {
 				runningInstances++;
 			}
@@ -225,18 +210,19 @@ public class MHost extends MObject {
 
 	public MInstance instanceWithPort( Integer port ) {
 		int instanceArrayCount = _instanceArray.count();
+
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInst = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInst = _instanceArray.objectAtIndex( i );
 			if( anInst.port().equals( port ) ) {
 				return anInst;
 			}
 		}
+
 		return null;
 	}
 
 	/**
-	 * ******** Machine Information and Availability Check (Used by MONITOR)
-	 * *********
+	 * Machine Information and Availability Check (Used by MONITOR)
 	 */
 	public String runningInstances = "?";
 
@@ -265,9 +251,9 @@ public class MHost extends MObject {
 		}
 	}
 
-	/** ******* */
-
-	/** ******** Communications Goop ********* */
+	/**
+	 * Communications Goop
+	 */
 	public static WOResponse[] sendRequestToWotaskdArray( NSData content, List<MHost> wotaskdArray, boolean willChange ) {
 		MSiteConfig aConfig;
 		MHost aHost = wotaskdArray.get( 0 );
