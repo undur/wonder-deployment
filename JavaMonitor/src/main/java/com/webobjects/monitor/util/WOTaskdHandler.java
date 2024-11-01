@@ -24,7 +24,6 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
-import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.components.AppDetailPage;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 import com.webobjects.monitor.application.components.HostsPage;
@@ -65,7 +64,6 @@ public class WOTaskdHandler {
 		}
 	}
 
-
 	public WOTaskdHandler( ErrorCollector errorCollector ) {
 		_errorCollector = errorCollector;
 	}
@@ -74,24 +72,20 @@ public class WOTaskdHandler {
 		return _errorCollector;
 	}
 
-	private static _NSCollectionReaderWriterLock lock() {
-		return _lock;
-	}
-
 	public void startReading() {
-		lock().startReading();
+		_lock.startReading();
 	}
 
 	public void endReading() {
-		lock().endReading();
+		_lock.endReading();
 	}
 
 	public void startWriting() {
-		lock().startWriting();
+		_lock.startWriting();
 	}
 
 	public void endWriting() {
-		lock().endWriting();
+		_lock.endWriting();
 	}
 
 	/**
