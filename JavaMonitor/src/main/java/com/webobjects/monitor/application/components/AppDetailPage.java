@@ -772,7 +772,7 @@ public class AppDetailPage extends MonitorComponent {
 
 		handler().startWriting();
 		try {
-			NSMutableArray newInstanceArray = siteConfig().addInstances_M( selectedHost, myApplication(), numberOfInstancesToAdd );
+			List<MInstance> newInstanceArray = siteConfig().addInstances_M( selectedHost, myApplication(), numberOfInstancesToAdd );
 
 			if( allHosts().size() != 0 ) {
 				handler().sendAddInstancesToWotaskds( newInstanceArray, allHosts() );

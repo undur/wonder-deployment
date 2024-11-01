@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.List;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -14,7 +16,6 @@ package com.webobjects.monitor.application.components;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor.application.MonitorComponent;
@@ -47,9 +48,8 @@ public class PathWizardPage1 extends MonitorComponent {
 		showFiles = aValue;
 	}
 
-	public NSArray hostList() {
-		NSArray aHostArray = siteConfig().hostArray();
-		return aHostArray;
+	public List<MHost> hostList() {
+		return siteConfig().hostArray();
 	}
 
 	public WOComponent hostClicked() {
@@ -63,35 +63,38 @@ public class PathWizardPage1 extends MonitorComponent {
 	}
 
 	public boolean onlyOneHost() {
-		NSArray aHostList = hostList();
+		final List<MHost> aHostList = hostList();
 
-		if( aHostList != null && (aHostList.count() == 1) ) {
+		if( aHostList != null && (aHostList.size() == 1) ) {
 			return true;
 		}
+
 		return false;
 	}
 
 	public boolean multipleHosts() {
-		NSArray aHostList = hostList();
+		final List<MHost> aHostList = hostList();
 
-		if( aHostList != null && (aHostList.count() > 1) ) {
+		if( aHostList != null && (aHostList.size() > 1) ) {
 			return true;
 		}
+
 		return false;
 	}
 
 	public boolean noHosts() {
-		NSArray aHostList = hostList();
+		final List<MHost> aHostList = hostList();
 
-		if( aHostList == null || (aHostList.count() == 0) ) {
+		if( aHostList == null || (aHostList.size() == 0) ) {
 			return true;
 		}
+
 		return false;
 	}
 
 	public WOComponent onlyHostClicked() {
 		PathWizardPage2 aPage = PathWizardPage2.create( context(), myApplication() );
-		aPage.setHost( (MHost)hostList().objectAtIndex( 0 ) );
+		aPage.setHost( hostList().get( 0 ) );
 		aPage.setCallbackKeypath( callbackKeypath );
 		aPage.setCallbackExpand( callbackExpand );
 		aPage.setCallbackPage( callbackPage );

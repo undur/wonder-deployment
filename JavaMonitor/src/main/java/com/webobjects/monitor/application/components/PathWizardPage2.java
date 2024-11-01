@@ -17,7 +17,6 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSKeyValueCodingAdditions;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
-import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
 
 public class PathWizardPage2 extends MonitorComponent {

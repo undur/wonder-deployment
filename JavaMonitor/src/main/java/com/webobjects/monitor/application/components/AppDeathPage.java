@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.List;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -14,7 +16,6 @@ package com.webobjects.monitor.application.components;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor.application.MonitorComponent;
 
@@ -28,7 +29,7 @@ public class AppDeathPage extends MonitorComponent {
 	}
 
 	public WOComponent clearDeathsClicked() {
-		handler().sendClearDeathsToWotaskds( new NSArray<>( myInstance() ), new NSArray<>( myInstance().host() ) );
+		handler().sendClearDeathsToWotaskds( List.of( myInstance() ), List.of( myInstance().host() ) );
 		return AppDetailPage.create( context(), myApplication() );
 	}
 

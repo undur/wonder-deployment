@@ -3,6 +3,7 @@ package com.webobjects.monitor.application.admin;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
+import java.util.List;
 
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOComponent;
@@ -82,31 +83,29 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		cleanup();
 	}
 
-	public void clearDeaths( NSArray nsarray ) {
-		MInstance minstance;
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			minstance = (MInstance)enumeration.nextElement();
+	public void clearDeaths( List<MInstance> nsarray ) {
+
+		for( MInstance minstance : nsarray ) {
 			processedInstance( minstance );
 		}
+
 		sendCommandInstancesToWotaskds( "CLEAR" );
 	}
 
-	public void scheduleType( NSArray nsarray, String scheduleType ) {
+	public void scheduleType( List<MInstance> nsarray, String scheduleType ) {
 		// Should be one of "HOURLY", "DAILY", "WEEKLY"
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+		for( MInstance minstance : nsarray ) {
 			minstance.setSchedulingType( scheduleType );
 			processedInstance( minstance );
 		}
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void hourlyStartHours( NSArray nsarray, int beginScheduleWindow, int endScheduleWindow, int interval ) {
+	public void hourlyStartHours( List<MInstance> nsarray, int beginScheduleWindow, int endScheduleWindow, int interval ) {
 		int hour = beginScheduleWindow;
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
+		for( MInstance minstance : nsarray ) {
 			if( hour > endScheduleWindow )
 				hour = beginScheduleWindow;
-			MInstance minstance = (MInstance)enumeration.nextElement();
 			minstance.setSchedulingHourlyStartTime( Integer.valueOf( hour ) );
 			minstance.setSchedulingInterval( Integer.valueOf( interval ) );
 			processedInstance( minstance );
@@ -115,12 +114,11 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void dailyStartHours( NSArray nsarray, int beginScheduleWindow, int endScheduleWindow ) {
+	public void dailyStartHours( List<MInstance> nsarray, int beginScheduleWindow, int endScheduleWindow ) {
 		int hour = beginScheduleWindow;
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
+		for( MInstance minstance : nsarray ) {
 			if( hour > endScheduleWindow )
 				hour = beginScheduleWindow;
-			MInstance minstance = (MInstance)enumeration.nextElement();
 			minstance.setSchedulingDailyStartTime( Integer.valueOf( hour ) );
 			processedInstance( minstance );
 			hour++;
@@ -128,12 +126,11 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void weeklyStartHours( NSArray nsarray, int beginScheduleWindow, int endScheduleWindow, int startDay ) {
+	public void weeklyStartHours( List<MInstance> nsarray, int beginScheduleWindow, int endScheduleWindow, int startDay ) {
 		int hour = beginScheduleWindow;
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
+		for( MInstance minstance : nsarray ) {
 			if( hour > endScheduleWindow )
 				hour = beginScheduleWindow;
-			MInstance minstance = (MInstance)enumeration.nextElement();
 			minstance.setSchedulingWeeklyStartTime( Integer.valueOf( hour ) );
 			minstance.setSchedulingStartDay( Integer.valueOf( startDay ) );
 			processedInstance( minstance );
@@ -142,9 +139,8 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void turnScheduledOn( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+	public void turnScheduledOn( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
 			if( !minstance.isScheduled() ) {
 				minstance.setSchedulingEnabled( Boolean.TRUE );
 				processedInstance( minstance );
@@ -153,9 +149,8 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void turnScheduledOff( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+	public void turnScheduledOff( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
 			if( minstance.isScheduled() ) {
 				minstance.setSchedulingEnabled( Boolean.FALSE );
 				processedInstance( minstance );
@@ -164,9 +159,8 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void setAdditionalArgs( NSArray instances, String arguments ) {
-		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance instance = (MInstance)enumeration.nextElement();
+	public void setAdditionalArgs( List<MInstance> instances, String arguments ) {
+		for( MInstance instance : instances ) {
 			String instArgs = instance.additionalArgs();
 			if( instArgs == null || !arguments.equals( instArgs ) ) {
 				instance.setAdditionalArgs( arguments );
@@ -176,9 +170,8 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void turnRefuseNewSessionsOn( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+	public void turnRefuseNewSessionsOn( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
 			if( !minstance.isRefusingNewSessions() ) {
 				minstance.setRefusingNewSessions( true );
 				processedInstance( minstance );
@@ -187,9 +180,8 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendCommandInstancesToWotaskds( "REFUSE" );
 	}
 
-	public void turnRefuseNewSessionsOff( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+	public void turnRefuseNewSessionsOff( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
 			if( minstance.isRefusingNewSessions() ) {
 				minstance.setRefusingNewSessions( false );
 				processedInstance( minstance );
@@ -198,11 +190,9 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendCommandInstancesToWotaskds( "ACCEPT" );
 	}
 
-	public void turnAutoRecoverOn( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
-			if( minstance.autoRecover() == null
-					|| !minstance.autoRecover().booleanValue() ) {
+	public void turnAutoRecoverOn( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
+			if( minstance.autoRecover() == null || !minstance.autoRecover().booleanValue() ) {
 				minstance.setAutoRecover( Boolean.TRUE );
 				processedInstance( minstance );
 			}
@@ -210,11 +200,9 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void turnAutoRecoverOff( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
-			if( minstance.autoRecover() != null
-					&& minstance.autoRecover().booleanValue() ) {
+	public void turnAutoRecoverOff( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
+			if( minstance.autoRecover() != null && minstance.autoRecover().booleanValue() ) {
 				minstance.setAutoRecover( Boolean.FALSE );
 				processedInstance( minstance );
 			}
@@ -222,21 +210,17 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendUpdateInstancesToWotaskds();
 	}
 
-	public void forceQuit( NSArray nsarray ) {
-		MInstance minstance;
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			minstance = (MInstance)enumeration.nextElement();
+	public void forceQuit( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
 			minstance.state = MObject.STOPPING;
 			processedInstance( minstance );
 		}
 		sendCommandInstancesToWotaskds( "QUIT" );
 	}
 
-	public void stop( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
-			if( minstance.state == MObject.ALIVE
-					|| minstance.state == MObject.STARTING ) {
+	public void stop( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
+			if( minstance.state == MObject.ALIVE || minstance.state == MObject.STARTING ) {
 				minstance.state = MObject.STOPPING;
 				processedInstance( minstance );
 			}
@@ -244,13 +228,9 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendCommandInstancesToWotaskds( "STOP" );
 	}
 
-	public void start( NSArray nsarray ) {
-		for( Enumeration enumeration = nsarray.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
-			if( minstance.state == MObject.DEAD
-					|| minstance.state == MObject.STOPPING
-					|| minstance.state == MObject.CRASHING
-					|| minstance.state == MObject.UNKNOWN ) {
+	public void start( List<MInstance> nsarray ) {
+		for( MInstance minstance : nsarray ) {
+			if( minstance.state == MObject.DEAD || minstance.state == MObject.STOPPING || minstance.state == MObject.CRASHING || minstance.state == MObject.UNKNOWN ) {
 				minstance.state = MObject.STARTING;
 				processedInstance( minstance );
 			}
@@ -258,25 +238,25 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		sendCommandInstancesToWotaskds( "START" );
 	}
 
-	public void bounce( NSArray<MApplication> applications ) {
+	public void bounce( List<MApplication> applications ) {
 		bounceGraceful( applications );
 	}
 
-	public void bounceGraceful( NSArray<MApplication> applications ) {
+	public void bounceGraceful( List<MApplication> applications ) {
 		for( MApplication application : applications ) {
 			AppDetailPage page = AppDetailPage.create( context(), application );
 			page = (AppDetailPage)page.bounceClickedWithGracefulBouncer();
 		}
 	}
 
-	public void bounceShutdown( NSArray<MApplication> applications, int maxwait ) {
+	public void bounceShutdown( List<MApplication> applications, int maxwait ) {
 		for( MApplication application : applications ) {
 			AppDetailPage page = AppDetailPage.create( context(), application );
 			page = (AppDetailPage)page.bounceClickedWithShutdownBouncer( maxwait );
 		}
 	}
 
-	public void bounceRolling( NSArray<MApplication> applications ) {
+	public void bounceRolling( List<MApplication> applications ) {
 		for( MApplication application : applications ) {
 			AppDetailPage page = AppDetailPage.create( context(), application );
 			page = (AppDetailPage)page.bounceClickedWithRollingBouncer();
@@ -292,10 +272,12 @@ public class AdminApplicationsPage extends ApplicationsPage {
 
 	protected NSArray allInstances() {
 		NSMutableArray nsmutablearray = new NSMutableArray();
+
 		for( Enumeration enumeration = applicationArray().objectEnumerator(); enumeration.hasMoreElements(); ) {
 			NSArray instances = ((MApplication)enumeration.nextElement()).instanceArray();
 			nsmutablearray.addObjectsFromArray( instances );
 		}
+
 		return nsmutablearray;
 	}
 

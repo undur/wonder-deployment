@@ -2,11 +2,11 @@ package com.webobjects.monitor.application.components;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.StringExtensions;
@@ -19,7 +19,7 @@ public class HostsPage extends MonitorComponent {
 	public MHost currentHost;
 	public String newHostName;
 	public String hostTypeSelection = "Unix";
-	public NSArray hostTypeList = MObject.hostTypeArray;
+	public List<String> hostTypeList = MObject.hostTypeArray;
 
 	public HostsPage( WOContext aWocontext ) {
 		super( aWocontext );
@@ -57,12 +57,12 @@ public class HostsPage extends MonitorComponent {
 							MHost host = new MHost( siteConfig(), newHostName, hostTypeSelection.toUpperCase() );
 
 							// To avoid overwriting hosts
-							NSArray tempHostArray = new NSArray( siteConfig().hostArray() );
+							final List<MHost> tempHostArray = new ArrayList( siteConfig().hostArray() );
 							siteConfig().addHost_M( host );
 
 							handler().sendOverwriteToWotaskd( host );
 
-							if( tempHostArray.count() != 0 ) {
+							if( tempHostArray.size() != 0 ) {
 								handler().sendAddHostToWotaskds( host, tempHostArray );
 							}
 
@@ -108,8 +108,8 @@ public class HostsPage extends MonitorComponent {
 					handler().startWriting();
 					try {
 						siteConfig().removeHost_M( host );
-						NSMutableArray tempHostArray = new NSMutableArray( siteConfig().hostArray() );
-						tempHostArray.addObject( host );
+						final List<MHost> tempHostArray = new ArrayList( siteConfig().hostArray() );
+						tempHostArray.add( host );
 
 						handler().sendRemoveHostToWotaskds( host, tempHostArray );
 					}

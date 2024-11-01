@@ -393,7 +393,7 @@ public class AppConfigurePage extends MonitorComponent {
 
 	public List<String> timeOfDayList = MObject.timeOfDayArray;
 
-	public List<Object> schedulingTypeList = MObject.schedulingTypeArray;
+	public List<String> schedulingTypeList = MObject.schedulingTypeArray;
 
 	public List<Integer> schedulingIntervalList = MObject.schedulingIntervalArray;
 
@@ -452,23 +452,23 @@ public class AppConfigurePage extends MonitorComponent {
 
 	public String loadSchedulerItem;
 
-	public List<Object> loadSchedulerList = MObject.loadSchedulerArray;
+	public List<String> loadSchedulerList = MObject.loadSchedulerArray;
 
 	public Integer urlVersionItem;
 
-	public List<Object> urlVersionList = MObject.urlVersionArray;
+	public List<Integer> urlVersionList = MObject.urlVersionArray;
 
 	public String customSchedulerName;
 
 	public String loadSchedulerSelection() {
 		if( myApplication().scheduler() != null ) {
-			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOfObject( myApplication().scheduler() );
+			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOf( myApplication().scheduler() );
 			if( indexOfScheduler != -1 ) {
-				_loadSchedulerSelection = (String)loadSchedulerList.get( indexOfScheduler );
+				_loadSchedulerSelection = loadSchedulerList.get( indexOfScheduler );
 			}
 			else {
 				// Custom scheduler
-				_loadSchedulerSelection = (String)loadSchedulerList.get( loadSchedulerList.size() - 1 );
+				_loadSchedulerSelection = loadSchedulerList.get( loadSchedulerList.size() - 1 );
 				customSchedulerName = myApplication().scheduler();
 			}
 		}
@@ -502,7 +502,7 @@ public class AppConfigurePage extends MonitorComponent {
 				}
 			}
 			else {
-				newValue = (String)MObject.loadSchedulerArrayValues.objectAtIndex( i );
+				newValue = MObject.loadSchedulerArrayValues.get( i );
 			}
 			myApplication().setScheduler( newValue );
 

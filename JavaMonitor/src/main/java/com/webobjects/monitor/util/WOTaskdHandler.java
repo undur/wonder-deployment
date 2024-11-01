@@ -1,6 +1,5 @@
 package com.webobjects.monitor.util;
 
-import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -54,8 +53,8 @@ public class WOTaskdHandler {
 			System.exit( 1 );
 		}
 
-		for( Enumeration e = _siteConfig.hostArray().objectEnumerator(); e.hasMoreElements(); ) {
-			_siteConfig.hostErrorArray.addObjectIfAbsent( e.nextElement() );
+		for( Object nextElement : _siteConfig.hostArray() ) {
+			_siteConfig.hostErrorArray.addObjectIfAbsent( nextElement );
 		}
 
 		if( _siteConfig.localHost() != null ) {
@@ -104,29 +103,28 @@ public class WOTaskdHandler {
 	 */
 	@Deprecated
 	public void updateForPage( Class<? extends WOComponent> pageClass ) {
-		// KH - we should probably set the instance information as we get the
-		// responses, to avoid waiting, then doing it in serial! (not that it's
-		// _that_ slow)
-		MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
+
+		// KH - we should probably set the instance information as we get the responses, to avoid waiting, then doing it in serial! (not that it's _that_ slow)
+		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
+
 		startReading();
+
 		try {
-			if( siteConfig.hostArray().count() != 0 ) {
-				if( ApplicationsPage.class.equals( pageClass ) && (siteConfig.applicationArray().count() != 0) ) {
-
-					for( MApplication anApp : siteConfig.applicationArray() ) {
-						anApp.setRunningInstancesCount( 0 );
+			if( siteConfig.hostArray().size() != 0 ) {
+				if( ApplicationsPage.class.equals( pageClass ) ) {
+					if( siteConfig.applicationArray().size() != 0 ) {
+						for( final MApplication anApp : siteConfig.applicationArray() ) {
+							anApp.setRunningInstancesCount( 0 );
+						}
+						
+						getApplicationStatusForHosts( siteConfig.hostArray() );
 					}
-
-					NSArray<MHost> hostArray = siteConfig.hostArray();
-					getApplicationStatusForHosts( hostArray );
 				}
 				else if( AppDetailPage.class.equals( pageClass ) ) {
-					NSArray<MHost> hostArray = siteConfig.hostArray();
-					getInstanceStatusForHosts( hostArray );
+					getInstanceStatusForHosts( siteConfig.hostArray() );
 				}
 				else if( HostsPage.class.equals( pageClass ) ) {
-					NSArray<MHost> hostArray = siteConfig.hostArray();
-					getHostStatusForHosts( hostArray );
+					getHostStatusForHosts( siteConfig.hostArray() );
 				}
 			}
 		}
@@ -136,34 +134,36 @@ public class WOTaskdHandler {
 	}
 
 	/* ******** Common Functionality ********* */
-	private static NSMutableDictionary createUpdateRequestDictionary( MSiteConfig _Config, MHost _Host, MApplication _Application, NSArray _InstanceArray, String requestType ) {
+	private static NSMutableDictionary createUpdateRequestDictionary( MSiteConfig _Config, MHost _Host, MApplication _Application, List<MInstance> _InstanceArray, String requestType ) {
 
 		final NSMutableDictionary monitorRequest = new NSMutableDictionary( 1 );
 		final NSMutableDictionary updateWotaskd = new NSMutableDictionary( 1 );
 		final NSMutableDictionary requestTypeDict = new NSMutableDictionary();
 
 		if( _Config != null ) {
-			NSDictionary site = new NSDictionary( _Config.values() );
+			final NSDictionary site = new NSDictionary( _Config.values() );
 			requestTypeDict.takeValueForKey( site, "site" );
 		}
 
 		if( _Host != null ) {
-			NSArray hostArray = new NSArray( _Host.values() );
+			final List<MHost> hostArray = new NSArray( _Host.values() );
 			requestTypeDict.takeValueForKey( hostArray, "hostArray" );
 		}
 
 		if( _Application != null ) {
-			NSArray applicationArray = new NSArray( _Application.values() );
+			final List<MApplication> applicationArray = new NSArray( _Application.values() );
 			requestTypeDict.takeValueForKey( applicationArray, "applicationArray" );
 		}
 
 		if( _InstanceArray != null ) {
-			int instanceCount = _InstanceArray.count();
-			NSMutableArray instanceArray = new NSMutableArray( instanceCount );
+			final int instanceCount = _InstanceArray.size();
+			final NSMutableArray instanceArray = new NSMutableArray( instanceCount );
+
 			for( int i = 0; i < instanceCount; i++ ) {
-				MInstance anInst = (MInstance)_InstanceArray.objectAtIndex( i );
+				MInstance anInst = _InstanceArray.get( i );
 				instanceArray.addObject( anInst.values() );
 			}
+
 			requestTypeDict.takeValueForKey( instanceArray, "instanceArray" );
 		}
 
@@ -181,7 +181,7 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** ADDING (UPDATE) ********* */
-	public void sendAddInstancesToWotaskds( NSArray newInstancesArray, List<MHost> wotaskdArray ) {
+	public void sendAddInstancesToWotaskds( List<MInstance> newInstancesArray, List<MHost> wotaskdArray ) {
 		final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, newInstancesArray, "add" ), wotaskdArray, true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "add", false, false, true, false );
@@ -202,7 +202,7 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** REMOVING (UPDATE) ********* */
-	public void sendRemoveInstancesToWotaskds( NSArray exInstanceArray, List<MHost> wotaskdArray ) {
+	public void sendRemoveInstancesToWotaskds( List<MInstance> exInstanceArray, List<MHost> wotaskdArray ) {
 		WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, exInstanceArray, "remove" ), wotaskdArray, true );
 		NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, "remove", false, false, true, false );
@@ -223,8 +223,8 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** CONFIGURE (UPDATE) ********* */
-	public void sendUpdateInstancesToWotaskds( NSArray<MInstance> changedInstanceArray, List<MHost> wotaskdArray ) {
-		if( wotaskdArray.size() != 0 && changedInstanceArray.count() != 0 ) {
+	public void sendUpdateInstancesToWotaskds( List<MInstance> changedInstanceArray, List<MHost> wotaskdArray ) {
+		if( wotaskdArray.size() != 0 && changedInstanceArray.size() != 0 ) {
 			final WOResponse[] responses = sendRequest( createUpdateRequestDictionary( null, null, null, changedInstanceArray, "configure" ), wotaskdArray, true );
 			final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 			getUpdateErrors( responseDicts, "configure", false, false, true, false );
@@ -256,7 +256,7 @@ public class WOTaskdHandler {
 		try {
 			final NSMutableArray hostArray = siteConfig().hostArray();
 
-			if( hostArray.count() != 0 ) {
+			if( hostArray.size() != 0 ) {
 				final NSMutableDictionary updateRequestDictionary = createUpdateRequestDictionary( siteConfig(), null, null, null, "configure" );
 				final WOResponse[] responses = sendRequest( updateRequestDictionary, hostArray, true );
 				final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
@@ -324,27 +324,27 @@ public class WOTaskdHandler {
 		}
 	}
 
-	public void sendCommandInstancesToWotaskds( String command, List<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
+	public void sendCommandInstancesToWotaskds( String command, List<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( command, instanceArray, wotaskdArray, this );
 	}
 
-	public void sendQuitInstancesToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
+	public void sendQuitInstancesToWotaskds( List<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "QUIT", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendStartInstancesToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
+	public void sendStartInstancesToWotaskds( List<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "START", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendClearDeathsToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
+	public void sendClearDeathsToWotaskds( List<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "CLEAR", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendStopInstancesToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
+	public void sendStopInstancesToWotaskds( List<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "STOP", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendRefuseSessionToWotaskds( NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray, boolean doRefuse ) {
+	public void sendRefuseSessionToWotaskds( List<MInstance> instanceArray, List<MHost> wotaskdArray, boolean doRefuse ) {
 
 		for( MInstance instance : instanceArray ) {
 			instance.setRefusingNewSessions( doRefuse );
@@ -457,11 +457,10 @@ public class WOTaskdHandler {
 
 	protected void _addUpdateResponseToErrorArray( NSDictionary updateTypeResponse, String responseKey, NSMutableArray errorArray ) {
 
-		final NSArray aResponse = (NSArray)updateTypeResponse.valueForKey( responseKey );
+		final List<NSDictionary> aResponse = (List<NSDictionary>)updateTypeResponse.valueForKey( responseKey );
 
 		if( aResponse != null ) {
-			for( Enumeration e = aResponse.objectEnumerator(); e.hasMoreElements(); ) {
-				final NSDictionary aDict = (NSDictionary)e.nextElement();
+			for( NSDictionary aDict : aResponse ) {
 				final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
 
 				if( errorMessage != null ) {
@@ -481,11 +480,11 @@ public class WOTaskdHandler {
 
 				final NSArray commandWotaskdResponse = (NSArray)responseDict.valueForKey( "commandWotaskdResponse" );
 
-				if( (commandWotaskdResponse != null) && (commandWotaskdResponse.count() > 0) ) {
-					int count = commandWotaskdResponse.count();
+				if( (commandWotaskdResponse != null) && (commandWotaskdResponse.size() > 0) ) {
+					int count = commandWotaskdResponse.size();
 
 					for( int j = 1; j < count; j++ ) {
-						final NSDictionary aDict = (NSDictionary)commandWotaskdResponse.objectAtIndex( j );
+						final NSDictionary aDict = (NSDictionary)commandWotaskdResponse.get( j );
 						final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
 
 						if( errorMessage != null ) {
@@ -519,11 +518,11 @@ public class WOTaskdHandler {
 
 				final NSArray commandWotaskdResponse = (NSArray)responseDict.valueForKey( "commandWotaskdResponse" );
 
-				if( (commandWotaskdResponse != null) && (commandWotaskdResponse.count() > 0) ) {
-					int count = commandWotaskdResponse.count();
+				if( (commandWotaskdResponse != null) && (commandWotaskdResponse.size() > 0) ) {
+					int count = commandWotaskdResponse.size();
 
 					for( int j = 1; j < count; j++ ) {
-						final NSDictionary aDict = (NSDictionary)commandWotaskdResponse.objectAtIndex( j );
+						final NSDictionary aDict = (NSDictionary)commandWotaskdResponse.get( j );
 						final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
 
 						if( errorMessage != null ) {
@@ -554,8 +553,8 @@ public class WOTaskdHandler {
 		}
 	}
 
-	public void getInstanceStatusForHosts( NSArray<MHost> hostArray ) {
-		if( hostArray.count() != 0 ) {
+	public void getInstanceStatusForHosts( List<MHost> hostArray ) {
+		if( hostArray.size() != 0 ) {
 
 			final WOResponse[] responses = sendQueryToWotaskds( "INSTANCE", hostArray );
 
@@ -585,8 +584,8 @@ public class WOTaskdHandler {
 					responseArray = (NSArray)queryResponseDictionary.valueForKey( "instanceResponse" );
 
 					if( responseArray != null ) {
-						for( int j = 0; j < responseArray.count(); j++ ) {
-							responseDictionary = (NSDictionary)responseArray.objectAtIndex( j );
+						for( int j = 0; j < responseArray.size(); j++ ) {
+							responseDictionary = (NSDictionary)responseArray.get( j );
 
 							final String host = (String)responseDictionary.valueForKey( "host" );
 							final Integer port = (Integer)responseDictionary.valueForKey( "port" );
@@ -631,14 +630,14 @@ public class WOTaskdHandler {
 		}
 	}
 
-	public void getHostStatusForHosts( NSArray<MHost> hostArray ) {
+	public void getHostStatusForHosts( List<MHost> hostArray ) {
 		final WOResponse[] responses = sendQueryToWotaskds( "HOST", hostArray );
 
 		final NSMutableArray errorArray = new NSMutableArray();
 		NSDictionary responseDict = null;
 
 		for( int i = 0; i < responses.length; i++ ) {
-			final MHost aHost = siteConfig().hostArray().objectAtIndex( i );
+			final MHost aHost = siteConfig().hostArray().get( i );
 
 			if( (responses[i] == null) || (responses[i].content() == null) ) {
 				responseDict = emptyResponse;
@@ -674,7 +673,7 @@ public class WOTaskdHandler {
 		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
 	}
 
-	public void getApplicationStatusForHosts( NSArray<MHost> hostArray ) {
+	public void getApplicationStatusForHosts( List<MHost> hostArray ) {
 
 		final WOResponse[] responses = sendQueryToWotaskds( "APPLICATION", hostArray );
 
@@ -706,8 +705,8 @@ public class WOTaskdHandler {
 				responseArray = (NSArray)applicationResponseDictionary.valueForKey( "applicationResponse" );
 
 				if( responseArray != null ) {
-					for( int j = 0; j < responseArray.count(); j++ ) {
-						responseDictionary = (NSDictionary)responseArray.objectAtIndex( j );
+					for( int j = 0; j < responseArray.size(); j++ ) {
+						responseDictionary = (NSDictionary)responseArray.get( j );
 						String appName = (String)responseDictionary.valueForKey( "name" );
 						Integer runningInstances = (Integer)responseDictionary.valueForKey( "runningInstances" );
 						MApplication anApplication = siteConfig().applicationWithName( appName );

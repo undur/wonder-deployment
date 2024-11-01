@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.List;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -14,7 +16,6 @@ package com.webobjects.monitor.application.components;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor.application.MonitorComponent;
@@ -22,7 +23,7 @@ import com.webobjects.monitor.application.MonitorComponent;
 public class HostConfigurePage extends MonitorComponent {
 
 	private String _hostTypeSelection;
-	public NSArray hostTypeList = MObject.hostTypeArray;
+	public List<String> hostTypeList = MObject.hostTypeArray;
 
 	public HostConfigurePage( WOContext aWocontext ) {
 		super( aWocontext );
@@ -31,8 +32,8 @@ public class HostConfigurePage extends MonitorComponent {
 	public String hostTypeSelection() {
 		if( _hostTypeSelection == null ) {
 			String type = myHost().osType();
-			for( int i = hostTypeList.count() - 1; i >= 0; i-- ) {
-				String myHostTypeSelection = (String)hostTypeList.objectAtIndex( i );
+			for( int i = hostTypeList.size() - 1; i >= 0; i-- ) {
+				String myHostTypeSelection = (String)hostTypeList.get( i );
 				if( type.equalsIgnoreCase( myHostTypeSelection ) ) {
 					_hostTypeSelection = myHostTypeSelection;
 				}
@@ -65,7 +66,7 @@ public class HostConfigurePage extends MonitorComponent {
 	public WOComponent syncHostClicked() {
 		MHost host = myHost();
 		siteConfig().hostErrorArray.addObjectIfAbsent( host );
-		handler().sendUpdateHostToWotaskds( host, new NSArray( host ) );
+		handler().sendUpdateHostToWotaskds( host, List.of( host ) );
 
 		return HostConfigurePage.create( context(), myHost() );
 	}

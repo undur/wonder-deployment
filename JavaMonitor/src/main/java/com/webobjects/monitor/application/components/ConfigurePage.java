@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.List;
+
 /*
  (c) Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -15,7 +17,6 @@ package com.webobjects.monitor.application.components;
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.MonitorComponent;
@@ -30,9 +31,9 @@ public class ConfigurePage extends MonitorComponent {
 	public boolean isBackupSectionVisible = false;
 	public String _loadSchedulerSelection = null;
 	public String loadSchedulerItem;
-	public NSArray loadSchedulerList = MObject.loadSchedulerArray;
+	public List<String> loadSchedulerList = MObject.loadSchedulerArray;
 	public Integer urlVersionItem;
-	public NSArray urlVersionList = MObject.urlVersionArray;
+	public List<Integer> urlVersionList = MObject.urlVersionArray;
 	public String customSchedulerName;
 	public String adaptorInfoUsername;
 	public String adaptorInfoPassword;
@@ -53,13 +54,13 @@ public class ConfigurePage extends MonitorComponent {
 
 	public String loadSchedulerSelection() {
 		if( (application() != null) && (siteConfig().scheduler() != null) ) {
-			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOfObject( siteConfig().scheduler() );
+			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOf( siteConfig().scheduler() );
 			if( indexOfScheduler != -1 ) {
-				_loadSchedulerSelection = (String)loadSchedulerList.objectAtIndex( indexOfScheduler );
+				_loadSchedulerSelection = loadSchedulerList.get( indexOfScheduler );
 			}
 			else {
 				// Custom scheduler
-				_loadSchedulerSelection = (String)loadSchedulerList.objectAtIndex( loadSchedulerList.count() - 1 );
+				_loadSchedulerSelection = loadSchedulerList.get( loadSchedulerList.size() - 1 );
 				customSchedulerName = siteConfig().scheduler();
 			}
 		}
@@ -87,18 +88,18 @@ public class ConfigurePage extends MonitorComponent {
 	public WOComponent adaptorUpdateClicked() {
 		String newValue;
 
-		int i = loadSchedulerList.indexOfObject( _loadSchedulerSelection );
+		int i = loadSchedulerList.indexOf( _loadSchedulerSelection );
 		if( i == 0 ) {
 			newValue = null;
 		}
-		else if( i == (loadSchedulerList.count() - 1) ) {
+		else if( i == (loadSchedulerList.size() - 1) ) {
 			newValue = customSchedulerName;
 			if( !StringExtensions.isValidXMLString( newValue ) ) {
 				newValue = null;
 			}
 		}
 		else {
-			newValue = (String)MObject.loadSchedulerArrayValues.objectAtIndex( i );
+			newValue = MObject.loadSchedulerArrayValues.get( i );
 		}
 		siteConfig().setScheduler( newValue );
 

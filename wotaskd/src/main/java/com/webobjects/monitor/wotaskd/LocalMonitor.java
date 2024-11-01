@@ -157,14 +157,15 @@ public class LocalMonitor extends ProtoLocalMonitor {
 			// Should make this configurable?
 			NSTimestamp cutOffDate = new NSTimestamp( System.currentTimeMillis() - 45000 );
 
-			NSArray unknownAppKeys = unknownApps.allKeys();
-			for( Enumeration e = unknownAppKeys.objectEnumerator(); e.hasMoreElements(); ) {
-				String unknownAppKey = (String)e.nextElement();
+			NSArray<String> unknownAppKeys = unknownApps.allKeys();
+
+			for( String unknownAppKey : unknownAppKeys ) {
 				NSMutableDictionary appDict = (NSMutableDictionary)unknownApps.valueForKey( unknownAppKey );
+
 				if( appDict != null ) {
-					NSArray appDictKeys = appDict.allKeys();
-					for( Enumeration e2 = appDictKeys.objectEnumerator(); e2.hasMoreElements(); ) {
-						String appDictKey = (String)e2.nextElement();
+					NSArray<String> appDictKeys = appDict.allKeys();
+
+					for( String appDictKey : appDictKeys ) {
 						NSTimestamp lastLifebeat = (NSTimestamp)appDict.valueForKey( appDictKey );
 						if( (lastLifebeat != null) && (lastLifebeat.before( cutOffDate )) ) {
 							appDict.removeObjectForKey( appDictKey );

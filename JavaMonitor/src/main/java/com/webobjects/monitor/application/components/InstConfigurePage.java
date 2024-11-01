@@ -1,5 +1,7 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.List;
+
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -14,7 +16,6 @@ package com.webobjects.monitor.application.components;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -107,7 +108,7 @@ public class InstConfigurePage extends MonitorComponent {
 	public WOComponent startupUpdateClicked() {
 		handler().startReading();
 		try {
-			handler().sendUpdateInstancesToWotaskds( new NSArray( myInstance() ), allHosts() );
+			handler().sendUpdateInstancesToWotaskds( List.of( myInstance() ), allHosts() );
 		}
 		finally {
 			handler().endReading();
@@ -121,7 +122,7 @@ public class InstConfigurePage extends MonitorComponent {
 	public WOComponent adaptorSettingsUpdateClicked() {
 		handler().startReading();
 		try {
-			handler().sendUpdateInstancesToWotaskds( new NSArray( myInstance() ), allHosts() );
+			handler().sendUpdateInstancesToWotaskds( List.of( myInstance() ), allHosts() );
 		}
 		finally {
 			handler().endReading();
@@ -229,7 +230,7 @@ public class InstConfigurePage extends MonitorComponent {
 	}
 
 	public WOComponent forceQuitClicked() {
-		handler().sendQuitInstancesToWotaskds( new NSArray( myInstance() ), new NSArray( myInstance().host() ) );
+		handler().sendQuitInstancesToWotaskds( List.of( myInstance() ), List.of( myInstance().host() ) );
 		return null;
 	}
 

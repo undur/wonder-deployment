@@ -1,6 +1,6 @@
 package com.webobjects.monitor.application.components;
 
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.webobjects.appserver.WOActionResults;
@@ -13,7 +13,7 @@ import com.webobjects.monitor.application.MonitorComponent;
 
 public class ModProxyPage extends MonitorComponent {
 
-	public NSArray<String> loadBalencers = new NSArray<>( List.of( "byrequests", "bytraffic", "bybusyness" ) );
+	public List<String> loadBalencers = new ArrayList<>( List.of( "byrequests", "bytraffic", "bybusyness" ) );
 	public String loadBalancerItem;
 	public String loadBalancer = "byrequests";
 	public Integer timeout = Integer.valueOf( 0 );
@@ -50,25 +50,22 @@ public class ModProxyPage extends MonitorComponent {
 		result.append( "# Balancer routes\n" );
 		result.append( "#\n" );
 
-		for( Enumeration<MApplication> e = siteConfig().applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
-			MApplication anApp = e.nextElement();
+		for( MApplication anApp : siteConfig().applicationArray() ) {
 			anApp.extractAdaptorValuesFromSiteConfig();
 
 			String tmpAdaptor = siteConfig().woAdaptor();
 			tmpAdaptor = removeEnd( tmpAdaptor, "/" );
 
-			NSArray<String> tmpPath = NSArray.componentsSeparatedByString( tmpAdaptor, "/" );
+			final List<String> tmpPath = NSArray.componentsSeparatedByString( tmpAdaptor, "/" );
 
-			int count = tmpPath.count();
+			int count = tmpPath.size();
 			String adaptorPath = "/" + tmpPath.get( count - 2 ) + "/" + tmpPath.get( count - 1 ) + "/";
 
 			result.append( "<Proxy balancer://" + anApp.name() + ".woa>\n" );
 
-			NSMutableArray<String> reversePathes = new NSMutableArray<>();
+			final List<String> reversePathes = new ArrayList<>();
 
-			for( Enumeration<MInstance> e2 = anApp.instanceArray().objectEnumerator(); e2.hasMoreElements(); ) {
-				MInstance anInst = e2.nextElement();
-
+			for( MInstance anInst : anApp.instanceArray() ) {
 				anInst.extractAdaptorValuesFromApplication();
 
 				String host = anInst.values().valueForKey( "hostName" ).toString();
@@ -95,8 +92,8 @@ public class ModProxyPage extends MonitorComponent {
 			result.append( _proxyBalancerCookieName( anApp.name() ) );
 			result.append( " nofailover=On\n" );
 
-			for( int i = 0; i < reversePathes.count(); i++ ) {
-				String url = reversePathes.objectAtIndex( i );
+			for( int i = 0; i < reversePathes.size(); i++ ) {
+				String url = reversePathes.get( i );
 				result.append( "ProxyPassReverse / " );
 				result.append( url );
 				result.append( '\n' );
@@ -108,8 +105,7 @@ public class ModProxyPage extends MonitorComponent {
 		result.append( "#\n" );
 		result.append( "# Balancer configuration\n" );
 		result.append( "#\n" );
-		for( Enumeration<MApplication> e = siteConfig().applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
-			MApplication anApp = e.nextElement();
+		for( MApplication anApp : siteConfig().applicationArray() ) {
 			anApp.extractAdaptorValuesFromSiteConfig();
 			String name = anApp.name();
 			result.append( "ProxySet balancer://" + name + ".woa" );
@@ -162,11 +158,10 @@ public class ModProxyPage extends MonitorComponent {
 		result.append( "RewriteEngine On\n\n" );
 		result.append( "# Rewrite rules\n" );
 
-		NSMutableArray<String> rewriteRules = new NSMutableArray<>();
-		NSMutableArray<String> properitesRules = new NSMutableArray<>();
+		final NSMutableArray<String> rewriteRules = new NSMutableArray<>();
+		final NSMutableArray<String> properitesRules = new NSMutableArray<>();
 
-		for( Enumeration<MApplication> e = siteConfig().applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
-			MApplication anApp = e.nextElement();
+		for( MApplication anApp : siteConfig().applicationArray() ) {
 			anApp.extractAdaptorValuesFromSiteConfig();
 
 			String tmpAdaptor = siteConfig().woAdaptor();

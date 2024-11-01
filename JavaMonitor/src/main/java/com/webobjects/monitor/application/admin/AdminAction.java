@@ -1,7 +1,6 @@
 package com.webobjects.monitor.application.admin;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 import com.webobjects.appserver.WOActionResults;
@@ -340,9 +339,9 @@ public class AdminAction extends WODirectAction {
 
 	private AdminApplicationsPage applicationsPage;
 
-	private NSMutableArray instances;
+	private List<MInstance> instances;
 
-	private NSMutableArray applications;
+	private List<MApplication> applications;
 
 	private WOTaskdHandler _handler;
 
@@ -350,7 +349,7 @@ public class AdminAction extends WODirectAction {
 		super( request );
 		instances = new NSMutableArray();
 		applications = new NSMutableArray();
-		_handler = new WOTaskdHandler( mySession() );
+		_handler = new WOTaskdHandler( (Session)session() );
 	}
 
 	private AdminApplicationsPage applicationsPage() {
@@ -364,8 +363,7 @@ public class AdminAction extends WODirectAction {
 	public WOActionResults infoAction() {
 		WOResponse woresponse = new WOResponse();
 		String result = "";
-		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+		for( MInstance minstance : instances ) {
 			result += (result.length() == 0 ? "" : ", \n");
 			result += "{";
 			result += "\"name\": \"" + minstance.applicationName() + "\", ";
@@ -410,7 +408,7 @@ public class AdminAction extends WODirectAction {
 		if( num != null && !num.equals( "" ) && !num.equalsIgnoreCase( "all" ) ) {
 			try {
 				numberOfInstancesRequested = Integer.valueOf( num ).intValue();
-				if( numberOfInstancesRequested > instances.count() ) {
+				if( numberOfInstancesRequested > instances.size() ) {
 					numberOfInstancesRequested = -1;
 				}
 			}
@@ -419,13 +417,12 @@ public class AdminAction extends WODirectAction {
 			}
 		}
 		int instancesAlive = 0;
-		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+		for( MInstance minstance : instances ) {
 			if( minstance.state == MObject.ALIVE ) {
 				instancesAlive++;
 			}
 		}
-		if( (numberOfInstancesRequested == -1 && instancesAlive < instances.count()) || instancesAlive < numberOfInstancesRequested ) {
+		if( (numberOfInstancesRequested == -1 && instancesAlive < instances.size()) || instancesAlive < numberOfInstancesRequested ) {
 			woresponse.setContent( "NO" );
 			woresponse.setStatus( 417 );
 		}
@@ -435,8 +432,7 @@ public class AdminAction extends WODirectAction {
 	public WOActionResults stoppedAction() {
 		WOResponse woresponse = new WOResponse();
 		woresponse.setContent( "YES" );
-		for( Enumeration enumeration = instances.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MInstance minstance = (MInstance)enumeration.nextElement();
+		for( MInstance minstance : instances ) {
 			if( minstance.state == MObject.DEAD )
 				continue;
 			woresponse.setContent( "NO" );
@@ -551,14 +547,14 @@ public class AdminAction extends WODirectAction {
 		applicationsPage().start( instances );
 	}
 
-	protected void prepareApplications( NSArray<String> appNames ) {
+	protected void prepareApplications( List<String> appNames ) {
 		if( appNames == null )
 			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
-		for( Enumeration enumeration = appNames.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			String s = (String)enumeration.nextElement();
-			MApplication mapplication = siteConfig().applicationWithName( s );
+		for( String s  : appNames ) {
+			final MApplication mapplication = siteConfig().applicationWithName( s );
+
 			if( mapplication != null ) {
-				applications.addObject( mapplication );
+				applications.add( mapplication );
 				addInstancesForApplication( mapplication );
 			}
 			else
@@ -592,14 +588,13 @@ public class AdminAction extends WODirectAction {
 		}
 	}
 
-	private void prepareInstances( NSArray<String> appNamesAndNumbers ) {
+	private void prepareInstances( List<String> appNamesAndNumbers ) {
 		if( appNamesAndNumbers == null )
 			throw new DirectActionException( "at least one instance name needs to be specified for type ins", 406 );
-		for( Enumeration enumeration = appNamesAndNumbers.objectEnumerator(); enumeration.hasMoreElements(); ) {
-			String s = (String)enumeration.nextElement();
+		for( String s : appNamesAndNumbers ) {
 			MInstance minstance = siteConfig().instanceWithName( s );
 			if( minstance != null )
-				instances.addObject( minstance );
+				instances.add( minstance );
 			else
 				throw new DirectActionException( "Unknown instance " + s, 404 );
 		}
@@ -607,39 +602,45 @@ public class AdminAction extends WODirectAction {
 	}
 
 	private void addInstancesForApplication( MApplication mapplication ) {
-		instances.addObjectsFromArray( mapplication.instanceArray() );
+		instances.addAll( mapplication.instanceArray() );
 	}
 
 	private void refreshInformation() {
-		for( Enumeration enumeration = (new NSSet( (NSArray)instances.valueForKey( "application" ) )).objectEnumerator(); enumeration.hasMoreElements(); ) {
-			MApplication mapplication = (MApplication)enumeration.nextElement();
 
+		// FIXME: We need to clean this shit up // Hugi 2024-11-01
+		final NSArray apps = (NSArray)((NSArray)instances).valueForKey( "application" );
+		System.out.println( apps );
+		final NSSet<MApplication> distinctApps = new NSSet<MApplication>( apps );
+		System.out.println( distinctApps );
+
+		for( MApplication mapplication : distinctApps ) {
 			@SuppressWarnings("unused")
 			AppDetailPage dummy = AppDetailPage.create( context(), mapplication );
 		}
 	}
 
 	private WOActionResults performMonitorActionNamed( String s ) {
-		String s1 = (String)context().request().formValueForKey( "type" );
-		if( "all".equalsIgnoreCase( s1 ) ) {
+		String typeParam = (String)context().request().formValueForKey( "type" );
+
+		if( "all".equalsIgnoreCase( typeParam ) ) {
 			prepareApplications( (NSArray)siteConfig().applicationArray().valueForKey( "name" ) );
 		}
 		else {
-			NSArray appNames = context().request().formValuesForKey( "name" );
-			NSArray hosts = context().request().formValuesForKey( "host" );
+			List appNamesParam = context().request().formValuesForKey( "name" );
+			List hostsParam = context().request().formValuesForKey( "host" );
 
-			if( "app".equalsIgnoreCase( s1 ) ) {
-				if( hosts == null || hosts.isEmpty() ) {
-					prepareApplications( appNames );
+			if( "app".equalsIgnoreCase( typeParam ) ) {
+				if( hostsParam == null || hostsParam.isEmpty() ) {
+					prepareApplications( appNamesParam );
 				}
 				else {
-					prepareApplicationsOnHosts( appNames, hosts );
+					prepareApplicationsOnHosts( appNamesParam, hostsParam );
 				}
 			}
-			else if( "ins".equalsIgnoreCase( s1 ) )
-				prepareInstances( appNames );
+			else if( "ins".equalsIgnoreCase( typeParam ) )
+				prepareInstances( appNamesParam );
 			else
-				throw new DirectActionException( "Invalid type " + s1, 406 );
+				throw new DirectActionException( "Invalid type " + typeParam, 406 );
 		}
 		refreshInformation();
 		_handler.startReading();
@@ -684,9 +685,5 @@ public class AdminAction extends WODirectAction {
 			woresponse.setContent( "Monitor is password protected - password missing or incorrect." );
 		}
 		return woresponse;
-	}
-
-	public Session mySession() {
-		return (Session)session();
 	}
 }
