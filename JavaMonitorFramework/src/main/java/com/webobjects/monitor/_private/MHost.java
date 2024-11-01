@@ -254,7 +254,7 @@ public class MHost extends MObject {
 	/**
 	 * Communications Goop
 	 */
-	public static WOResponse[] sendRequestToWotaskdArray( NSData content, List<MHost> wotaskdArray, boolean willChange ) {
+	public static WOResponse[] sendRequestToWotaskdArray( String contentString, List<MHost> wotaskdArray, boolean willChange ) {
 		MSiteConfig aConfig;
 		MHost aHost = wotaskdArray.get( 0 );
 		if( aHost != null ) {
@@ -295,7 +295,7 @@ public class MHost extends MObject {
 			catch( InterruptedException ie ) {}
 		}
 
-		final WORequest aRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig.passwordDictionary(), content, null );
+		final WORequest aRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
 		final List<MHost> finalWotaskdArray = wotaskdArray;
 		final boolean wc = willChange;
 

@@ -163,9 +163,8 @@ public class WOTaskdHandler {
 	}
 
 	private WOResponse[] sendRequest( NSDictionary monitorRequest, List<MHost> wotaskdArray, boolean willChange ) {
-		final String encodedRootObjectForKey = new _JavaMonitorCoder().encodeRootObjectForKey( monitorRequest, "monitorRequest" );
-		final NSData content = new NSData( encodedRootObjectForKey.getBytes() );
-		return MHost.sendRequestToWotaskdArray( content, wotaskdArray, willChange );
+		final String encodedString = new _JavaMonitorCoder().encodeRootObjectForKey( monitorRequest, "monitorRequest" );
+		return MHost.sendRequestToWotaskdArray( encodedString, wotaskdArray, willChange );
 	}
 
 	/* ******* */
