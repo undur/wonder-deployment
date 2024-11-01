@@ -614,9 +614,9 @@ public class MSiteConfig extends MObject {
 		return NSDictionary.emptyDictionary();
 	}
 
-	/**********/
-
-	/********** Constructors **********/
+	/**
+	 * FIXME: Switch to java http client // Hugi 2024-11-01
+	 */
 	public static MSiteConfig getSiteConfigFromHostAndPort( String configHostName, int aPort ) throws MonitorException {
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelInformational, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "!@#$!@#$ getSiteConfigFromHostAndPort creates a WOHTTPConnection" );

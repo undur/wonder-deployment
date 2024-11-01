@@ -189,11 +189,10 @@ public class FileBrowser extends MonitorComponent {
 
 		private static String getPathString = "/cgi-bin/WebObjects/wotaskd.woa/wa/RemoteBrowse/getPath";
 
+		/**
+		 * FIXME: Switch to java http client // Hugi 2024-11-01
+		 */
 		public static NSDictionary fileListForStartingPathHost( String aString, MHost aHost, boolean showFiles ) throws MonitorException {
-
-			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-				NSLog.debug.appendln( "!@#$!@#$ fileListForStartingPathHost creates a WOHTTPConnection" );
-			}
 
 			NSDictionary aFileListDictionary = null;
 

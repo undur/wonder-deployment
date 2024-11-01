@@ -535,9 +535,10 @@ public class LocalMonitor extends ProtoLocalMonitor {
 			throw new MonitorException( _hostName + ": " + anInstance.displayName() + " is not running" );
 	}
 
+	/**
+	 * FIXME: Switch to java http client // Hugi 2024-11-01
+	 */
 	private WOResponse sendInstanceRequest( MInstance anInstance, NSDictionary xmlDict ) throws MonitorException {
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
-			NSLog.debug.appendln( "!@#$!@#$ sendInstanceRequest creates a WOHTTPConnection" );
 
 		String contentXML = (new _JavaMonitorCoder()).encodeRootObjectForKey( xmlDict, "instanceRequest" );
 		NSData content = new NSData( contentXML );

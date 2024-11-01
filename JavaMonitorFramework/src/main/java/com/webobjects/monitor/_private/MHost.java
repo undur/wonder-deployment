@@ -341,13 +341,13 @@ public class MHost extends MObject {
 
 	private String errorResponse = null;
 
+	/**
+	 * FIXME: Switch to java http client // Hugi 2024-11-01
+	 */
 	public WOResponse sendRequestToWotaskd( WORequest aRequest, boolean willChange, boolean isSync ) {
 
 		//		logger.info( "Sending request: {}", aRequest );
 
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-			NSLog.debug.appendln( "!@#$!@#$ sendRequestToWotaskd creates a WOHTTPConnection" );
-		}
 		WOResponse aResponse = null;
 
 		try {
