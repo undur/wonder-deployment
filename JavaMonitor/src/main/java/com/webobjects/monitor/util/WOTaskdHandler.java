@@ -2,6 +2,7 @@ package com.webobjects.monitor.util;
 
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSPropertyListSerialization;
-import com.webobjects.foundation._NSCollectionReaderWriterLock;
 import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
@@ -34,7 +34,8 @@ public class WOTaskdHandler {
 		public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors );
 	}
 
-	private static _NSCollectionReaderWriterLock _lock = new _NSCollectionReaderWriterLock();
+//	private static _NSCollectionReaderWriterLock _lock = new _NSCollectionReaderWriterLock();
+	private static ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
 
 	private static MSiteConfig _siteConfig;
 
@@ -71,19 +72,31 @@ public class WOTaskdHandler {
 	}
 
 	public void startReading() {
-		_lock.startReading();
+//		_lock.startReading();
+		logger.info( "Acquiring read lock: " + Thread.currentThread().getName(), new Throwable() );
+		_lock.readLock().lock();
+		logger.info( "Acquired read lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void endReading() {
-		_lock.endReading();
+//		_lock.endReading();
+		logger.info( "Releasing read lock: " + Thread.currentThread().getName(), new Throwable() );
+		_lock.readLock().unlock();
+		logger.info( "Released read lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void startWriting() {
-		_lock.startWriting();
+//		_lock.startWriting();
+		logger.info( "Acquiring write lock: " + Thread.currentThread().getName(), new Throwable() );
+		_lock.writeLock().lock();
+		logger.info( "Acquired write lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void endWriting() {
-		_lock.endWriting();
+//		_lock.endWriting();
+		logger.info( "Releasing write lock: " + Thread.currentThread().getName(), new Throwable() );
+		_lock.writeLock().unlock();
+		logger.info( "Released write lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	/**
