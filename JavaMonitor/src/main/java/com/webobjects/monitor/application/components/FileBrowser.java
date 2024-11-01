@@ -18,7 +18,6 @@ import com.webobjects.appserver.WOHTTPConnection;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.xml.WOXMLException;
-import com.webobjects.appserver.xml._JavaMonitorDecoder;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
@@ -26,6 +25,7 @@ import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSPathUtilities;
+import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MonitorException;
@@ -155,7 +155,7 @@ public class FileBrowser extends MonitorComponent {
 					throw new MonitorException( "Path " + thePath + " does not exist" );
 				}
 
-				_JavaMonitorDecoder aDecoder = new _JavaMonitorDecoder();
+				CoderWrapper aDecoder = new CoderWrapper();
 				try {
 					byte[] evilHackCombined = new byte[responseContentBytes.length + evilHack.length];
 					// System.arraycopy(src, src_pos, dst, dst_pos, length);

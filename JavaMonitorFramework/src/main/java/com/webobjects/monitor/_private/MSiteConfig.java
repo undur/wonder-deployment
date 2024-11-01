@@ -37,8 +37,6 @@ import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver._private.WOHostUtilities;
 import com.webobjects.appserver.xml.WOXMLException;
-import com.webobjects.appserver.xml._JavaMonitorCoder;
-import com.webobjects.appserver.xml._JavaMonitorDecoder;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
@@ -622,7 +620,7 @@ public class MSiteConfig extends MObject {
 			NSLog.debug.appendln( "!@#$!@#$ getSiteConfigFromHostAndPort creates a WOHTTPConnection" );
 		}
 		final NSDictionary<String, String> monitorRequest = new NSDictionary<>( "SITE", "queryWotaskd" );
-		final NSData content = new NSData( (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
+		final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
 
 		final WORequest aRequest = new ERXRequest( MObject._POST, MObject.directActionString, MObject._HTTP1, NSDictionary.EmptyDictionary, content, null );
 		WOResponse aResponse = null;
@@ -643,7 +641,7 @@ public class MSiteConfig extends MObject {
 		NSDictionary xmlDict = NSDictionary.EmptyDictionary;
 		if( aResponse != null ) {
 			try {
-				xmlDict = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( aResponse.content() );
+				xmlDict = (NSDictionary)new CoderWrapper().decodeRootObject( aResponse.content() );
 			}
 			catch( final WOXMLException wxe ) {
 				logger.error( "Got non-parsable data from Host: {} + and Port: {}. Data received was: {}. It is possible that the Wotaskd on the remote host is of the wrong version", configHostName, aPort, aResponse.contentString() );
@@ -857,7 +855,7 @@ public class MSiteConfig extends MObject {
 			// It is awkward to do the file creation here, in this way, but this stuff needs to be factored properly.
 			// This may throw an exception when it tries to create the file. Go to the utility method to see the exception being dropped.
 
-			_NSStringUtilities.writeToFile( fileForSiteConfig(), new _JavaMonitorCoder().encodeRootObjectForKey( NSDictionary.EmptyDictionary, "SiteConfig" ) );
+			_NSStringUtilities.writeToFile( fileForSiteConfig(), new CoderWrapper().encodeRootObjectForKey( NSDictionary.EmptyDictionary, "SiteConfig" ) );
 		}
 
 		// now, the file should exist, or we have an error.
@@ -865,7 +863,7 @@ public class MSiteConfig extends MObject {
 		if( fileForSiteConfig().exists() ) {
 			if( fileForSiteConfig().canRead() ) {
 				try {
-					final NSDictionary siteDict = (NSDictionary)(new _JavaMonitorDecoder().decodeRootObject( pathForSiteConfig() ));
+					final NSDictionary siteDict = (NSDictionary)(new CoderWrapper().decodeRootObject( pathForSiteConfig() ));
 					aConfig = new MSiteConfig( siteDict );
 					if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 						NSLog.debug.appendln( "the SiteConfig is \n" + aConfig.generateSiteConfigXML() );
@@ -1096,7 +1094,7 @@ public class MSiteConfig extends MObject {
 	}
 
 	public String generateSiteConfigXML() {
-		return (new _JavaMonitorCoder()).encodeRootObjectForKey( dictionaryForArchive(), "SiteConfig" );
+		return (new CoderWrapper()).encodeRootObjectForKey( dictionaryForArchive(), "SiteConfig" );
 	}
 
 	private String _lastConfig;

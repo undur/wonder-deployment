@@ -18,12 +18,12 @@ import com.webobjects.appserver.WODirectAction;
 import com.webobjects.appserver.WOMessage;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
-import com.webobjects.appserver.xml._JavaMonitorCoder;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSComparator;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSPathUtilities;
+import com.webobjects.monitor._private.CoderWrapper;
 
 public class RemoteBrowse extends WODirectAction {
 	private Object[] fileKeys = new Object[] { "file", "fileType", "fileSize" };
@@ -51,7 +51,7 @@ public class RemoteBrowse extends WODirectAction {
 			rootArray.addObject( aFileDict );
 		}
 
-		xmlRoots = ((new _JavaMonitorCoder()).encodeRootObjectForKey( rootArray, "pathArray" )) + " \r\n";
+		xmlRoots = ((new CoderWrapper()).encodeRootObjectForKey( rootArray, "pathArray" )) + " \r\n";
 	}
 
 	public NSArray fileListForStartingPath( String aStartingPath, boolean showFiles ) {
@@ -138,7 +138,7 @@ public class RemoteBrowse extends WODirectAction {
 				aResponse.appendContentString( "ERROR" );
 			}
 			else {
-				_JavaMonitorCoder aCoder = new _JavaMonitorCoder();
+				CoderWrapper aCoder = new CoderWrapper();
 				String anXMLString = null;
 				anXMLString = aCoder.encodeRootObjectForKey( anArray, "pathArray" );
 				anXMLString = (anXMLString) + " \r\n";

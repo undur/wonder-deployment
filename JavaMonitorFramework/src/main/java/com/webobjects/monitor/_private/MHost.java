@@ -23,7 +23,6 @@ import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOHTTPConnection;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
-import com.webobjects.appserver.xml._JavaMonitorCoder;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
@@ -107,7 +106,7 @@ public class MHost extends MObject {
 			}
 		}
 		// This is just for caching purposes
-		errorResponse = new _JavaMonitorCoder().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
+		errorResponse = new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
 
 	}
 
@@ -333,7 +332,7 @@ public class MHost extends MObject {
 			final NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( aConfig.dictionaryForArchive(), "SiteConfig" );
 			final NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>( data, "sync" );
 			final NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>( updateWotaskd, "updateWotaskd" );
-			final NSData content = new NSData( (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
+			final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
 			_syncRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig.passwordDictionary(), content, null );
 		}
 		return _syncRequest;

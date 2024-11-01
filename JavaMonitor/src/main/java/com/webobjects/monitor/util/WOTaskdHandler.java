@@ -9,16 +9,14 @@ import org.slf4j.LoggerFactory;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.xml.WOXMLException;
-import com.webobjects.appserver.xml._JavaMonitorCoder;
-import com.webobjects.appserver.xml._JavaMonitorDecoder;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSPropertyListSerialization;
 import com.webobjects.foundation._NSCollectionReaderWriterLock;
+import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -163,7 +161,7 @@ public class WOTaskdHandler {
 	}
 
 	private WOResponse[] sendRequest( NSDictionary monitorRequest, List<MHost> wotaskdArray, boolean willChange ) {
-		final String encodedString = new _JavaMonitorCoder().encodeRootObjectForKey( monitorRequest, "monitorRequest" );
+		final String encodedString = new CoderWrapper().encodeRootObjectForKey( monitorRequest, "monitorRequest" );
 		return MHost.sendRequestToWotaskdArray( encodedString, wotaskdArray, willChange );
 	}
 
@@ -368,7 +366,7 @@ public class WOTaskdHandler {
 		for( int i = 0; i < responses.length; i++ ) {
 			if( (responses[i] != null) && (responses[i].content() != null) ) {
 				try {
-					responseDicts[i] = (NSDictionary)(new _JavaMonitorDecoder()).decodeRootObject( responses[i].content() );
+					responseDicts[i] = (NSDictionary)(new CoderWrapper()).decodeRootObject( responses[i].content() );
 				}
 				catch( WOXMLException wxe ) {
 					responseDicts[i] = responseParsingFailed;
@@ -559,7 +557,7 @@ public class WOTaskdHandler {
 				}
 				else {
 					try {
-						responseDictionary = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i].content() );
+						responseDictionary = (NSDictionary)new CoderWrapper().decodeRootObject( responses[i].content() );
 					}
 					catch( WOXMLException wxe ) {
 						NSLog.err.appendln( "MonitorComponent pageWithName(AppDetailPage) Error decoding response: " + responses[i].contentString() );
@@ -634,7 +632,7 @@ public class WOTaskdHandler {
 			}
 			else {
 				try {
-					responseDict = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i].content() );
+					responseDict = (NSDictionary)new CoderWrapper().decodeRootObject( responses[i].content() );
 				}
 				catch( WOXMLException wxe ) {
 					NSLog.err.appendln( "MonitorComponent pageWithName(HostsPage) Error decoding response: " + responses[i].contentString() );
@@ -679,7 +677,7 @@ public class WOTaskdHandler {
 			}
 			else {
 				try {
-					queryResponseDictionary = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responses[i].content() );
+					queryResponseDictionary = (NSDictionary)new CoderWrapper().decodeRootObject( responses[i].content() );
 				}
 				catch( WOXMLException wxe ) {
 					NSLog.err.appendln( "MonitorComponent pageWithName(ApplicationsPage) Error decoding response: " + responses[i].contentString() );

@@ -25,7 +25,6 @@ import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.WOTimer;
 import com.webobjects.appserver._private.WOHostUtilities;
-import com.webobjects.appserver.xml._JavaMonitorCoder;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
@@ -36,6 +35,7 @@ import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.foundation.NSSocketUtilities;
 import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation._NSCollectionReaderWriterLock;
+import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -540,7 +540,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 	 */
 	private WOResponse sendInstanceRequest( MInstance anInstance, NSDictionary xmlDict ) throws MonitorException {
 
-		String contentXML = (new _JavaMonitorCoder()).encodeRootObjectForKey( xmlDict, "instanceRequest" );
+		String contentXML = (new CoderWrapper()).encodeRootObjectForKey( xmlDict, "instanceRequest" );
 		NSData content = new NSData( contentXML );
 
 		//        String urlString = MObject.adminActionStringPrefix + anInstance.application().realName() + MObject.adminActionStringPostfix;

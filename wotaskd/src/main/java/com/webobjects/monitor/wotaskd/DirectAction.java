@@ -22,8 +22,6 @@ import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver._private.WOHostUtilities;
 import com.webobjects.appserver.xml.WOXMLException;
-import com.webobjects.appserver.xml._JavaMonitorCoder;
-import com.webobjects.appserver.xml._JavaMonitorDecoder;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
@@ -36,6 +34,7 @@ import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation.NSTimestampFormatter;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 import com.webobjects.foundation._NSUtilities;
+import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -72,10 +71,10 @@ public class DirectAction extends WODirectAction {
 		errorKeys = new Object[] { "success", "errorMessage" };
 
 		// Pre-cache error messages
-		_accessDenied = (new _JavaMonitorCoder()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + ": wotaskd may not be accessed through a Web server - Access Denied" ), "errorResponse" ), "monitorResponse" );
-		_invalidPassword = (new _JavaMonitorCoder()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + ": Invalid Password - Access Denied" ), "errorResponse" ), "monitorResponse" );
-		_invalidXML = (new _JavaMonitorCoder()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + " - INTERNAL ERROR: Request from Monitor was Invalid" ), "errorResponse" ), "monitorResponse" );
-		_emptyXML = (new _JavaMonitorCoder()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + " - INTERNAL ERROR: Request from Monitor was Empty" ), "errorResponse" ), "monitorResponse" );
+		_accessDenied = (new CoderWrapper()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + ": wotaskd may not be accessed through a Web server - Access Denied" ), "errorResponse" ), "monitorResponse" );
+		_invalidPassword = (new CoderWrapper()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + ": Invalid Password - Access Denied" ), "errorResponse" ), "monitorResponse" );
+		_invalidXML = (new CoderWrapper()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + " - INTERNAL ERROR: Request from Monitor was Invalid" ), "errorResponse" ), "monitorResponse" );
+		_emptyXML = (new CoderWrapper()).encodeRootObjectForKey( new NSDictionary( new NSArray( _hostName + " - INTERNAL ERROR: Request from Monitor was Empty" ), "errorResponse" ), "monitorResponse" );
 		_argumentNumberCommandError = new NSDictionary( new Object[] { Boolean.FALSE, _hostName + " - INTERNAL ERROR: Not enough elements: Need 'commandString' + 'arrayOfInstances'" }, errorKeys );
 
 		// get the formatter setup
@@ -123,7 +122,7 @@ public class DirectAction extends WODirectAction {
 
 		NSDictionary requestDict;
 		try {
-			requestDict = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( aRequest.content() );
+			requestDict = (NSDictionary)new CoderWrapper().decodeRootObject( aRequest.content() );
 		}
 		catch( WOXMLException wxe ) {
 			NSLog.err.appendln( "Wotaskd monitorRequestAction: Error parsing request" );
@@ -618,7 +617,7 @@ public class DirectAction extends WODirectAction {
 			NSLog.debug.appendln( "@@@@@ monitorRequestAction returning response to Monitor" );
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) )
 			NSLog.debug.appendln( "@@@@@ monitorRequestAction responseDict: " + monitorResponse + "\n" );
-		aResponse.appendContentString( (new _JavaMonitorCoder()).encodeRootObjectForKey( monitorResponse, "monitorResponse" ) );
+		aResponse.appendContentString( (new CoderWrapper()).encodeRootObjectForKey( monitorResponse, "monitorResponse" ) );
 		return aResponse;
 	}
 
@@ -683,7 +682,7 @@ public class DirectAction extends WODirectAction {
 				NSDictionary instanceResponse = null;
 				NSData responseContent = aResponse.content();
 				try {
-					instanceResponse = (NSDictionary)new _JavaMonitorDecoder().decodeRootObject( responseContent );
+					instanceResponse = (NSDictionary)new CoderWrapper().decodeRootObject( responseContent );
 				}
 				catch( WOXMLException wxe ) {
 					try {
