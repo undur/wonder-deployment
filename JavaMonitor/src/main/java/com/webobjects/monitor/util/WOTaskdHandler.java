@@ -283,18 +283,18 @@ public class WOTaskdHandler {
 	/* ******** COMMANDING ********* */
 	private static Object[] commandInstanceKeys = new Object[] { "applicationName", "id", "hostName", "port" };
 
-	public static void sendCommandInstancesToWotaskds( String command, NSArray instanceArray, List<MHost> wotaskdArray, WOTaskdHandler collector ) {
+	public static void sendCommandInstancesToWotaskds( String command, List<MInstance> instanceArray, List<MHost> wotaskdArray, WOTaskdHandler collector ) {
 
-		if( instanceArray.count() > 0 && wotaskdArray.size() > 0 ) {
-			final int instanceCount = instanceArray.count();
+		if( instanceArray.size() > 0 && wotaskdArray.size() > 0 ) {
+			final int instanceCount = instanceArray.size();
 
 			final NSMutableDictionary monitorRequest = new NSMutableDictionary( 1 );
-			final NSMutableArray commandWotaskd = new NSMutableArray( instanceArray.count() + 1 );
+			final NSMutableArray commandWotaskd = new NSMutableArray( instanceArray.size() + 1 );
 
 			commandWotaskd.addObject( command );
 
 			for( int i = 0; i < instanceCount; i++ ) {
-				MInstance anInst = (MInstance)instanceArray.objectAtIndex( i );
+				MInstance anInst = instanceArray.get( i );
 				commandWotaskd.addObject( new NSDictionary( new Object[] { anInst.applicationName(), anInst.id(), anInst.hostName(), anInst.port() }, commandInstanceKeys ) );
 			}
 
@@ -311,23 +311,23 @@ public class WOTaskdHandler {
 		}
 	}
 
-	public void sendCommandInstancesToWotaskds( String command, NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
+	public void sendCommandInstancesToWotaskds( String command, List<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( command, instanceArray, wotaskdArray, this );
 	}
 
-	public void sendQuitInstancesToWotaskds( NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
+	public void sendQuitInstancesToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "QUIT", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendStartInstancesToWotaskds( NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
+	public void sendStartInstancesToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "START", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendClearDeathsToWotaskds( NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
+	public void sendClearDeathsToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "CLEAR", instanceArray, wotaskdArray, this );
 	}
 
-	public void sendStopInstancesToWotaskds( NSArray<MInstance> instanceArray, NSArray<MHost> wotaskdArray ) {
+	public void sendStopInstancesToWotaskds( NSArray<MInstance> instanceArray, List<MHost> wotaskdArray ) {
 		sendCommandInstancesToWotaskds( "STOP", instanceArray, wotaskdArray, this );
 	}
 
