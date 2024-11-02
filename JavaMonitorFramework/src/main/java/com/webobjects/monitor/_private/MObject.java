@@ -97,13 +97,13 @@ public class MObject implements NSKeyValueCoding {
 	}
 
 	public static String validatedHostType( String value ) {
+
 		if( value != null ) {
-			if( (value.equals( "UNIX" )) ||
-					(value.equals( "WINDOWS" )) ||
-					(value.equals( "MACOSX" )) ) {
+			if( value.equals( "UNIX" ) || value.equals( "WINDOWS" ) || value.equals( "MACOSX" ) ) {
 				return value;
 			}
 		}
+
 		return null;
 	}
 
