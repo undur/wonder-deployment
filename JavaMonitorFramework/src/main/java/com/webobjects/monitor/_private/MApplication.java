@@ -667,7 +667,7 @@ public class MApplication extends MObject {
 	}
 
 	// Used for the ApplicationsPage
-	private Integer runningInstancesCount = MObject._zeroInteger;
+	private Integer runningInstancesCount = 0;
 
 	public boolean isRunning() {
 		// AK: this one is called from the overview page (may or may not be correct)
