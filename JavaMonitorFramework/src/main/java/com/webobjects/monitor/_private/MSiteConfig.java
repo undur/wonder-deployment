@@ -256,7 +256,7 @@ public class MSiteConfig extends MObject {
 	private final NSMutableArray<MInstance> _instanceArray = new NSMutableArray<>();
 	private final NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
 
-	MHost _localHost;
+	private MHost _localHost;
 
 	public NSMutableArray<MHost> hostArray() {
 		return _hostArray;
@@ -294,8 +294,8 @@ public class MSiteConfig extends MObject {
 	/**********/
 
 	/********** Adding and Deleting **********/
-	InetAddress localHostAddress;
-	String localHostName;
+	private InetAddress localHostAddress;
+	private String localHostName;
 
 	public void _addHost( MHost newHost ) {
 		// If WOHost was passed, it'll resolve against that, otherwise, it'll resolve any local address
