@@ -3,7 +3,6 @@ package com.webobjects.monitor.application;
 import java.util.List;
 
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
