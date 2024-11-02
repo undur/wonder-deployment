@@ -203,11 +203,8 @@ public class MHost extends MObject {
 	}
 
 	public MInstance instanceWithPort( Integer port ) {
-		int instanceArrayCount = _instanceArray.size();
 
-		for( int i = 0; i < instanceArrayCount; i++ ) {
-			final MInstance anInst = _instanceArray.get( i );
-
+		for( MInstance anInst : _instanceArray ) {
 			if( anInst.port().equals( port ) ) {
 				return anInst;
 			}
