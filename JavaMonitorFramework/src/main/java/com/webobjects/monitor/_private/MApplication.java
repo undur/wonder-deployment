@@ -577,9 +577,6 @@ public class MApplication extends MObject {
 
 	@Override
 	public String toString() {
-		if( false ) {
-			return values.toString();
-		}
 		return "MApplication@" + name();
 	}
 
