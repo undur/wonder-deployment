@@ -222,6 +222,9 @@ public class MObject implements NSKeyValueCoding {
 		return true;
 	}
 
+	/**
+	 * FIXME: I… Uhm… Why? I don't really think we need to implement NSKeyValueCoding? // Hugi 2024-11-02
+	 */
 	@Override
 	public Object valueForKey( String key ) {
 		return NSKeyValueCoding.DefaultImplementation.valueForKey( this, key );
