@@ -332,7 +332,7 @@ public class AdminAction extends WODirectAction {
 	/**
 	 * FIXME: Not sure why this is here, never used
 	 */
-	private static List<String> supportedActionNames = List.of( "running","bounce", "stopped", "start", "stop", "forceQuit", "turnAutoRecoverOn", "turnAutoRecoverOff", "turnRefuseNewSessionsOn", "turnRefuseNewSessionsOff", "turnScheduledOn", "turnScheduledOff", "turnAutoRecoverOn", "turnAutoRecoverOff", "clearDeaths", "info" );
+//	private static List<String> supportedActionNames = List.of( "running","bounce", "stopped", "start", "stop", "forceQuit", "turnAutoRecoverOn", "turnAutoRecoverOff", "turnRefuseNewSessionsOn", "turnRefuseNewSessionsOff", "turnScheduledOn", "turnScheduledOff", "turnAutoRecoverOn", "turnAutoRecoverOff", "clearDeaths", "info" );
 
 	private AdminApplicationsPage applicationsPage;
 

@@ -23,38 +23,38 @@ public class AdminApplicationsPage extends ApplicationsPage {
 
 	public static final String DISPLAY_NAME = "displayName";
 	public static final String ACTION_NAME = "actionName";
-	protected static NSArray _actions;
-	public NSArray actions;
+//	protected static NSArray _actions;
+//	public NSArray actions;
 	public NSDictionary selectedAction;
 	public NSDictionary currentActionItem;
 	protected NSMutableArray processedHosts;
 	protected NSMutableArray processedInstances;
 
-	static {
-		try {
-			Class c = AdminApplicationsPage.class;
-			Class aclass[] = { List.class };
-			String[] keys = new String[] { DISPLAY_NAME, ACTION_NAME };
-			_actions = new NSArray( new NSDictionary[] {
-					new NSDictionary( new Object[] { "Start", c.getMethod( "start", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Stop", c.getMethod( "stop", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Turn Auto Recover on for", c.getMethod( "turnAutoRecoverOn", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Turn Auto Recover off for", c.getMethod( "turnAutoRecoverOff", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Turn Refuse New Sessions on for", c.getMethod( "turnRefuseNewSessionsOn", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Turn Refuse New Sessions off for", c.getMethod( "turnRefuseNewSessionsOff", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Turn Scheduled on for", c.getMethod( "turnScheduledOn", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Turn Scheduled off for", c.getMethod( "turnScheduledOff", aclass ) }, keys ),
-					new NSDictionary( new Object[] { "Force Quit", c.getMethod( "forceQuit", aclass ) }, keys )
-			} );
-		}
-		catch( NoSuchMethodException nosuchmethodexception ) {
-			nosuchmethodexception.printStackTrace();
-		}
-	}
+//	static {
+//		try {
+//			Class c = AdminApplicationsPage.class;
+//			Class aclass[] = { List.class };
+//			String[] keys = new String[] { DISPLAY_NAME, ACTION_NAME };
+//			_actions = new NSArray( new NSDictionary[] {
+//					new NSDictionary( new Object[] { "Start", c.getMethod( "start", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Stop", c.getMethod( "stop", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Turn Auto Recover on for", c.getMethod( "turnAutoRecoverOn", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Turn Auto Recover off for", c.getMethod( "turnAutoRecoverOff", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Turn Refuse New Sessions on for", c.getMethod( "turnRefuseNewSessionsOn", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Turn Refuse New Sessions off for", c.getMethod( "turnRefuseNewSessionsOff", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Turn Scheduled on for", c.getMethod( "turnScheduledOn", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Turn Scheduled off for", c.getMethod( "turnScheduledOff", aclass ) }, keys ),
+//					new NSDictionary( new Object[] { "Force Quit", c.getMethod( "forceQuit", aclass ) }, keys )
+//			} );
+//		}
+//		catch( NoSuchMethodException nosuchmethodexception ) {
+//			nosuchmethodexception.printStackTrace();
+//		}
+//	}
 
 	public AdminApplicationsPage( WOContext context ) {
 		super( context );
-		actions = _actions;
+//		actions = _actions;
 		processedHosts = new NSMutableArray();
 		processedInstances = new NSMutableArray();
 	}
