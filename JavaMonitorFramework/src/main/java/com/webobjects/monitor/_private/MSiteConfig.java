@@ -629,14 +629,14 @@ public class MSiteConfig extends MObject {
 		}
 		final NSDictionary<String, String> monitorRequest = new NSDictionary<>( "SITE", "queryWotaskd" );
 		final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
-	
+
 		final WORequest aRequest = new ERXRequest( MObject._POST, MObject.directActionString, MObject._HTTP1, NSDictionary.EmptyDictionary, content, null );
 		WOResponse aResponse = null;
-	
+
 		try {
 			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( configHostName, aPort );
 			anHTTPConnection.setReceiveTimeout( 5000 );
-	
+
 			if( anHTTPConnection.sendRequest( aRequest ) ) {
 				aResponse = anHTTPConnection.readResponse();
 			}
@@ -645,7 +645,7 @@ public class MSiteConfig extends MObject {
 			logger.error( "Failed to connect to Host: {} and Port: {}", configHostName, aPort );
 			throw new MonitorException( "Failed to connect to Host: " + configHostName + " and Port: " + aPort );
 		}
-	
+
 		NSDictionary xmlDict = NSDictionary.EmptyDictionary;
 		if( aResponse != null ) {
 			try {
@@ -656,7 +656,7 @@ public class MSiteConfig extends MObject {
 				throw new MonitorException( "Got non-parsable data from Host: " + configHostName + " + and Port: " + aPort + ". Data received was: " + aResponse.contentString() + ". It is possible that the Wotaskd on the remote host is of the wrong version" );
 			}
 		}
-	
+
 		final NSArray errorResponse = (NSArray)xmlDict.valueForKey( "errorResponse" );
 		if( errorResponse != null ) {
 			String errorString = "";
@@ -665,7 +665,7 @@ public class MSiteConfig extends MObject {
 			}
 			throw new MonitorException( errorString );
 		}
-	
+
 		final NSDictionary queryWotaskdResponse = (NSDictionary)xmlDict.valueForKey( "queryWotaskdResponse" );
 		if( queryWotaskdResponse != null ) {
 			return new MSiteConfig( (NSDictionary)queryWotaskdResponse.valueForKey( "SiteConfig" ) );
@@ -723,7 +723,7 @@ public class MSiteConfig extends MObject {
 		_lastConfig = generateSiteConfigXML();
 	}
 
-	public void _initHostsWithArray( NSArray anArray ) {
+	private void _initHostsWithArray( NSArray anArray ) {
 		if( anArray == null ) {
 			return;
 		}
@@ -733,7 +733,7 @@ public class MSiteConfig extends MObject {
 		}
 	}
 
-	public void _initApplicationsWithArray( NSArray anArray ) {
+	private void _initApplicationsWithArray( NSArray anArray ) {
 		if( anArray == null ) {
 			return;
 		}
@@ -743,7 +743,7 @@ public class MSiteConfig extends MObject {
 		}
 	}
 
-	public void _initInstancesWithArray( NSArray anArray ) {
+	private void _initInstancesWithArray( NSArray anArray ) {
 		if( anArray == null ) {
 			return;
 		}
@@ -827,28 +827,28 @@ public class MSiteConfig extends MObject {
 		return _configDirectoryPath;
 	}
 
-	public static String pathForSiteConfig() {
+	private static String pathForSiteConfig() {
 		if( _pathForSiteConfig == null ) {
 			_pathForSiteConfig = MSiteConfig.configDirectoryPath().concat( "SiteConfig.xml" );
 		}
 		return _pathForSiteConfig;
 	}
 
-	public static String pathForAdaptorConfig() {
+	private static String pathForAdaptorConfig() {
 		if( _pathForAdaptorConfig == null ) {
 			_pathForAdaptorConfig = MSiteConfig.configDirectoryPath().concat( "WOConfig.xml" );
 		}
 		return _pathForAdaptorConfig;
 	}
 
-	public static File fileForSiteConfig() {
+	private static File fileForSiteConfig() {
 		if( _fileForSiteConfig == null ) {
 			_fileForSiteConfig = new File( pathForSiteConfig() );
 		}
 		return _fileForSiteConfig;
 	}
 
-	public static File fileForAdaptorConfig() {
+	private static File fileForAdaptorConfig() {
 		if( _fileForAdaptorConfig == null ) {
 			_fileForAdaptorConfig = new File( pathForAdaptorConfig() );
 		}
@@ -920,7 +920,7 @@ public class MSiteConfig extends MObject {
 		saveSiteConfig( fileForSiteConfig(), generateSiteConfigXML(), false );
 	}
 
-	public void saveSiteConfig( File sc, String value, boolean compress ) {
+	private void saveSiteConfig( File sc, String value, boolean compress ) {
 		try {
 			if( sc.exists() && !sc.canWrite() ) {
 				logger.error( "Don't have permission to write to file {} as this user, please change the permissions.", sc.getAbsolutePath() );
