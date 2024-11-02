@@ -358,19 +358,26 @@ public class MSiteConfig extends MObject {
 	}
 
 	public void removeApplication_M( MApplication anApplication ) {
+
 		backup( "removeApplication-" + anApplication.name() );
-		final NSArray tempArray = new NSArray( anApplication._instanceArray );
+
+		final NSArray<MInstance> tempArray = new NSArray<>( anApplication._instanceArray );
+
 		for( int i = 0; i < tempArray.count(); i++ ) {
-			removeInstance_M( (MInstance)tempArray.objectAtIndex( i ), false );
+			removeInstance_M( tempArray.objectAtIndex( i ), false );
 		}
+
 		_removeApplication( anApplication );
 	}
 
 	public void removeApplication_W( MApplication anApplication ) {
-		final NSArray tempArray = new NSArray( anApplication._instanceArray );
+
+		final NSArray<MInstance> tempArray = new NSArray<>( anApplication._instanceArray );
+
 		for( int i = 0; i < tempArray.count(); i++ ) {
-			removeInstance_W( (MInstance)tempArray.objectAtIndex( i ) );
+			removeInstance_W( tempArray.objectAtIndex( i ) );
 		}
+
 		_removeApplication( anApplication );
 	}
 
@@ -383,7 +390,7 @@ public class MSiteConfig extends MObject {
 
 	public NSMutableArray<MInstance> addInstances_M( MHost selectedHost, MApplication myApplication, int numberToAdd ) {
 		backup( "addInstances-" + myApplication.name() + "-" + selectedHost.name() + "-" + numberToAdd );
-		final NSMutableArray newInstanceArray = new NSMutableArray( numberToAdd );
+		final NSMutableArray<MInstance> newInstanceArray = new NSMutableArray<>( numberToAdd );
 
 		for( int i = 0; i < numberToAdd; i++ ) {
 			final Integer aUniqueID = myApplication.nextID();
