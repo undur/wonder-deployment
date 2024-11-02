@@ -24,7 +24,6 @@ import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 
 public class MObject implements NSKeyValueCoding {
 
-	/********** Useful Statics **********/
 	public static final List<String> loadSchedulerArray = new ArrayList<>( List.of( "Default", "Round Robin", "Random", "Load Average", "Custom" ) );
 	public static final List<String> loadSchedulerArrayValues = new ArrayList<>( List.of( "DEFAULT", "ROUNDROBIN", "RANDOM", "LOADAVERAGE", "CUSTOM" ) );
 
@@ -32,11 +31,9 @@ public class MObject implements NSKeyValueCoding {
 
 	public static final List<Integer> urlVersionArray = new ArrayList<>( List.of( Integer.valueOf( 4 ), Integer.valueOf( 3 ) ) );
 
-	private static final String[] weekNames = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-	public static final List<String> weekArray = new ArrayList<>( Arrays.asList( weekNames ) );
+	public static final List<String> weekArray = new ArrayList<>( List.of( "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ) );
 
-	public static final String[] timesOfDay = new String[] { "0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300" };
-	public static final List<String> timeOfDayArray = new ArrayList<>( Arrays.asList( timesOfDay ) );
+	public static final List<String> timeOfDayArray = new ArrayList<>( List.of( "0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300" ) );
 
 	private static final Integer[] schedulingIntervals = new Integer[] { Integer.valueOf( 1 ), Integer.valueOf( 2 ), Integer.valueOf( 3 ), Integer.valueOf( 4 ), Integer.valueOf( 6 ), Integer.valueOf( 8 ), Integer.valueOf( 12 ) };
 	public static final List<Integer> schedulingIntervalArray = new ArrayList<>( Arrays.asList( schedulingIntervals ) );
