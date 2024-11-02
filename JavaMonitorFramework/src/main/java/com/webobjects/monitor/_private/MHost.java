@@ -39,11 +39,6 @@ public class MHost extends MObject {
 
 	private final int _receiveTimeout = ERXProperties.intForKeyWithDefault( "JavaMonitor.receiveTimeout", 10000 );
 
-	// FIXME: These seem unused
-	public static final String MAC_HOST_TYPE = "MACOSX";
-	public static final String WINDOWS_HOST_TYPE = "WINDOWS";
-	public static final String UNIX_HOST_TYPE = "UNIX";
-
 	public String name() {
 		return (String)values.valueForKey( "name" );
 	}
