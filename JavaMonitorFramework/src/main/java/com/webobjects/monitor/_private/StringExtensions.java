@@ -27,10 +27,6 @@ public class StringExtensions {
 				s.equalsIgnoreCase( "1" ));
 	}
 
-	public static String booleanAsYNString( final Boolean b ) {
-		return (b != null && b.booleanValue()) ? "YES" : "NO";
-	}
-
 	public static boolean isValidXMLString( final String s ) {
 
 		if( s == null || s.length() == 0 ) {

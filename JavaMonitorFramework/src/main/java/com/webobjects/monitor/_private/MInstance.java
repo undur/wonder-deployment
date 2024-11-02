@@ -882,15 +882,15 @@ public class MInstance extends MObject {
 		anArray.addObject( "-WOPort" );
 		anArray.addObject( port().toString() );
 		anArray.addObject( "-WOCachingEnabled" );
-		anArray.addObject( StringExtensions.booleanAsYNString( cachingEnabled() ) );
+		anArray.addObject( booleanAsYNString( cachingEnabled() ) );
 		anArray.addObject( "-WODebuggingEnabled" );
-		anArray.addObject( StringExtensions.booleanAsYNString( debuggingEnabled() ) );
+		anArray.addObject( booleanAsYNString( debuggingEnabled() ) );
 		anArray.addObject( "-WOOutputPath" );
 		anArray.addObject( MObject.validatedOutputPath( outputPath() ) );
 		anArray.addObject( "-WOAutoOpenInBrowser" );
-		anArray.addObject( StringExtensions.booleanAsYNString( autoOpenInBrowser() ) );
+		anArray.addObject( booleanAsYNString( autoOpenInBrowser() ) );
 		anArray.addObject( "-WOAutoOpenClientApplication" );
-		anArray.addObject( StringExtensions.booleanAsYNString( autoOpenInBrowser() ) );
+		anArray.addObject( booleanAsYNString( autoOpenInBrowser() ) );
 		anArray.addObject( "-WOLifebeatInterval" );
 		anArray.addObject( lifebeatInterval().toString() );
 		anArray.addObject( "-WOLifebeatEnabled" );
@@ -957,6 +957,10 @@ public class MInstance extends MObject {
 		}
 
 		return anArray;
+	}
+
+	private static String booleanAsYNString( final Boolean b ) {
+		return (b != null && b.booleanValue()) ? "YES" : "NO";
 	}
 
 	public String commandLineArguments() {
