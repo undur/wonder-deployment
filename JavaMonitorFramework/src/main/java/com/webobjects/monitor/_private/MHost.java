@@ -161,11 +161,6 @@ public class MHost extends MObject {
 
 	@Override
 	public String toString() {
-
-		if( false ) {
-			return values.toString() + " " + "address = " + _address + " " + "runningInstances = " + runningInstances + " " + "operatingSystem = " + operatingSystem + " " + "processorType = " + processorType + " ";
-		}
-
 		return "MHost@" + _address;
 	}
 
