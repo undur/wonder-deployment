@@ -613,6 +613,7 @@ public class AdminAction extends WODirectAction {
 		final NSSet<MApplication> distinctApps = new NSSet<MApplication>( apps );
 		System.out.println( distinctApps );
 
+		// FIXME: The creation of that AppDetail page in here is probably just to get to the functionality in WOTaskdHandler.updateForPage(). We should invoke that functionality directly instead, once we've refactored that part // Hugi 2024-11-02  
 		for( MApplication mapplication : distinctApps ) {
 			@SuppressWarnings("unused")
 			AppDetailPage dummy = AppDetailPage.create( context(), mapplication );
