@@ -1118,36 +1118,41 @@ public class MSiteConfig extends MObject {
 	}
 
 	public NSDictionary dictionaryForArchive() {
-		final int hostArrayCount = _hostArray.count();
-		final int applicationArrayCount = _applicationArray.count();
-		final int instanceArrayCount = _instanceArray.count();
+		final int hostArrayCount = _hostArray.size();
+		final int applicationArrayCount = _applicationArray.size();
+		final int instanceArrayCount = _instanceArray.size();
 
-		final NSMutableDictionary SiteConfig = new NSMutableDictionary( 4 );
+		final NSMutableDictionary siteConfig = new NSMutableDictionary( 4 );
 
-		final NSMutableDictionary Site = values;
+		final NSMutableDictionary site = values;
 
-		final NSMutableArray HostArray = new NSMutableArray( hostArrayCount );
+		final NSMutableArray<MHost> hostArray = new NSMutableArray<>( hostArrayCount );
+
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MObject anMobject = _hostArray.objectAtIndex( i );
-			HostArray.addObject( anMobject.values );
+			final MHost anMobject = _hostArray.get( i );
+			hostArray.addObject( anMobject.values );
 		}
-		final NSMutableArray ApplicationArray = new NSMutableArray( applicationArrayCount );
+
+		final NSMutableArray<MApplication> applicationArray = new NSMutableArray<>( applicationArrayCount );
+
 		for( int i = 0; i < applicationArrayCount; i++ ) {
-			final MObject anMobject = _applicationArray.objectAtIndex( i );
-			ApplicationArray.addObject( anMobject.values );
+			final MApplication anMobject = _applicationArray.get( i );
+			applicationArray.addObject( anMobject.values );
 		}
-		final NSMutableArray InstanceArray = new NSMutableArray( instanceArrayCount );
+
+		final NSMutableArray<MInstance> instanceArray = new NSMutableArray<>( instanceArrayCount );
+
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			final MObject anMobject = _instanceArray.objectAtIndex( i );
-			InstanceArray.addObject( anMobject.values );
+			final MInstance anMobject = _instanceArray.get( i );
+			instanceArray.addObject( anMobject.values );
 		}
 
-		SiteConfig.takeValueForKey( Site, "site" );
-		SiteConfig.takeValueForKey( HostArray, "hostArray" );
-		SiteConfig.takeValueForKey( ApplicationArray, "applicationArray" );
-		SiteConfig.takeValueForKey( InstanceArray, "instanceArray" );
+		siteConfig.takeValueForKey( site, "site" );
+		siteConfig.takeValueForKey( hostArray, "hostArray" );
+		siteConfig.takeValueForKey( applicationArray, "applicationArray" );
+		siteConfig.takeValueForKey( instanceArray, "instanceArray" );
 
-		return SiteConfig;
+		return siteConfig;
 	}
 
 	@Override
