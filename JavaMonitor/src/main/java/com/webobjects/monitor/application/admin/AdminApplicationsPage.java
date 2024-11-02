@@ -366,18 +366,20 @@ public class AdminApplicationsPage extends ApplicationsPage {
 	public WOComponent addApplicationClicked() {
 		String s = null;
 		WOComponent result = null;
+
 		if( !StringExtensions.isValidXMLString( newApplicationName ) )
-			s = "\"" + newApplicationName
-					+ "\" is an invalid application name.";
+			s = "\"" + newApplicationName + "\" is an invalid application name.";
+
 		if( siteConfig().applicationWithName( newApplicationName ) != null )
-			s = "An application with the name \"" + newApplicationName
-					+ "\" does already exist.";
+			s = "An application with the name \"" + newApplicationName + "\" does already exist.";
+
 		if( s != null ) {
 			result = AdminApplicationsPage.create( context() );
 		}
 		else {
 			result = super.addApplicationClicked();
 		}
+
 		return result;
 	}
 
