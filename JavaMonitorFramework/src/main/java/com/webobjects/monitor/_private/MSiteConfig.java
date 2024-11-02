@@ -1100,7 +1100,7 @@ public class MSiteConfig extends MObject {
 
 	private String _lastConfig;
 
-	public void backup( String action ) {
+	private void backup( String action ) {
 		if( Boolean.getBoolean( "WODeploymentBackups" ) ) {
 			final String currentSiteConfig = generateSiteConfigXML();
 			if( !_lastConfig.equals( generateSiteConfigXML() ) ) {
