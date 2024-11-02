@@ -9,7 +9,6 @@ import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
-import com.webobjects.foundation.NSSet;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
@@ -607,11 +606,11 @@ public class AdminAction extends WODirectAction {
 
 	private void refreshInformation() {
 
-		// FIXME: We need to clean this shit up // Hugi 2024-11-01
-		final NSArray apps = (NSArray)((NSArray)instances).valueForKey( "application" );
-		System.out.println( apps );
-		final NSSet<MApplication> distinctApps = new NSSet<MApplication>( apps );
-		System.out.println( distinctApps );
+		final List<MApplication> distinctApps = instances
+			.stream()
+			.map( MInstance::application )
+			.distinct()
+			.toList();
 
 		// FIXME: The creation of that AppDetail page in here is probably just to get to the functionality in WOTaskdHandler.updateForPage(). We should invoke that functionality directly instead, once we've refactored that part // Hugi 2024-11-02  
 		for( MApplication mapplication : distinctApps ) {
