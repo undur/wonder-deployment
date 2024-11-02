@@ -439,7 +439,7 @@ public class MSiteConfig extends MObject {
 	/**********/
 
 	/********** Password Methods **********/
-	public static long myrand() {
+	private static long myrand() {
 		long nextLong = ThreadLocalRandom.current().nextLong();
 		while( nextLong == Long.MIN_VALUE ) {
 			nextLong = ThreadLocalRandom.current().nextLong();
@@ -447,7 +447,7 @@ public class MSiteConfig extends MObject {
 		return Math.abs( nextLong );
 	}
 
-	public String encryptStringWithKey( String to_be_encrypted, String aKey ) {
+	private String encryptStringWithKey( String to_be_encrypted, String aKey ) {
 		String encrypted_value = "";
 		final char xdigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		MessageDigest messageDigest;
