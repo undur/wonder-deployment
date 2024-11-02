@@ -31,13 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webobjects.appserver.WOApplication;
-import com.webobjects.appserver.WOHTTPConnection;
-import com.webobjects.appserver.WORequest;
-import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver._private.WOHostUtilities;
-import com.webobjects.appserver.xml.WOXMLException;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSForwardException;
 import com.webobjects.foundation.NSLog;
@@ -49,8 +44,6 @@ import com.webobjects.foundation.NSTimestampFormatter;
 import com.webobjects.foundation._NSStringUtilities;
 import com.webobjects.foundation._NSThreadsafeMutableArray;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
-
-import er.extensions.appserver.ERXRequest;
 
 public class MSiteConfig extends MObject {
 
@@ -614,7 +607,9 @@ public class MSiteConfig extends MObject {
 
 	/**
 	 * FIXME: Switch to java http client // Hugi 2024-11-01
+	 * FIXME: This seems unused. Disabled, probably removable // Hugi 2024-11-02
 	 */
+	/*
 	public static MSiteConfig getSiteConfigFromHostAndPort( String configHostName, int aPort ) throws MonitorException {
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelInformational, NSLog.DebugGroupDeployment ) ) {
 			NSLog.debug.appendln( "!@#$!@#$ getSiteConfigFromHostAndPort creates a WOHTTPConnection" );
@@ -664,6 +659,7 @@ public class MSiteConfig extends MObject {
 		}
 		return new MSiteConfig( null );
 	}
+	*/
 
 	public MSiteConfig( NSDictionary xmlDict ) {
 		localHostAddress = WOApplication.application().hostAddress();
