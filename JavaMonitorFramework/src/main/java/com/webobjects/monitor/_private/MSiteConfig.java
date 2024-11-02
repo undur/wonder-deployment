@@ -252,9 +252,10 @@ public class MSiteConfig extends MObject {
 	/**********/
 
 	/********** Object Graph  **********/
-	NSMutableArray _hostArray = new NSMutableArray();
-	NSMutableArray _instanceArray = new NSMutableArray();
-	NSMutableArray _applicationArray = new NSMutableArray();
+	private final NSMutableArray<MHost> _hostArray = new NSMutableArray<>();
+	private final NSMutableArray<MInstance> _instanceArray = new NSMutableArray<>();
+	private final NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
+
 	MHost _localHost;
 
 	public NSMutableArray<MHost> hostArray() {
@@ -1127,17 +1128,17 @@ public class MSiteConfig extends MObject {
 
 		final NSMutableArray HostArray = new NSMutableArray( hostArrayCount );
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MObject anMobject = (MObject)_hostArray.objectAtIndex( i );
+			final MObject anMobject = _hostArray.objectAtIndex( i );
 			HostArray.addObject( anMobject.values );
 		}
 		final NSMutableArray ApplicationArray = new NSMutableArray( applicationArrayCount );
 		for( int i = 0; i < applicationArrayCount; i++ ) {
-			final MObject anMobject = (MObject)_applicationArray.objectAtIndex( i );
+			final MObject anMobject = _applicationArray.objectAtIndex( i );
 			ApplicationArray.addObject( anMobject.values );
 		}
 		final NSMutableArray InstanceArray = new NSMutableArray( instanceArrayCount );
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			final MObject anMobject = (MObject)_instanceArray.objectAtIndex( i );
+			final MObject anMobject = _instanceArray.objectAtIndex( i );
 			InstanceArray.addObject( anMobject.values );
 		}
 
@@ -1163,7 +1164,7 @@ public class MSiteConfig extends MObject {
 		final int instanceArrayCount = _instanceArray.count();
 		int smallestInterval = 0;
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			final MInstance anInst = (MInstance)_instanceArray.objectAtIndex( i );
+			final MInstance anInst = _instanceArray.objectAtIndex( i );
 			final Integer Interval = anInst.lifebeatInterval();
 			if( Interval != null ) {
 				final int interval = Interval.intValue();
@@ -1185,7 +1186,7 @@ public class MSiteConfig extends MObject {
 
 		final int applicationArrayCount = _applicationArray.count();
 		for( int i = 0; i < applicationArrayCount; i++ ) {
-			final MApplication anApp = (MApplication)_applicationArray.objectAtIndex( i );
+			final MApplication anApp = _applicationArray.objectAtIndex( i );
 			if( anApp.name().equals( anAppName ) ) {
 				return anApp;
 			}
@@ -1204,7 +1205,7 @@ public class MSiteConfig extends MObject {
 
 		final int hostArrayCount = _hostArray.count();
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MHost aHost = (MHost)_hostArray.objectAtIndex( i );
+			final MHost aHost = _hostArray.objectAtIndex( i );
 			if( aHost.name().equals( aHostName ) ) {
 				return aHost;
 			}
@@ -1217,7 +1218,7 @@ public class MSiteConfig extends MObject {
 		final String loopback = "127.0.0.1";
 		final int hostArrayCount = _hostArray.count();
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MHost aHost = (MHost)_hostArray.objectAtIndex( i );
+			final MHost aHost = _hostArray.objectAtIndex( i );
 			if( (aHost.name().equals( localhost )) || (aHost.name().equals( loopback )) ) {
 				return true;
 			}
@@ -1236,7 +1237,7 @@ public class MSiteConfig extends MObject {
 
 		final int hostArrayCount = _hostArray.count();
 		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MHost aHost = (MHost)_hostArray.objectAtIndex( i );
+			final MHost aHost = _hostArray.objectAtIndex( i );
 			if( anAddress.equals( aHost.address() ) ) {
 				return aHost;
 			}
@@ -1251,7 +1252,7 @@ public class MSiteConfig extends MObject {
 
 		final int instanceArrayCount = _instanceArray.count();
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			final MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+			final MInstance anInstance = _instanceArray.objectAtIndex( i );
 			if( anInstance.displayName().equals( anInstanceName ) ) {
 				return anInstance;
 			}
