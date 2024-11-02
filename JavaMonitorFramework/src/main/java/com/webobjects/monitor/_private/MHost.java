@@ -14,6 +14,7 @@ package com.webobjects.monitor._private;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,22 +227,22 @@ public class MHost extends MObject {
 
 	public boolean isAvailable = false;
 
-	public void _setHostInfo( NSDictionary _hostStats ) {
-		Object aValue = null;
+	public void _setHostInfo( Map map ) {
+		Object value = null;
 
-		aValue = _hostStats.valueForKey( "runningInstances" );
-		if( aValue != null ) {
-			runningInstances = aValue.toString();
+		value = map.get( "runningInstances" );
+		if( value != null ) {
+			runningInstances = value.toString();
 		}
 
-		aValue = _hostStats.valueForKey( "operatingSystem" );
-		if( aValue != null ) {
-			operatingSystem = aValue.toString();
+		value = map.get( "operatingSystem" );
+		if( value != null ) {
+			operatingSystem = value.toString();
 		}
 
-		aValue = _hostStats.valueForKey( "processorType" );
-		if( aValue != null ) {
-			processorType = aValue.toString();
+		value = map.get( "processorType" );
+		if( value != null ) {
+			processorType = value.toString();
 		}
 	}
 
