@@ -72,30 +72,34 @@ public class WOTaskdHandler {
 
 	public void startReading() {
 //		_lock.startReading();
-		logger.info( "Acquiring read lock: " + Thread.currentThread().getName(), new Throwable() );
+		log( "Acquiring read lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.readLock().lock();
-		logger.info( "Acquired read lock:  " + Thread.currentThread().getName(), new Throwable() );
+		log( "Acquired read lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void endReading() {
 //		_lock.endReading();
-		logger.info( "Releasing read lock: " + Thread.currentThread().getName(), new Throwable() );
+		log( "Releasing read lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.readLock().unlock();
-		logger.info( "Released read lock:  " + Thread.currentThread().getName(), new Throwable() );
+		log( "Released read lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void startWriting() {
 //		_lock.startWriting();
-		logger.info( "Acquiring write lock: " + Thread.currentThread().getName(), new Throwable() );
+		log( "Acquiring write lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.writeLock().lock();
-		logger.info( "Acquired write lock:  " + Thread.currentThread().getName(), new Throwable() );
+		log( "Acquired write lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void endWriting() {
 //		_lock.endWriting();
-		logger.info( "Releasing write lock: " + Thread.currentThread().getName(), new Throwable() );
+		log( "Releasing write lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.writeLock().unlock();
-		logger.info( "Released write lock:  " + Thread.currentThread().getName(), new Throwable() );
+		log( "Released write lock:  " + Thread.currentThread().getName(), new Throwable() );
+	}
+
+	private static void log( String message, Throwable throwable ) {
+//		logger.info( message, new Throwable() );
 	}
 
 	/**
