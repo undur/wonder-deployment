@@ -1032,6 +1032,8 @@ public class MInstance extends MObject {
 		long temp;
 		temp = Math.abs( _nextScheduledShutdown.timeIntervalSinceTimestamp( rightNow ) );
 
+		final long halfHourAsSeconds = 1800;
+
 		if( temp < halfHourAsSeconds ) {
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelInformational, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "nearNextScheduledShutdown TRUE" );

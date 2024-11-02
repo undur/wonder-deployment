@@ -43,8 +43,6 @@ public class MObject implements NSKeyValueCoding {
 
 	public static final List<String> schedulingTypeArray = new ArrayList<>( List.of( "HOURLY", "DAILY", "WEEKLY" ) );
 
-	public static final long halfHourAsSeconds = 1800;
-
 	public static final String _POST = "POST";
 	public static final String _GET = "GET";
 	public static final String _HTTP1 = "HTTP/1.0";
