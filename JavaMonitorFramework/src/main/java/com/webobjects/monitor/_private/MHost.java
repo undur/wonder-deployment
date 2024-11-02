@@ -57,7 +57,6 @@ public class MHost extends MObject {
 		_siteConfig.dataHasChanged();
 	}
 
-	// FIXME: We should probably make this private and provide access through the accessor
 	private NSMutableArray<MInstance> _instanceArray;
 
 	private NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
@@ -102,18 +101,19 @@ public class MHost extends MObject {
 		}
 		// This is just for caching purposes
 		errorResponse = new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
-
 	}
 
 	public void _addInstancePrimitive( MInstance anInstance ) {
 		_instanceArray.addObject( anInstance );
-		if( !_applicationArray.containsObject( anInstance._application ) ) {
-			_applicationArray.addObject( anInstance._application );
+		if( !_applicationArray.contains( anInstance._application ) ) {
+			_applicationArray.add( anInstance._application );
 		}
 	}
 
 	public void _removeInstancePrimitive( MInstance anInstance ) {
+
 		_instanceArray.removeObject( anInstance );
+
 		// get the instances's host - check all the other instances that this
 		// application has to see if any other ones have that host
 		// if not, remove it.
@@ -173,13 +173,15 @@ public class MHost extends MObject {
 
 	public Integer runningInstancesCount_W() {
 		int runningInstances = 0;
-		int numInstances = _instanceArray.count();
+		int numInstances = _instanceArray.size();
+
 		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = _instanceArray.objectAtIndex( i );
+			MInstance anInstance = _instanceArray.get( i );
 			if( anInstance.isRunning_W() ) {
 				runningInstances++;
 			}
 		}
+
 		return Integer.valueOf( runningInstances );
 	}
 
@@ -203,10 +205,11 @@ public class MHost extends MObject {
 	}
 
 	public MInstance instanceWithPort( Integer port ) {
-		int instanceArrayCount = _instanceArray.count();
+		int instanceArrayCount = _instanceArray.size();
 
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInst = _instanceArray.objectAtIndex( i );
+			final MInstance anInst = _instanceArray.get( i );
+
 			if( anInst.port().equals( port ) ) {
 				return anInst;
 			}
@@ -249,34 +252,40 @@ public class MHost extends MObject {
 	 * Communications Goop
 	 */
 	public static WOResponse[] sendRequestToWotaskdArray( String contentString, List<MHost> wotaskdArray, boolean willChange ) {
-		MSiteConfig aConfig;
-		MHost aHost = wotaskdArray.get( 0 );
-		if( aHost != null ) {
-			aConfig = aHost.siteConfig();
-		}
-		else {
+
+		final MHost aHost = wotaskdArray.get( 0 );
+
+		// FIXME: A little danger sign here... // Hugi 2024-11-02
+		if( aHost == null ) {
 			return null;
 		}
+
+		final MSiteConfig aConfig = aHost.siteConfig();
 
 		// we had errors reaching a host last time - do it again!
 		if( aConfig.hostErrorArray.count() > 0 ) {
 			_syncRequest = null;
 			final WORequest aSyncRequest = syncRequest( aConfig );
 			final _NSThreadsafeMutableArray syncHosts = aConfig.hostErrorArray;
+
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "Sending sync requests to: " + syncHosts.array() );
 			}
+
 			// final MSiteConfig finalConfig = aConfig;
-			Thread[] workers = new Thread[syncHosts.count()];
+			final Thread[] workers = new Thread[syncHosts.count()];
+
 			for( int i = 0; i < workers.length; i++ ) {
 				final int j = i;
-				Runnable work = new Runnable() {
+
+				final Runnable work = new Runnable() {
 					@Override
 					public void run() {
 						MHost aHost = (MHost)syncHosts.objectAtIndex( j );
 						aHost.sendRequestToWotaskd( aSyncRequest, true, true );
 					}
 				};
+
 				workers[j] = new Thread( work );
 				workers[j].start();
 			}
@@ -293,17 +302,19 @@ public class MHost extends MObject {
 		final List<MHost> finalWotaskdArray = wotaskdArray;
 		final boolean wc = willChange;
 
-		Thread[] workers = new Thread[wotaskdArray.size()];
+		final Thread[] workers = new Thread[wotaskdArray.size()];
 		final WOResponse[] responses = new WOResponse[workers.length];
 
 		for( int i = 0; i < workers.length; i++ ) {
 			final int j = i;
+
 			Runnable work = new Runnable() {
 				@Override
 				public void run() {
 					responses[j] = finalWotaskdArray.get( j ).sendRequestToWotaskd( aRequest, wc, false );
 				}
 			};
+
 			workers[j] = new Thread( work );
 			workers[j].start();
 		}
