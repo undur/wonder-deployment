@@ -58,7 +58,7 @@ public class MHost extends MObject {
 	}
 
 	// FIXME: We should probably make this private and provide access through the accessor
-	NSMutableArray<MInstance> _instanceArray;
+	private NSMutableArray<MInstance> _instanceArray;
 
 	private NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
 
