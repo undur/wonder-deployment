@@ -20,6 +20,7 @@ import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 
 public class MApplication extends MObject {
+
 	/*
 	String name;
 	Integer startingPort;
@@ -60,8 +61,6 @@ public class MApplication extends MObject {
 	Integer poolsize;
 	Integer urlVersion;	// 3 | 4
 	 */
-
-	String _name;
 
 	@Override
 	public int hashCode() {
