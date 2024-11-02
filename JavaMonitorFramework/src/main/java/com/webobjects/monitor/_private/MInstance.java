@@ -327,19 +327,22 @@ public class MInstance extends MObject {
 		_siteConfig.dataHasChanged();
 	}
 
-	/** ******* */
-
-	/** ******** Don't use this ********** */
+	/**
+	 * FIXME: This was previously marked "don't use this". We whould trust whoever wrote that. Note that at the moment, this can be accessed through KVC in wotaskd's DirectAction class... // Hugi 2024-11-02
+	 */
+	@Deprecated
 	public Integer oldport() {
 		return (Integer)values.valueForKey( "oldport" );
 	}
 
+	/**
+	 * FIXME: This was previously marked "don't use this". We whould trust whoever wrote that. Note that at the moment, this can be accessed through KVC in wotaskd's DirectAction class... // Hugi 2024-11-02
+	 */
+	@Deprecated
 	public void setOldport( Integer value ) {
 		values.takeValueForKey( MObject.validatedInteger( value ), "oldport" );
 		_siteConfig.dataHasChanged();
 	}
-
-	/** ******* */
 
 	/** ******** Object Graph ********* */
 	MHost _host;
@@ -356,15 +359,14 @@ public class MInstance extends MObject {
 
 	/** ******* */
 
-	NSTimestamp _lastRegistration = NSTimestamp.DistantPast;
+	private NSTimestamp _lastRegistration = NSTimestamp.DistantPast;
 
-	NSMutableArray _deaths = new NSMutableArray();
+	private NSMutableArray _deaths = new NSMutableArray();
 
 	private boolean isRefusingNewSessions = false;
 
 	public int state = MObject.DEAD;
 
-	/** ******** Constructors ********* */
 	// This constructor is for adding new instances through the UI
 	public MInstance( MHost aHost, MApplication anApplication, Integer anID, MSiteConfig aConfig ) {
 		shutdownFormatter.setDefaultFormatTimeZone( NSTimeZone.timeZoneWithName( "UTC", true ) );
@@ -549,28 +551,24 @@ public class MInstance extends MObject {
 	/** ******* */
 
 	/** ******** Statistics Support ********* */
-	NSMutableDictionary _statistics = new NSMutableDictionary();
+	private NSMutableDictionary _statistics = new NSMutableDictionary();
 
 	public NSDictionary statistics() {
 		return _statistics;
 	}
 
 	public void setStatistics( NSDictionary newStatistics ) {
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "transactions" ) ),
-				"transactions" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "activeSessions" ) ),
-				"activeSessions" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "avgTransactionTime" ) ),
-				"avgTransactionTime" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "averageIdlePeriod" ) ),
-				"averageIdlePeriod" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "startedAt" ) ),
-				"startedAt" );
+		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "transactions" ) ), "transactions" );
+		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "activeSessions" ) ), "activeSessions" );
+		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "avgTransactionTime" ) ), "avgTransactionTime" );
+		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "averageIdlePeriod" ) ), "averageIdlePeriod" );
+		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "startedAt" ) ), "startedAt" );
 	}
 
 	public String transactions() {
 		if( _statistics != null ) {
 			Object _value = _statistics.valueForKey( "transactions" );
+
 			if( _value != null ) {
 				return (_value.toString());
 			}
@@ -581,6 +579,7 @@ public class MInstance extends MObject {
 	public String activeSessions() {
 		if( _statistics != null ) {
 			Object _value = _statistics.valueForKey( "activeSessions" );
+
 			if( _value != null ) {
 				return (_value.toString());
 			}
@@ -591,6 +590,7 @@ public class MInstance extends MObject {
 	public String avgTransactionTime() {
 		if( _statistics != null ) {
 			Object _value = _statistics.valueForKey( "avgTransactionTime" );
+
 			if( _value != null ) {
 				return (_value.toString());
 			}
@@ -601,6 +601,7 @@ public class MInstance extends MObject {
 	public String averageIdlePeriod() {
 		if( _statistics != null ) {
 			Object _value = _statistics.valueForKey( "averageIdlePeriod" );
+
 			if( _value != null ) {
 				return (_value.toString());
 			}
@@ -622,8 +623,6 @@ public class MInstance extends MObject {
 		_statisticsError = null;
 	}
 
-	/** ******* */
-
 	/** ******** Startup Calculations ********* */
 	public static long TIME_FOR_STARTUP = 30;
 
@@ -633,16 +632,16 @@ public class MInstance extends MObject {
 		state = MObject.STARTING;
 		long timeForStartup;
 		Integer tfs = _application.timeForStartup();
+
 		if( tfs != null ) {
 			timeForStartup = tfs.intValue();
 		}
 		else {
 			timeForStartup = MInstance.TIME_FOR_STARTUP;
 		}
+
 		_finishStartingByDate = new NSTimestamp( new NSTimestamp().getTime() + (timeForStartup * 1000) );
 	}
-
-	/** ******* */
 
 	/** ******** State Support ********* */
 	private int _connectFailureCount = 0;
@@ -754,8 +753,6 @@ public class MInstance extends MObject {
 		_shouldDie = false;
 		return b;
 	}
-
-	/** ******* */
 
 	/** ******** Registration and Lifebeats ********* */
 	public NSTimestamp lastRegistration() {
@@ -1144,10 +1141,7 @@ public class MInstance extends MObject {
 		}
 	}
 
-	/** ******* */
-
 	public void setRefusingNewSessions( boolean isRefusingNewSessions ) {
-		// NSLog.debug.appendln(this + " setRefusingNewSessions: " + isRefusingNewSessions);
 		this.isRefusingNewSessions = isRefusingNewSessions;
 	}
 
@@ -1155,7 +1149,7 @@ public class MInstance extends MObject {
 		return isRefusingNewSessions;
 	}
 
-	protected int intStatisticsValueForKey( String key, int defaultValue ) {
+	private int intStatisticsValueForKey( String key, int defaultValue ) {
 		NSDictionary aStatsDict = statistics();
 
 		if( aStatsDict != null ) {
@@ -1172,7 +1166,7 @@ public class MInstance extends MObject {
 		return defaultValue;
 	}
 
-	protected float floatStatisticsValueForKey( String key, float defaultValue ) {
+	private float floatStatisticsValueForKey( String key, float defaultValue ) {
 		NSDictionary aStatsDict = statistics();
 
 		if( aStatsDict != null ) {
@@ -1237,7 +1231,8 @@ public class MInstance extends MObject {
 	}
 
 	/**
-	 * only one force quit task can be scheduled
+	 * Only one force quit task can be scheduled
+	 *
 	 * @param task - task to schedule
 	 * @param delay - delay before the task is fired (milliseconds)
 	 */
@@ -1250,6 +1245,7 @@ public class MInstance extends MObject {
 
 	/**
 	 * Schedule a task to repeatedly run
+	 *
 	 * @param task - task to schedule
 	 * @param delay - delay before the task runs (milliseconds)
 	 * @param period - interval when the task is ran (milliseconds)
@@ -1260,7 +1256,4 @@ public class MInstance extends MObject {
 			taskTimer().schedule( _forceQuitTask, delay, period );
 		}
 	}
-
-	/** ******* */
-
 }
