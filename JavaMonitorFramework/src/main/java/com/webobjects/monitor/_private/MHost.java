@@ -59,6 +59,10 @@ public class MHost extends MObject {
 
 	private NSMutableArray<MInstance> _instanceArray;
 
+	/**
+	 * FIXME: It doesn't look like this variable is ever actually read in a meaningful way. Delete? // Hugi 2024-11-02
+	 */
+	@Deprecated
 	private NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
 
 	public NSMutableArray<MInstance> instanceArray() {
