@@ -2,6 +2,7 @@ package com.webobjects.monitor.application.admin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -27,8 +28,8 @@ public class AdminApplicationsPage extends ApplicationsPage {
 //	public NSArray actions;
 	public NSDictionary selectedAction;
 	public NSDictionary currentActionItem;
-	protected NSMutableArray processedHosts;
-	protected NSMutableArray processedInstances;
+	protected List<MHost> processedHosts;
+	protected List<MInstance> processedInstances;
 
 //	static {
 //		try {
@@ -55,29 +56,29 @@ public class AdminApplicationsPage extends ApplicationsPage {
 	public AdminApplicationsPage( WOContext context ) {
 		super( context );
 //		actions = _actions;
-		processedHosts = new NSMutableArray();
-		processedInstances = new NSMutableArray();
+		processedHosts = new ArrayList();
+		processedInstances = new ArrayList();
 	}
 
 	private void processedInstance( MInstance minstance ) {
-		processedInstances.addObject( minstance );
-		processedHosts.addObject( minstance.host() );
+		processedInstances.add( minstance );
+		processedHosts.add( minstance.host() );
 	}
 
 	private void cleanup() {
-		processedInstances.removeAllObjects();
-		processedHosts.removeAllObjects();
+		processedInstances.clear();
+		processedHosts.clear();
 	}
 
 	private void sendUpdateInstancesToWotaskds() {
-		if( processedInstances.count() > 0 ) {
+		if( processedInstances.size() > 0 ) {
 			handler().sendUpdateInstancesToWotaskds( processedInstances, processedHosts );
 		}
 		cleanup();
 	}
 
 	private void sendCommandInstancesToWotaskds( String s ) {
-		if( processedInstances.count() > 0 ) {
+		if( processedInstances.size() > 0 ) {
 			handler().sendCommandInstancesToWotaskds( s, processedInstances, processedHosts );
 		}
 		cleanup();
