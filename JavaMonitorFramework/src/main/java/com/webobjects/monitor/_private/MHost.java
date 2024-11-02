@@ -65,10 +65,6 @@ public class MHost extends MObject {
 		return _instanceArray;
 	}
 
-	public NSArray<MApplication> applicationArray() {
-		return _applicationArray;
-	}
-
 	// From the UI
 	public MHost( MSiteConfig aConfig, String name, String type ) {
 		this( new NSDictionary<Object, Object>( new Object[] { name, type }, new Object[] { "name", "type" } ), aConfig );
