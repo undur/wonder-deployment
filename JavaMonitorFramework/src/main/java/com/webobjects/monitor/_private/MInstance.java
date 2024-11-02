@@ -485,10 +485,6 @@ public class MInstance extends MObject {
 
 	@Override
 	public String toString() {
-		if( false ) {
-			return (values.toString() + " " + "lastRegistration = " + _lastRegistration + " " + "state = " + state
-					+ " " + "isRefusingNewSessions = " + isRefusingNewSessions() + " " + "deaths = " + _deaths);
-		}
 		return "MInstance@" + applicationName() + "-" + id();
 	}
 
