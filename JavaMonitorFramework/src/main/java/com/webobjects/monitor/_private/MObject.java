@@ -57,9 +57,6 @@ public class MObject implements NSKeyValueCoding {
 	public static final int DEAD = 4;
 	public static final int CRASHING = 5;
 
-	public static final String _emptyString = "";
-	public static final Integer _zeroInteger = Integer.valueOf( 0 );
-
 	public static final String directActionString = "/cgi-bin/WebObjects/wotaskd.woa/wa/monitorRequest";
 	public static final String adminActionStringPrefix = "/cgi-bin/WebObjects/";
 	public static final String adminActionStringPostfix = ".woa/womp/instanceRequest";
