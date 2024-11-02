@@ -33,7 +33,7 @@ public class AdminApplicationsPage extends ApplicationsPage {
 	static {
 		try {
 			Class c = AdminApplicationsPage.class;
-			Class aclass[] = { com.webobjects.foundation.NSArray.class };
+			Class aclass[] = { List.class };
 			String[] keys = new String[] { DISPLAY_NAME, ACTION_NAME };
 			_actions = new NSArray( new NSDictionary[] {
 					new NSDictionary( new Object[] { "Start", c.getMethod( "start", aclass ) }, keys ),
