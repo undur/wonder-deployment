@@ -23,7 +23,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPOutputStream;
@@ -978,8 +977,7 @@ public class MSiteConfig extends MObject {
 	public String generateAdaptorConfigXML( boolean onlyIncludeRunningInstances, boolean shouldIncludeUnregisteredInstances ) {
 		final StringBuilder sb = new StringBuilder( "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<adaptor>\n" );
 
-		for( final Enumeration e = applicationArray().objectEnumerator(); e.hasMoreElements(); ) {
-			final MApplication anApp = (MApplication)e.nextElement();
+		for( final MApplication anApp : applicationArray() ) {
 
 			if( !(onlyIncludeRunningInstances && !anApp.isRunning_W()) ) {
 
@@ -1021,8 +1019,7 @@ public class MSiteConfig extends MObject {
 				}
 				sb.append( "\">\n" );
 
-				for( final Enumeration e2 = anApp.instanceArray().objectEnumerator(); e2.hasMoreElements(); ) {
-					final MInstance anInst = (MInstance)e2.nextElement();
+				for( final MInstance anInst : anApp.instanceArray() ) {
 
 					if( !(onlyIncludeRunningInstances && !anInst.isRunning_W()) ) {
 
