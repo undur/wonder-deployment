@@ -1260,23 +1260,6 @@ public class MSiteConfig extends MObject {
 		return null;
 	}
 
-	public MInstance instanceWithHostnameAndPort( String hostAndPort ) {
-		final NSArray hostPortArray = NSArray.componentsSeparatedByString( hostAndPort, "\n" );
-		return instanceWithHostnameAndPort( (String)hostPortArray.objectAtIndex( 0 ),
-				Integer.valueOf( (String)hostPortArray.objectAtIndex( 2 ) ) );
-	}
-
-	public MInstance instanceWithHostnameAndPort( String hostName, String port ) {
-		try {
-			final Integer anIntPort = Integer.valueOf( port );
-			return instanceWithHostnameAndPort( hostName, anIntPort );
-		}
-		catch( final Exception e ) {
-			logger.error( "Exception getting instance: {}:{}", hostName, port, e );
-		}
-		return null;
-	}
-
 	public MInstance instanceWithHostnameAndPort( String hostName, Integer port ) {
 		final MHost aHost = hostWithName( hostName );
 		if( aHost == null ) {
