@@ -7,7 +7,6 @@ import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WODirectAction;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
@@ -623,7 +622,13 @@ public class AdminAction extends WODirectAction {
 		String typeParam = (String)context().request().formValueForKey( "type" );
 
 		if( "all".equalsIgnoreCase( typeParam ) ) {
-			prepareApplications( (NSArray)siteConfig().applicationArray().valueForKey( "name" ) );
+			final List<String> applicationNames = siteConfig()
+					.applicationArray()
+					.stream()
+					.map( MApplication::name )
+					.toList();
+
+			prepareApplications( applicationNames );
 		}
 		else {
 			List appNamesParam = context().request().formValuesForKey( "name" );
