@@ -1,35 +1,26 @@
 package com.webobjects.monitor.application.admin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
-import com.webobjects.appserver.WOApplication;
-import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSDictionary;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
-import com.webobjects.monitor._private.StringExtensions;
 import com.webobjects.monitor.application.components.AppDetailPage;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 
 public class AdminApplicationsPage extends ApplicationsPage {
 
-	public static final String DISPLAY_NAME = "displayName";
-	public static final String ACTION_NAME = "actionName";
+//	public static final String DISPLAY_NAME = "displayName";
+//	public static final String ACTION_NAME = "actionName";
 //	protected static NSArray _actions;
 //	public NSArray actions;
-	public NSDictionary selectedAction;
-	public NSDictionary currentActionItem;
-	protected List<MHost> processedHosts;
-	protected List<MInstance> processedInstances;
+//	public NSDictionary selectedAction;
+//	public NSDictionary currentActionItem;
+	private List<MHost> processedHosts;
+	private List<MInstance> processedInstances;
 
 //	static {
 //		try {
@@ -264,11 +255,16 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		}
 	}
 
+/*
 	@Override
 	public WOComponent bounceClicked() {
 		AppDetailPage page = AppDetailPage.create( context(), currentApplication );
 		page = (AppDetailPage)page.bounceClicked();
 		return page;
+	}
+
+	private NSMutableArray applicationArray() {
+		return siteConfig().applicationArray();
 	}
 
 	private NSArray allInstances() {
@@ -280,10 +276,6 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		}
 
 		return nsmutablearray;
-	}
-
-	private NSMutableArray applicationArray() {
-		return siteConfig().applicationArray();
 	}
 
 	private WOComponent performInstanceAction() {
@@ -386,4 +378,5 @@ public class AdminApplicationsPage extends ApplicationsPage {
 	public static WOComponent create( WOContext context ) {
 		return WOApplication.application().pageWithName( AdminApplicationsPage.class.getName(), context );
 	}
+ */
 }
