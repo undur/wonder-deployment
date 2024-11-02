@@ -7,7 +7,6 @@ import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WODirectAction;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
@@ -345,8 +344,8 @@ public class AdminAction extends WODirectAction {
 
 	public AdminAction( WORequest request ) {
 		super( request );
-		instances = new NSMutableArray();
-		applications = new NSMutableArray();
+		instances = new ArrayList();
+		applications = new ArrayList();
 		_handler = new WOTaskdHandler( (Session)session() );
 	}
 
