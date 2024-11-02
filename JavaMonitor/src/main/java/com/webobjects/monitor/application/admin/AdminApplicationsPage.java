@@ -59,24 +59,24 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		processedInstances = new NSMutableArray();
 	}
 
-	protected void processedInstance( MInstance minstance ) {
+	private void processedInstance( MInstance minstance ) {
 		processedInstances.addObject( minstance );
 		processedHosts.addObject( minstance.host() );
 	}
 
-	protected void cleanup() {
+	private void cleanup() {
 		processedInstances.removeAllObjects();
 		processedHosts.removeAllObjects();
 	}
 
-	protected void sendUpdateInstancesToWotaskds() {
+	private void sendUpdateInstancesToWotaskds() {
 		if( processedInstances.count() > 0 ) {
 			handler().sendUpdateInstancesToWotaskds( processedInstances, processedHosts );
 		}
 		cleanup();
 	}
 
-	protected void sendCommandInstancesToWotaskds( String s ) {
+	private void sendCommandInstancesToWotaskds( String s ) {
 		if( processedInstances.count() > 0 ) {
 			handler().sendCommandInstancesToWotaskds( s, processedInstances, processedHosts );
 		}
@@ -270,7 +270,7 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		return page;
 	}
 
-	protected NSArray allInstances() {
+	private NSArray allInstances() {
 		NSMutableArray nsmutablearray = new NSMutableArray();
 
 		for( Enumeration enumeration = applicationArray().objectEnumerator(); enumeration.hasMoreElements(); ) {
@@ -285,7 +285,7 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		return siteConfig().applicationArray();
 	}
 
-	public WOComponent performInstanceAction() {
+	private WOComponent performInstanceAction() {
 		handler().startReading();
 		try {
 			((Method)selectedAction.valueForKey( "actionName" )).invoke( this, new Object[] { allInstances() } );
@@ -305,11 +305,11 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		return AdminApplicationsPage.create( context() );
 	}
 
-	public boolean showMovers() {
+	private boolean showMovers() {
 		return applicationArray().count() > 1;
 	}
 
-	public WOComponent saveMoving() {
+	private WOComponent saveMoving() {
 		handler().startReading();
 		try {
 			MHost mhost;
@@ -325,7 +325,7 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		}
 	}
 
-	public WOComponent moveUpClicked() {
+	private WOComponent moveUpClicked() {
 		handler().startReading();
 		try {
 			NSMutableArray nsmutablearray = applicationArray();
@@ -343,7 +343,7 @@ public class AdminApplicationsPage extends ApplicationsPage {
 		}
 	}
 
-	public WOComponent moveDownClicked() {
+	private WOComponent moveDownClicked() {
 		handler().startReading();
 		try {
 			NSMutableArray nsmutablearray = applicationArray();
@@ -383,5 +383,4 @@ public class AdminApplicationsPage extends ApplicationsPage {
 	public static WOComponent create( WOContext context ) {
 		return WOApplication.application().pageWithName( AdminApplicationsPage.class.getName(), context );
 	}
-
 }

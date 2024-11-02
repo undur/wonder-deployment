@@ -544,7 +544,7 @@ public class AdminAction extends WODirectAction {
 		applicationsPage().start( instances );
 	}
 
-	protected void prepareApplications( List<String> appNames ) {
+	private void prepareApplications( List<String> appNames ) {
 		if( appNames == null )
 			throw new DirectActionException( "at least one application name needs to be specified for type app", 406 );
 		for( String s  : appNames ) {
