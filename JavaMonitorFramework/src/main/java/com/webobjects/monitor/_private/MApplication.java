@@ -479,8 +479,8 @@ public class MApplication extends MObject {
 	/**********/
 
 	/********** Object Graph **********/
-	NSMutableArray _instanceArray = new NSMutableArray();
-	NSMutableArray _hostArray = new NSMutableArray();
+	NSMutableArray<MInstance> _instanceArray = new NSMutableArray<>();
+	NSMutableArray<MHost> _hostArray = new NSMutableArray<>();
 
 	public NSArray<MInstance> instanceArray() {
 		return _instanceArray;
@@ -563,7 +563,7 @@ public class MApplication extends MObject {
 	public void pushValuesToInstances() {
 		int instanceArrayCount = _instanceArray.count();
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInstance = _instanceArray.objectAtIndex( i );
 			anInstance.takeValuesFromApplication();
 		}
 	}
@@ -619,7 +619,7 @@ public class MApplication extends MObject {
 		int instanceArrayCount = _instanceArray.count();
 		int lastSequence = 0;
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInst = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInst = _instanceArray.objectAtIndex( i );
 			int thisSequence = anInst.id().intValue();
 			if( thisSequence > lastSequence ) {
 				lastSequence = thisSequence;
@@ -638,7 +638,7 @@ public class MApplication extends MObject {
 	public MInstance instanceWithID( Integer ID ) {
 		int instanceArrayCount = _instanceArray.count();
 		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInst = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInst = _instanceArray.objectAtIndex( i );
 			if( anInst.id().equals( ID ) ) {
 				return anInst;
 			}
@@ -650,7 +650,7 @@ public class MApplication extends MObject {
 		int runningInstances = 0;
 		int numInstances = _instanceArray.count();
 		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInstance = _instanceArray.objectAtIndex( i );
 			if( anInstance.isRunning_W() ) {
 				runningInstances++;
 			}
@@ -693,7 +693,7 @@ public class MApplication extends MObject {
 		NSMutableArray<MInstance> instances = new NSMutableArray<>();
 		int numInstances = _instanceArray.count();
 		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInstance = _instanceArray.objectAtIndex( i );
 			if( anInstance.isRunning_M() ) {
 				instances.addObject( anInstance );
 			}
@@ -711,7 +711,7 @@ public class MApplication extends MObject {
 	public boolean isStopped_M() {
 		int numInstances = _instanceArray.count();
 		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = (MInstance)_instanceArray.objectAtIndex( i );
+			MInstance anInstance = _instanceArray.objectAtIndex( i );
 			if( anInstance.state != MObject.DEAD ) {
 				return false;
 			}
