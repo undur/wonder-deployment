@@ -14,6 +14,10 @@ package com.webobjects.monitor._private;
 
 public class StringExtensions {
 
+	/**
+	 * FIXME: Eliminate. Each call site of this method needs to be checked  beforehand // Hugi 2024-11-02
+	 */
+	@Deprecated
 	public static boolean boolValue( final String s ) {
 
 		if( s == null ) {
@@ -27,6 +31,10 @@ public class StringExtensions {
 				s.equalsIgnoreCase( "1" ));
 	}
 
+	/**
+	 * FIXME: Eliminate. Each call site of this method needs to be checked  beforehand // Hugi 2024-11-02
+	 */
+	@Deprecated
 	public static boolean isValidXMLString( final String s ) {
 
 		if( s == null || s.length() == 0 ) {
@@ -35,6 +43,7 @@ public class StringExtensions {
 
 		for( int i = 0; i < s.length(); i++ ) {
 			char aChar = s.charAt( i );
+
 			if( (!Character.isLetterOrDigit( aChar )) && (aChar != '-') && (aChar != '.') ) {
 				return false;
 			}
