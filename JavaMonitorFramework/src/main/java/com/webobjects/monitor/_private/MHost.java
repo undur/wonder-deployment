@@ -142,26 +142,9 @@ public class MHost extends MObject {
 		return "Unknown";
 	}
 
-	/** ******* */
-
-	@Override
-	public boolean equals( Object other ) {
-		return (other instanceof MHost) && (((MHost)other)._address.equals( _address ));
-	}
-
-	@Override
-	public int hashCode() {
-		return _address.hashCode();
-	}
-
 	/** ******** Archiving Support ********* */
 	public NSDictionary dictionaryForArchive() {
 		return values;
-	}
-
-	@Override
-	public String toString() {
-		return "MHost@" + _address;
 	}
 
 	public Integer runningInstancesCount_W() {
@@ -294,5 +277,20 @@ public class MHost extends MObject {
 		}
 
 		return aResponse;
+	}
+
+	@Override
+	public String toString() {
+		return "MHost@" + _address;
+	}
+
+	@Override
+	public boolean equals( Object other ) {
+		return (other instanceof MHost) && (((MHost)other)._address.equals( _address ));
+	}
+
+	@Override
+	public int hashCode() {
+		return _address.hashCode();
 	}
 }
