@@ -50,12 +50,12 @@ public class MObject implements NSKeyValueCoding {
 
 	MSiteConfig _siteConfig;
 
+	protected NSMutableDictionary<String, ?> values;
+	protected _NSThreadsafeMutableDictionary<String, ?> adaptorValues = new _NSThreadsafeMutableDictionary<>( new NSMutableDictionary<>() );
+
 	public MSiteConfig siteConfig() {
 		return _siteConfig;
 	}
-
-	protected NSMutableDictionary<String, ?> values;
-	protected _NSThreadsafeMutableDictionary<String, ?> adaptorValues = new _NSThreadsafeMutableDictionary<>( new NSMutableDictionary<>() );
 
 	public NSMutableDictionary<String, ?> values() {
 		return values;
