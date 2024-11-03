@@ -376,7 +376,7 @@ public class WOTaskdHandler {
 
 	public static NSDictionary emptyResponse = new NSDictionary( new NSDictionary( new NSArray( "INTERNAL ERROR: Response returned was null or empty" ), "errorResponse" ), "monitorResponse" );
 
-	private NSDictionary[] generateResponseDictionaries( WOResponse[] responses ) {
+	private static NSDictionary[] generateResponseDictionaries( WOResponse[] responses ) {
 
 		final NSDictionary[] responseDicts = new NSDictionary[responses.length];
 
