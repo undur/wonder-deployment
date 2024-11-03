@@ -12,6 +12,9 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor._private;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -852,8 +855,8 @@ public class MInstance extends MObject {
 	/** ******* */
 
 	/** ******** Command Line Arguments ********* */
-	public NSArray additionalArgumentsAsArray() {
-		return NSArray.componentsSeparatedByString( additionalArgs(), " " );
+	private List<String> additionalArgumentsAsArray() {
+		return Arrays.asList( additionalArgs().split( " " ) );
 	}
 
 	private String toNullOrString( Object o ) {
@@ -863,91 +866,91 @@ public class MInstance extends MObject {
 		return null;
 	}
 
-	public NSArray commandLineArgumentsAsArray() {
-		NSMutableArray anArray = new NSMutableArray( 17 );
+	public List<String> commandLineArgumentsAsArray() {
+		List<String> anArray = new ArrayList<>( 17 );
 
 		// Only if we were passed a WOHost argument
 		if( !WOApplication.application()._unsetHost ) {
-			anArray.addObject( "-WOHost" );
-			anArray.addObject( WOApplication.application().host() );
+			anArray.add( "-WOHost" );
+			anArray.add( WOApplication.application().host() );
 		}
 
 		// instance stuff
-		anArray.addObject( "-WOPort" );
-		anArray.addObject( port().toString() );
-		anArray.addObject( "-WOCachingEnabled" );
-		anArray.addObject( booleanAsYNString( cachingEnabled() ) );
-		anArray.addObject( "-WODebuggingEnabled" );
-		anArray.addObject( booleanAsYNString( debuggingEnabled() ) );
-		anArray.addObject( "-WOOutputPath" );
-		anArray.addObject( MObject.validatedOutputPath( outputPath() ) );
-		anArray.addObject( "-WOAutoOpenInBrowser" );
-		anArray.addObject( booleanAsYNString( autoOpenInBrowser() ) );
-		anArray.addObject( "-WOAutoOpenClientApplication" );
-		anArray.addObject( booleanAsYNString( autoOpenInBrowser() ) );
-		anArray.addObject( "-WOLifebeatInterval" );
-		anArray.addObject( lifebeatInterval().toString() );
-		anArray.addObject( "-WOLifebeatEnabled" );
-		anArray.addObject( "YES" );
-		anArray.addObject( "-WOLifebeatDestinationPort" );
-		anArray.addObject( String.valueOf( WOApplication.application().lifebeatDestinationPort() ) );
+		anArray.add( "-WOPort" );
+		anArray.add( port().toString() );
+		anArray.add( "-WOCachingEnabled" );
+		anArray.add( booleanAsYNString( cachingEnabled() ) );
+		anArray.add( "-WODebuggingEnabled" );
+		anArray.add( booleanAsYNString( debuggingEnabled() ) );
+		anArray.add( "-WOOutputPath" );
+		anArray.add( MObject.validatedOutputPath( outputPath() ) );
+		anArray.add( "-WOAutoOpenInBrowser" );
+		anArray.add( booleanAsYNString( autoOpenInBrowser() ) );
+		anArray.add( "-WOAutoOpenClientApplication" );
+		anArray.add( booleanAsYNString( autoOpenInBrowser() ) );
+		anArray.add( "-WOLifebeatInterval" );
+		anArray.add( lifebeatInterval().toString() );
+		anArray.add( "-WOLifebeatEnabled" );
+		anArray.add( "YES" );
+		anArray.add( "-WOLifebeatDestinationPort" );
+		anArray.add( String.valueOf( WOApplication.application().lifebeatDestinationPort() ) );
 
 		// application stuff
 		String adaptorString = toNullOrString( _application.adaptor() );
 		if( adaptorString != null && adaptorString.length() > 0 ) {
-			anArray.addObject( "-WOAdaptor" );
-			anArray.addObject( adaptorString );
+			anArray.add( "-WOAdaptor" );
+			anArray.add( adaptorString );
 		}
 		String adaptorThreadsString = toNullOrString( _application.adaptorThreads() );
 		if( adaptorThreadsString != null && adaptorThreadsString.length() > 0 ) {
-			anArray.addObject( "-WOWorkerThreadCount" );
-			anArray.addObject( adaptorThreadsString );
+			anArray.add( "-WOWorkerThreadCount" );
+			anArray.add( adaptorThreadsString );
 		}
 		String listenQueueSizeString = toNullOrString( _application.listenQueueSize() );
 		if( listenQueueSizeString != null && listenQueueSizeString.length() > 0 ) {
-			anArray.addObject( "-WOListenQueueSize" );
-			anArray.addObject( listenQueueSizeString );
+			anArray.add( "-WOListenQueueSize" );
+			anArray.add( listenQueueSizeString );
 		}
 		String adaptorThreadsMinString = toNullOrString( _application.adaptorThreadsMin() );
 		if( adaptorThreadsMinString != null && adaptorThreadsMinString.length() > 0 ) {
-			anArray.addObject( "-WOWorkerThreadCountMin" );
-			anArray.addObject( adaptorThreadsMinString );
+			anArray.add( "-WOWorkerThreadCountMin" );
+			anArray.add( adaptorThreadsMinString );
 		}
 		String adaptorThreadsMaxString = toNullOrString( _application.adaptorThreadsMax() );
 		if( adaptorThreadsMaxString != null && adaptorThreadsMaxString.length() > 0 ) {
-			anArray.addObject( "-WOWorkerThreadCountMax" );
-			anArray.addObject( adaptorThreadsMaxString );
+			anArray.add( "-WOWorkerThreadCountMax" );
+			anArray.add( adaptorThreadsMaxString );
 		}
 		String projectSearchPathString = toNullOrString( _application.projectSearchPath() );
 		if( projectSearchPathString != null && projectSearchPathString.length() > 0 ) {
-			anArray.addObject( "-NSProjectSearchPath" );
-			anArray.addObject( projectSearchPathString );
+			anArray.add( "-NSProjectSearchPath" );
+			anArray.add( projectSearchPathString );
 		}
 		String sessionTimeOutString = toNullOrString( _application.sessionTimeOut() );
 		if( sessionTimeOutString != null && sessionTimeOutString.length() > 0 ) {
-			anArray.addObject( "-WOSessionTimeOut" );
-			anArray.addObject( sessionTimeOutString );
+			anArray.add( "-WOSessionTimeOut" );
+			anArray.add( sessionTimeOutString );
 		}
 		String statisticsPasswordString = toNullOrString( _application.statisticsPassword() );
 		if( statisticsPasswordString != null && statisticsPasswordString.length() > 0 ) {
-			anArray.addObject( "-WOStatisticsPassword" );
-			anArray.addObject( statisticsPasswordString );
+			anArray.add( "-WOStatisticsPassword" );
+			anArray.add( statisticsPasswordString );
 		}
 
 		String appNameString = toNullOrString( _application.name() );
 		if( appNameString != null && appNameString.length() > 0 ) {
-			anArray.addObject( "-WOApplicationName" );
-			anArray.addObject( appNameString );
+			anArray.add( "-WOApplicationName" );
+			anArray.add( appNameString );
 		}
-		anArray.addObject( "-WOMonitorEnabled" );
-		anArray.addObject( "YES" );
-		anArray.addObject( "-WONoPause" );
-		anArray.addObject( "YES" );
+		anArray.add( "-WOMonitorEnabled" );
+		anArray.add( "YES" );
+		anArray.add( "-WONoPause" );
+		anArray.add( "YES" );
 
 		// Additional Arguments
 		String additionalArgsString = toNullOrString( additionalArgs() );
 		if( additionalArgsString != null && additionalArgsString.length() > 0 ) {
-			anArray.addObjectsFromArray( additionalArgumentsAsArray() );
+			anArray.addAll( additionalArgumentsAsArray() );
 		}
 
 		return anArray;
@@ -958,7 +961,7 @@ public class MInstance extends MObject {
 	}
 
 	public String commandLineArguments() {
-		return commandLineArgumentsAsArray().componentsJoinedByString( " " ).replace( '\n', ' ' ).replace( '\r', ' ' );
+		return String.join( " ", commandLineArgumentsAsArray() ).replace( '\n', ' ' ).replace( '\r', ' ' );
 	}
 
 	/** ******* */

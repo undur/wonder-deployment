@@ -6,8 +6,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
+import java.util.List;
 
-import com.webobjects.foundation.NSArray;
 import com.webobjects.monitor._private.MInstance;
 
 /**
@@ -17,14 +17,14 @@ import com.webobjects.monitor._private.MInstance;
 public class ExperimentalUtilities {
 
 	public static String jstack( final MInstance instance ) {
-		final NSArray arguments = instance.commandLineArgumentsAsArray();
+		final List<String> arguments = instance.commandLineArgumentsAsArray();
 		final int indexOfAppPasswordDefinition = arguments.indexOf( "-WOMonitorServicePassword" );
 
 		if( indexOfAppPasswordDefinition == -1 ) {
 			throw new IllegalArgumentException( "WOMonitorServicePassword is not set" );
 		}
 
-		final String password = (String)arguments.get( indexOfAppPasswordDefinition + 1 );
+		final String password = arguments.get( indexOfAppPasswordDefinition + 1 );
 		final String hostName = "localhost";
 		
 		// FIXME: This method of obtaining a port for the monitor service absolutely sucks
