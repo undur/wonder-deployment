@@ -40,7 +40,6 @@ public class WOTaskdComms {
 				NSLog.debug.appendln( "Sending sync requests to: " + syncHosts.array() );
 			}
 
-			// final MSiteConfig finalConfig = aConfig;
 			final Thread[] workers = new Thread[syncHosts.count()];
 
 			for( int i = 0; i < workers.length; i++ ) {
