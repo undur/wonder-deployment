@@ -13,7 +13,6 @@ SUCH DAMAGE.
 package com.webobjects.monitor._private;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.webobjects.foundation.NSDictionary;
@@ -26,18 +25,11 @@ public class MObject implements NSKeyValueCoding {
 
 	public static final List<String> loadSchedulerArray = new ArrayList<>( List.of( "Default", "Round Robin", "Random", "Load Average", "Custom" ) );
 	public static final List<String> loadSchedulerArrayValues = new ArrayList<>( List.of( "DEFAULT", "ROUNDROBIN", "RANDOM", "LOADAVERAGE", "CUSTOM" ) );
-
 	public static final List<String> hostTypeArray = new ArrayList<>( List.of( "MacOSX", "Windows", "Unix" ) );
-
 	public static final List<Integer> urlVersionArray = new ArrayList<>( List.of( Integer.valueOf( 4 ), Integer.valueOf( 3 ) ) );
-
 	public static final List<String> weekArray = new ArrayList<>( List.of( "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ) );
-
 	public static final List<String> timeOfDayArray = new ArrayList<>( List.of( "0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300" ) );
-
-	private static final Integer[] schedulingIntervals = new Integer[] { Integer.valueOf( 1 ), Integer.valueOf( 2 ), Integer.valueOf( 3 ), Integer.valueOf( 4 ), Integer.valueOf( 6 ), Integer.valueOf( 8 ), Integer.valueOf( 12 ) };
-	public static final List<Integer> schedulingIntervalArray = new ArrayList<>( Arrays.asList( schedulingIntervals ) );
-
+	public static final List<Integer> schedulingIntervalArray = new ArrayList<>( List.of( Integer.valueOf( 1 ), Integer.valueOf( 2 ), Integer.valueOf( 3 ), Integer.valueOf( 4 ), Integer.valueOf( 6 ), Integer.valueOf( 8 ), Integer.valueOf( 12 ) ) );
 	public static final List<String> schedulingTypeArray = new ArrayList<>( List.of( "HOURLY", "DAILY", "WEEKLY" ) );
 
 	public static final String _POST = "POST";
