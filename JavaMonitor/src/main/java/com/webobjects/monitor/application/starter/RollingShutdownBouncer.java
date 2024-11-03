@@ -1,7 +1,8 @@
 package com.webobjects.monitor.application.starter;
 
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSMutableArray;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -27,21 +28,24 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 	@Override
 	protected void bounce() throws InterruptedException {
 
-		NSArray<MInstance> instances = application().instanceArray().immutableClone();
-		NSArray<MInstance> runningInstances = application().runningInstances_M();
-		NSArray<MHost> activeHosts = (NSArray<MHost>)runningInstances.valueForKeyPath( "host.@unique" );
+		List<MInstance> instances = new ArrayList<>( application().instanceArray() );
+		List<MInstance> runningInstances = application().runningInstances_M();
+		List<MHost> activeHosts = runningInstances
+				.stream()
+				.map( MInstance::host )
+				.distinct()
+				.toList();
 
-		NSMutableArray<MInstance> inactiveInstances = instances.mutableClone();
-		inactiveInstances.removeObjectsInArray( runningInstances );
+		List<MInstance> inactiveInstances = new ArrayList<>( instances );
+		inactiveInstances.removeAll( runningInstances );
 
 		if( inactiveInstances.isEmpty() ) {
-			addObjectsFromArrayIfAbsentToErrorMessageArray(
-					new NSArray<>( "You must have at least one inactive instance to perform a rolling shutdown bounce." ) );
+			addObjectsFromArrayIfAbsentToErrorMessageArray( List.of( "You must have at least one inactive instance to perform a rolling shutdown bounce." ) );
 			return;
 		}
 
 		int numInstancesToStartPerHost = numInstancesToStartPerHost( runningInstances, activeHosts );
-		NSArray<MInstance> startingInstances = instancesToStart( inactiveInstances, activeHosts, numInstancesToStartPerHost );
+		List<MInstance> startingInstances = instancesToStart( inactiveInstances, activeHosts, numInstancesToStartPerHost );
 
 		boolean useScheduling = doAllRunningInstancesUseScheduling( runningInstances );
 		log( "Starting inactive instances" );
@@ -49,15 +53,16 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 
 		waitForInactiveInstancesToStart( startingInstances, activeHosts );
 
-		NSMutableArray<MInstance> restartingInstances = runningInstances.mutableClone();
+		List<MInstance> restartingInstances = new ArrayList<>( runningInstances );
 		refuseNewSessions( restartingInstances, activeHosts );
 
-		NSMutableArray<MInstance> stoppingInstances = new NSMutableArray<>();
+		List<MInstance> stoppingInstances = new ArrayList<>();
+
 		for( int i = numInstancesToStartPerHost; i > 0; i-- ) {
 			if( restartingInstances.isEmpty() ) {
 				break;
 			}
-			stoppingInstances.addObject( restartingInstances.removeLastObject() );
+			stoppingInstances.add( restartingInstances.removeLast() );
 		}
 
 		restartInstances( restartingInstances, activeHosts, useScheduling );
@@ -73,18 +78,22 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 		}
 	}
 
-	protected int numInstancesToStartPerHost( NSArray<MInstance> runningInstances, NSArray<MHost> activeHosts ) {
+	protected int numInstancesToStartPerHost( List<MInstance> runningInstances, List<MHost> activeHosts ) {
 		int numToStartPerHost = 1;
-		if( activeHosts.count() > 0 ) {
-			numToStartPerHost = (int)(runningInstances.count() / activeHosts.count() * .1);
+
+		if( activeHosts.size() > 0 ) {
+			numToStartPerHost = (int)(runningInstances.size() / activeHosts.size() * .1);
 		}
+
 		if( numToStartPerHost < 1 ) {
 			numToStartPerHost = 1;
 		}
+
 		return numToStartPerHost;
 	}
 
-	protected NSArray<MInstance> instancesToStart( NSArray<MInstance> inactiveInstances, NSArray<MHost> activeHosts, int numInstancesToStartPerHost ) {
+	// FIXME: Fix up that old ERXKey thing // Hugi 2024-11-03
+	protected List<MInstance> instancesToStart( List<MInstance> inactiveInstances, List<MHost> activeHosts, int numInstancesToStartPerHost ) {
 		throw new RuntimeException( "Missing ERXKey, look into this" ); // FIXME Hugi 2021-11-13
 		/*
 		NSMutableArray<MInstance> startingInstances = new NSMutableArray<>();
@@ -105,27 +114,31 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 		*/
 	}
 
-	protected boolean doAllRunningInstancesUseScheduling( NSArray<MInstance> runningInstances ) {
+	protected boolean doAllRunningInstancesUseScheduling( List<MInstance> runningInstances ) {
 		boolean useScheduling = true;
+
 		for( MInstance instance : runningInstances ) {
 			useScheduling &= instance.schedulingEnabled() != null && instance.schedulingEnabled().booleanValue();
 		}
+
 		return useScheduling;
 	}
 
-	protected void startInstances( NSArray<MInstance> startingInstances, NSArray<MHost> activeHosts, boolean useScheduling ) {
+	protected void startInstances( List<MInstance> startingInstances, List<MHost> activeHosts, boolean useScheduling ) {
+
 		for( MInstance instance : startingInstances ) {
 			if( useScheduling ) {
 				instance.setSchedulingEnabled( Boolean.TRUE );
 			}
+
 			instance.setAutoRecover( Boolean.TRUE );
 		}
+
 		handler().sendUpdateInstancesToWotaskds( startingInstances, activeHosts );
 		handler().sendStartInstancesToWotaskds( startingInstances, activeHosts );
 	}
 
-	protected void waitForInactiveInstancesToStart( NSArray<MInstance> startingInstances, NSArray<MHost> activeHosts )
-			throws InterruptedException {
+	protected void waitForInactiveInstancesToStart( List<MInstance> startingInstances, List<MHost> activeHosts ) throws InterruptedException {
 		boolean waiting = true;
 
 		// wait until apps have started
@@ -152,17 +165,17 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 		log( "Started inactive instances sucessfully" );
 	}
 
-	protected void refuseNewSessions( NSArray<MInstance> restartingInstances, NSArray<MHost> activeHosts ) {
+	protected void refuseNewSessions( List<MInstance> restartingInstances, List<MHost> activeHosts ) {
 		for( MInstance instance : restartingInstances ) {
 			instance.setRefusingNewSessions( true );
 		}
 		handler().sendRefuseSessionToWotaskds( restartingInstances, activeHosts, true );
 	}
 
-	protected void restartInstances( NSArray<MInstance> runningInstances, NSArray<MHost> activeHosts, boolean useScheduling )
-			throws InterruptedException {
+	protected void restartInstances( List<MInstance> runningInstances, List<MHost> activeHosts, boolean useScheduling ) throws InterruptedException {
+
 		for( MInstance instance : runningInstances ) {
-			NSArray<MInstance> instanceInArray = new NSArray<>( instance );
+			List<MInstance> instanceInArray = new ArrayList<>( List.of( instance ) );
 			handler().sendStopInstancesToWotaskds( instanceInArray, activeHosts );
 
 			sleep( 10 * 1000 );
@@ -175,14 +188,15 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 		}
 	}
 
-	protected void stopInstances( NSMutableArray<MInstance> stoppingInstances, NSArray<MHost> activeHosts ) {
+	protected void stopInstances( List<MInstance> stoppingInstances, List<MHost> activeHosts ) {
+
 		for( MInstance instance : stoppingInstances ) {
 			instance.setSchedulingEnabled( Boolean.FALSE );
 			instance.setAutoRecover( Boolean.FALSE );
 		}
+
 		handler().sendUpdateInstancesToWotaskds( stoppingInstances, activeHosts );
 		handler().sendStopInstancesToWotaskds( stoppingInstances, activeHosts );
 		log( "Stopped instances " + stoppingInstances.toString() + " sucessfully" );
 	}
-
 }

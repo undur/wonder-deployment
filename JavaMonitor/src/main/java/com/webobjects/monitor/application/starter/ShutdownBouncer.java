@@ -1,8 +1,10 @@
 package com.webobjects.monitor.application.starter;
 
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSMutableArray;
-import com.webobjects.foundation.NSMutableSet;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -24,17 +26,19 @@ public class ShutdownBouncer extends ApplicationStarter {
 	@Override
 	protected void bounce() throws InterruptedException {
 
-		NSArray<MInstance> instances = application().instanceArray().immutableClone();
-		NSMutableArray<MInstance> runningInstances = new NSMutableArray<>();
-		NSMutableSet<MHost> activeHosts = new NSMutableSet<>();
+		List<MInstance> instances = new ArrayList<>( application().instanceArray() );
+		List<MInstance> runningInstances = new ArrayList<>();
+		Set<MHost> activeHosts = new HashSet<>();
+
 		for( MInstance instance : instances ) {
 			MHost host = instance.host();
 			if( instance.isRunning_M() ) {
-				runningInstances.addObject( instance );
-				activeHosts.addObject( host );
+				runningInstances.add( instance );
+				activeHosts.add( host );
 			}
 		}
-		handler().sendRefuseSessionToWotaskds( runningInstances, activeHosts.allObjects(), true );
+
+		handler().sendRefuseSessionToWotaskds( runningInstances, new ArrayList<>( activeHosts ), true );
 		boolean waiting = true;
 
 		long startTime = System.currentTimeMillis();
@@ -43,7 +47,7 @@ public class ShutdownBouncer extends ApplicationStarter {
 			handler().startReading();
 			try {
 				log( "Checking for started instances" );
-				handler().getInstanceStatusForHosts( activeHosts.allObjects() );
+				handler().getInstanceStatusForHosts( new ArrayList<>( activeHosts ) );
 				boolean allStopped = false;
 				for( MInstance instance : runningInstances ) {
 					allStopped &= !instance.isRunning_M();
@@ -59,20 +63,20 @@ public class ShutdownBouncer extends ApplicationStarter {
 				handler().endReading();
 			}
 		}
-		handler().sendStopInstancesToWotaskds( runningInstances, activeHosts.allObjects() );
+
+		handler().sendStopInstancesToWotaskds( runningInstances, new ArrayList<>( activeHosts ) );
 		log( "Stopped instances sucessfully" );
 
-		handler().sendRefuseSessionToWotaskds( runningInstances, activeHosts.allObjects(), false );
-		handler().sendStartInstancesToWotaskds( runningInstances, activeHosts.allObjects() );
+		handler().sendRefuseSessionToWotaskds( runningInstances, new ArrayList<>( activeHosts ), false );
+		handler().sendStartInstancesToWotaskds( runningInstances, new ArrayList<>( activeHosts ) );
 
 		handler().startReading();
 		try {
-			handler().getInstanceStatusForHosts( activeHosts.allObjects() );
+			handler().getInstanceStatusForHosts( new ArrayList<>( activeHosts ) );
 			log( "Finished" );
 		}
 		finally {
 			handler().endReading();
 		}
 	}
-
 }
