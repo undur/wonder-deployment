@@ -1,5 +1,6 @@
 package com.webobjects.monitor.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -399,9 +400,9 @@ public class WOTaskdHandler {
 	/* ******* */
 
 	/* ******** Error Handling ********* */
-	public NSMutableArray getUpdateErrors( NSDictionary[] responseDicts, String updateType, boolean hasHosts, boolean hasApplications, boolean hasInstances, boolean hasSite ) {
+	public void getUpdateErrors( NSDictionary[] responseDicts, String updateType, boolean hasHosts, boolean hasApplications, boolean hasInstances, boolean hasSite ) {
 
-		final NSMutableArray errorArray = new NSMutableArray();
+		final List<String> errorArray = new ArrayList();
 
 		boolean clearOverwrite = false;
 
@@ -424,7 +425,7 @@ public class WOTaskdHandler {
 							final String errorMessage = (String)updateTypeResponse.valueForKey( "errorMessage" );
 
 							if( errorMessage != null ) {
-								errorArray.addObject( errorMessage );
+								errorArray.add( errorMessage );
 							}
 						}
 						else {
@@ -433,7 +434,7 @@ public class WOTaskdHandler {
 								final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
 
 								if( errorMessage != null ) {
-									errorArray.addObject( errorMessage );
+									errorArray.add( errorMessage );
 								}
 							}
 							if( hasHosts ) {
@@ -456,10 +457,9 @@ public class WOTaskdHandler {
 		}
 
 		errorCollector().addObjectsFromArrayIfAbsentToErrorMessageArray( errorArray );
-		return errorArray;
 	}
 
-	protected void _addUpdateResponseToErrorArray( NSDictionary updateTypeResponse, String responseKey, NSMutableArray errorArray ) {
+	protected void _addUpdateResponseToErrorArray( NSDictionary updateTypeResponse, String responseKey, List<String> errorArray ) {
 
 		final List<NSDictionary> aResponse = (List<NSDictionary>)updateTypeResponse.valueForKey( responseKey );
 
@@ -468,7 +468,7 @@ public class WOTaskdHandler {
 				final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
 
 				if( errorMessage != null ) {
-					errorArray.addObject( errorMessage );
+					errorArray.add( errorMessage );
 				}
 			}
 		}
@@ -549,11 +549,11 @@ public class WOTaskdHandler {
 		return errorArray;
 	}
 
-	protected void getGlobalErrorFromResponse( NSDictionary responseDict, NSMutableArray errorArray ) {
+	protected void getGlobalErrorFromResponse( NSDictionary responseDict, List<String> errorArray ) {
 		final NSArray errorResponse = (NSArray)responseDict.valueForKey( "errorResponse" );
 
 		if( errorResponse != null ) {
-			errorArray.addObjectsFromArray( errorResponse );
+			errorArray.addAll( errorResponse );
 		}
 	}
 
