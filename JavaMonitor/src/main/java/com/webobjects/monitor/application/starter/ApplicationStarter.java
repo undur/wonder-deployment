@@ -1,11 +1,13 @@
 package com.webobjects.monitor.application.starter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.webobjects.foundation.NSLog;
-import com.webobjects.foundation.NSMutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor.util.WOTaskdHandler;
 import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
@@ -16,6 +18,8 @@ import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
  * @author ak
  */
 public abstract class ApplicationStarter extends Thread implements ErrorCollector {
+
+	private static Logger logger = LoggerFactory.getLogger( ApplicationStarter.class );
 
 	private MApplication _app;
 
@@ -34,7 +38,7 @@ public abstract class ApplicationStarter extends Thread implements ErrorCollecto
 	protected abstract void bounce() throws InterruptedException;
 
 	protected void log( Object msg ) {
-		NSLog.out.appendln( msg );
+		logger.info( msg != null ? msg.toString() : "[null]" );
 		_status = msg != null ? msg.toString() : "No status";
 	}
 
@@ -49,7 +53,7 @@ public abstract class ApplicationStarter extends Thread implements ErrorCollecto
 	@Override
 	public void run() {
 		try {
-			_errors = new NSMutableSet<>();
+			_errors = new HashSet<>();
 			bounce();
 		}
 		catch( InterruptedException e ) {
