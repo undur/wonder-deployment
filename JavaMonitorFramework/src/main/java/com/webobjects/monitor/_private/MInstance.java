@@ -364,7 +364,7 @@ public class MInstance extends MObject {
 
 	private NSTimestamp _lastRegistration = NSTimestamp.DistantPast;
 
-	private NSMutableArray _deaths = new NSMutableArray();
+	private NSMutableArray<String> _deaths = new NSMutableArray<>();
 
 	private boolean isRefusingNewSessions = false;
 
@@ -810,7 +810,7 @@ public class MInstance extends MObject {
 			try {
 				WOMailDelivery mailer = WOMailDelivery.sharedInstance();
 				String fromAddress = siteConfig().emailReturnAddr();
-				NSArray toAddress = null;
+				NSArray<String> toAddress = null;
 				String subject = "App stopped running: " + displayName();
 				String bodyText = message;
 				if( fromAddress != null ) {
@@ -832,11 +832,11 @@ public class MInstance extends MObject {
 	/** ****** */
 
 	/** ******** Deaths ********* */
-	public NSMutableArray deaths() {
+	public NSMutableArray<String> deaths() {
 		return _deaths;
 	}
 
-	public void setDeaths( NSMutableArray values ) {
+	public void setDeaths( NSMutableArray<String> values ) {
 		_deaths = values;
 	}
 
@@ -849,7 +849,7 @@ public class MInstance extends MObject {
 	}
 
 	public void removeAllDeaths() {
-		_deaths = new NSMutableArray();
+		_deaths = new NSMutableArray<>();
 	}
 
 	/** ******* */
