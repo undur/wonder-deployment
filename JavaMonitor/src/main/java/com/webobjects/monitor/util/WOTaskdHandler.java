@@ -750,7 +750,7 @@ public class WOTaskdHandler {
 		if( aConfig.hostErrorArray.count() > 0 ) {
 			_syncRequest = null;
 			final WORequest aSyncRequest = syncRequest( aConfig );
-			final _NSThreadsafeMutableArray syncHosts = aConfig.hostErrorArray;
+			final _NSThreadsafeMutableArray<MHost> syncHosts = aConfig.hostErrorArray;
 
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "Sending sync requests to: " + syncHosts.array() );
@@ -765,7 +765,7 @@ public class WOTaskdHandler {
 				final Runnable work = new Runnable() {
 					@Override
 					public void run() {
-						MHost aHost = (MHost)syncHosts.objectAtIndex( j );
+						MHost aHost = syncHosts.objectAtIndex( j );
 						aHost.sendRequestToWotaskd( aSyncRequest, true, true );
 					}
 				};
