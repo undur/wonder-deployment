@@ -23,6 +23,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPOutputStream;
@@ -422,8 +423,8 @@ public class MSiteConfig extends MObject {
 		removeInstance_M( anInstance, true );
 	}
 
-	public void removeInstances_M( MApplication application, NSArray<MInstance> instances ) {
-		backup( "removeInstances-" + application + "-" + instances.count() );
+	public void removeInstances_M( MApplication application, List<MInstance> instances ) {
+		backup( "removeInstances-" + application + "-" + instances.size() );
 		for( final MInstance instance : instances ) {
 			removeInstance_M( instance, false );
 		}
@@ -629,14 +630,14 @@ public class MSiteConfig extends MObject {
 		}
 		final NSDictionary<String, String> monitorRequest = new NSDictionary<>( "SITE", "queryWotaskd" );
 		final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
-
+	
 		final WORequest aRequest = new ERXRequest( MObject._POST, MObject.directActionString, MObject._HTTP1, NSDictionary.EmptyDictionary, content, null );
 		WOResponse aResponse = null;
-
+	
 		try {
 			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( configHostName, aPort );
 			anHTTPConnection.setReceiveTimeout( 5000 );
-
+	
 			if( anHTTPConnection.sendRequest( aRequest ) ) {
 				aResponse = anHTTPConnection.readResponse();
 			}
@@ -645,7 +646,7 @@ public class MSiteConfig extends MObject {
 			logger.error( "Failed to connect to Host: {} and Port: {}", configHostName, aPort );
 			throw new MonitorException( "Failed to connect to Host: " + configHostName + " and Port: " + aPort );
 		}
-
+	
 		NSDictionary xmlDict = NSDictionary.EmptyDictionary;
 		if( aResponse != null ) {
 			try {
@@ -656,7 +657,7 @@ public class MSiteConfig extends MObject {
 				throw new MonitorException( "Got non-parsable data from Host: " + configHostName + " + and Port: " + aPort + ". Data received was: " + aResponse.contentString() + ". It is possible that the Wotaskd on the remote host is of the wrong version" );
 			}
 		}
-
+	
 		final NSArray errorResponse = (NSArray)xmlDict.valueForKey( "errorResponse" );
 		if( errorResponse != null ) {
 			String errorString = "";
@@ -665,7 +666,7 @@ public class MSiteConfig extends MObject {
 			}
 			throw new MonitorException( errorString );
 		}
-
+	
 		final NSDictionary queryWotaskdResponse = (NSDictionary)xmlDict.valueForKey( "queryWotaskdResponse" );
 		if( queryWotaskdResponse != null ) {
 			return new MSiteConfig( (NSDictionary)queryWotaskdResponse.valueForKey( "SiteConfig" ) );
