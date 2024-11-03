@@ -97,8 +97,6 @@ public class MHost extends MObject {
 				}
 			}
 		}
-		// This is just for caching purposes
-		errorResponse = new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
 	}
 
 	public void _addInstancePrimitive( MInstance anInstance ) {
@@ -221,7 +219,14 @@ public class MHost extends MObject {
 		}
 	}
 
-	private String errorResponse = null;
+	/**
+	 * @return Fake response content for an "error response"
+	 *
+	 * FIXME: Part of weird error handling mechanism // Hugi 2024-11-03
+	 */
+	private static String errorResponseContent( final MHost host ) {
+		return new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
+	}
 
 	/**
 	 * FIXME: Switch to java http client // Hugi 2024-11-01
@@ -264,7 +269,7 @@ public class MHost extends MObject {
 				_siteConfig.hostErrorArray.addObjectIfAbsent( this );
 			}
 			aResponse = new WOResponse();
-			aResponse.setContent( errorResponse );
+			aResponse.setContent( errorResponseContent( this ) );
 		}
 		else {
 			// if we successfully synced, clear the error dictionary
