@@ -1,9 +1,12 @@
 package com.webobjects.monitor.application.starter;
 
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSMutableArray;
-import com.webobjects.foundation.NSMutableDictionary;
-import com.webobjects.foundation.NSMutableSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -32,60 +35,69 @@ public class GracefulBouncer extends ApplicationStarter {
 	@Override
 	protected void bounce() throws InterruptedException {
 
-		NSArray<MInstance> instances = application().instanceArray().immutableClone();
-		NSMutableArray<MInstance> runningInstances = new NSMutableArray<>();
-		NSMutableSet<MHost> activeHosts = new NSMutableSet<>();
-		NSMutableDictionary<MHost, NSMutableArray<MInstance>> inactiveInstancesByHost = new NSMutableDictionary<MHost, NSMutableArray<MInstance>>();
-		NSMutableDictionary<MHost, NSMutableArray<MInstance>> activeInstancesByHost = new NSMutableDictionary<MHost, NSMutableArray<MInstance>>();
+		List<MInstance> instances = application().instanceArray().immutableClone();
+		List<MInstance> runningInstances = new ArrayList<>();
+		Set<MHost> activeHosts = new HashSet<>();
+		Map<MHost, List<MInstance>> inactiveInstancesByHost = new HashMap<MHost, List<MInstance>>();
+		Map<MHost, List<MInstance>> activeInstancesByHost = new HashMap<MHost, List<MInstance>>();
+
 		for( MInstance instance : instances ) {
 			MHost host = instance.host();
 			if( instance.isRunning_M() ) {
-				runningInstances.addObject( instance );
-				activeHosts.addObject( host );
-				NSMutableArray<MInstance> currentInstances = activeInstancesByHost.objectForKey( host );
+				runningInstances.add( instance );
+				activeHosts.add( host );
+				List<MInstance> currentInstances = activeInstancesByHost.get( host );
+
 				if( currentInstances == null ) {
-					currentInstances = new NSMutableArray<>();
-					activeInstancesByHost.setObjectForKey( currentInstances, host );
+					currentInstances = new ArrayList<>();
+					activeInstancesByHost.put( host, currentInstances );
 				}
-				currentInstances.addObject( instance );
+
+				currentInstances.add( instance );
 			}
 			else {
-				NSMutableArray<MInstance> currentInstances = inactiveInstancesByHost.objectForKey( host );
+				List<MInstance> currentInstances = inactiveInstancesByHost.get( host );
+
 				if( currentInstances == null ) {
-					currentInstances = new NSMutableArray<>();
-					inactiveInstancesByHost.setObjectForKey( currentInstances, host );
+					currentInstances = new ArrayList<>();
+					inactiveInstancesByHost.put( host, currentInstances );
 				}
-				currentInstances.addObject( instance );
+
+				currentInstances.add( instance );
 			}
 		}
 
 		if( inactiveInstancesByHost.isEmpty() ) {
-			addObjectsFromArrayIfAbsentToErrorMessageArray(
-					new NSArray<>( "You must have at least one inactive instance to perform a graceful bounce." ) );
+			addObjectsFromArrayIfAbsentToErrorMessageArray( List.of( "You must have at least one inactive instance to perform a graceful bounce." ) );
 			return;
 		}
 
 		int numToStartPerHost = 1;
-		if( activeHosts.count() > 0 ) {
-			numToStartPerHost = (int)(runningInstances.count() / activeHosts.count() * .1);
+
+		if( activeHosts.size() > 0 ) {
+			numToStartPerHost = (int)(runningInstances.size() / activeHosts.size() * .1);
 		}
+
 		if( numToStartPerHost < 1 ) {
 			numToStartPerHost = 1;
 		}
+
 		boolean useScheduling = true;
 
 		for( MInstance instance : runningInstances ) {
 			useScheduling &= instance.schedulingEnabled() != null && instance.schedulingEnabled().booleanValue();
 		}
 
-		NSMutableArray<MInstance> startingInstances = new NSMutableArray<>();
+		List<MInstance> startingInstances = new ArrayList<>();
+
 		for( int i = 0; i < numToStartPerHost; i++ ) {
 			for( MHost host : activeHosts ) {
-				NSArray<MInstance> inactiveInstances = inactiveInstancesByHost.objectForKey( host );
-				if( inactiveInstances != null && inactiveInstances.count() >= i ) {
-					MInstance instance = inactiveInstances.objectAtIndex( i );
+				List<MInstance> inactiveInstances = inactiveInstancesByHost.get( host );
+
+				if( inactiveInstances != null && inactiveInstances.size() >= i ) {
+					MInstance instance = inactiveInstances.get( i );
 					log( "Starting inactive instance " + instance.displayName() + " on host " + host.addressAsString() );
-					startingInstances.addObject( instance );
+					startingInstances.add( instance );
 				}
 				else {
 					log( "Not enough inactive instances on host: " + host.addressAsString() );
@@ -98,8 +110,8 @@ public class GracefulBouncer extends ApplicationStarter {
 			}
 			instance.setAutoRecover( Boolean.TRUE );
 		}
-		handler().sendUpdateInstancesToWotaskds( startingInstances, activeHosts.allObjects() );
-		handler().sendStartInstancesToWotaskds( startingInstances, activeHosts.allObjects() );
+		handler().sendUpdateInstancesToWotaskds( startingInstances, new ArrayList<>( activeHosts ) );
+		handler().sendStartInstancesToWotaskds( startingInstances, new ArrayList<>( activeHosts ) );
 		boolean waiting = true;
 
 		// wait until apps have started
@@ -107,7 +119,7 @@ public class GracefulBouncer extends ApplicationStarter {
 			handler().startReading();
 			try {
 				log( "Checking for started instances" );
-				handler().getInstanceStatusForHosts( activeHosts.allObjects() );
+				handler().getInstanceStatusForHosts( new ArrayList<>( activeHosts ) );
 				boolean allStarted = true;
 				for( MInstance instance : startingInstances ) {
 					allStarted &= instance.isRunning_M();
@@ -127,7 +139,8 @@ public class GracefulBouncer extends ApplicationStarter {
 
 		// turn scheduling off
 		for( MHost host : activeHosts ) {
-			NSArray<MInstance> currentInstances = activeInstancesByHost.objectForKey( host );
+			List<MInstance> currentInstances = activeInstancesByHost.get( host );
+
 			for( MInstance instance : currentInstances ) {
 				if( useScheduling ) {
 					instance.setSchedulingEnabled( Boolean.FALSE );
@@ -136,37 +149,42 @@ public class GracefulBouncer extends ApplicationStarter {
 			}
 		}
 
-		handler().sendUpdateInstancesToWotaskds( runningInstances, activeHosts.allObjects() );
+		handler().sendUpdateInstancesToWotaskds( runningInstances, new ArrayList<>( activeHosts ) );
 
 		// then start to refuse new sessions
 		for( MHost host : activeHosts ) {
-			NSArray<MInstance> currentInstances = activeInstancesByHost.objectForKey( host );
+			List<MInstance> currentInstances = activeInstancesByHost.get( host );
 			for( MInstance instance : currentInstances ) {
 				instance.setRefusingNewSessions( true );
 			}
 		}
-		handler().sendRefuseSessionToWotaskds( runningInstances, activeHosts.allObjects(), true );
+		handler().sendRefuseSessionToWotaskds( runningInstances, new ArrayList<>( activeHosts ), true );
 		log( "Refused new sessions: " + runningInstances );
 
 		// turn scheduling on again, but only
-		NSMutableArray<MInstance> restarting = new NSMutableArray<>();
+		List<MInstance> restarting = new ArrayList<>();
+
 		for( MHost host : activeHosts ) {
-			NSArray<MInstance> currentInstances = activeInstancesByHost.objectForKey( host );
-			for( int i = 0; i < currentInstances.count() - numToStartPerHost; i++ ) {
-				MInstance instance = currentInstances.objectAtIndex( i );
+			List<MInstance> currentInstances = activeInstancesByHost.get( host );
+
+			for( int i = 0; i < currentInstances.size() - numToStartPerHost; i++ ) {
+				MInstance instance = currentInstances.get( i );
+
 				if( useScheduling ) {
 					instance.setSchedulingEnabled( Boolean.TRUE );
 				}
+
 				instance.setAutoRecover( Boolean.TRUE );
-				restarting.addObject( instance );
+				restarting.add( instance );
 			}
 		}
-		handler().sendUpdateInstancesToWotaskds( restarting, activeHosts.allObjects() );
+
+		handler().sendUpdateInstancesToWotaskds( restarting, new ArrayList<>( activeHosts ) );
 		log( "Started scheduling again: " + restarting );
 
 		handler().startReading();
 		try {
-			handler().getInstanceStatusForHosts( activeHosts.allObjects() );
+			handler().getInstanceStatusForHosts( new ArrayList<>( activeHosts ) );
 			log( "Finished" );
 		}
 		finally {
