@@ -12,8 +12,9 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor.util;
 
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSDictionary;
+import java.util.List;
+import java.util.Map;
+
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation.NSTimestampFormatter;
@@ -29,11 +30,11 @@ public class StatsUtilities {
 		int totalTransactionsForApplication = 0;
 
 		for( MInstance anInstance : anApp.instanceArray() ) {
-			NSDictionary aStatsDict = anInstance.statistics();
+			Map aStatsDict = anInstance.statistics();
 
 			if( aStatsDict != null ) {
 				try {
-					String transactions = (String)aStatsDict.valueForKey( "transactions" );
+					String transactions = (String)aStatsDict.get( "transactions" );
 					totalTransactionsForApplication += Integer.parseInt( transactions );
 				}
 				catch( Throwable ex ) {
@@ -54,18 +55,18 @@ public class StatsUtilities {
 	}
 
 	public static Integer totalActiveSessionsForApplication( MApplication anApp ) {
-		NSArray anInstArray = anApp.instanceArray();
+		List<MInstance> anInstArray = anApp.instanceArray();
 		int aTotalActiveSessions = 0;
 		int i;
-		int anInstArrayCount = anInstArray.count();
+		int anInstArrayCount = anInstArray.size();
 
 		for( i = 0; i < anInstArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)anInstArray.objectAtIndex( i );
-			NSDictionary aStatsDict = anInstance.statistics();
+			MInstance anInstance = anInstArray.get( i );
+			Map aStatsDict = anInstance.statistics();
 
 			if( aStatsDict != null ) {
 				try {
-					String aValue = (String)aStatsDict.valueForKey( "activeSessions" );
+					String aValue = (String)aStatsDict.get( "activeSessions" );
 					aTotalActiveSessions = aTotalActiveSessions + Integer.parseInt( aValue );
 				}
 				catch( Throwable ex ) {
@@ -91,13 +92,13 @@ public class StatsUtilities {
 	 */
 	private static Integer sumStatisticOfActiveInstances( MApplication monitoredApplication, String statisticsKey ) {
 		int sum = 0;
-		NSArray<MInstance> instances = monitoredApplication.instanceArray();
+		List<MInstance> instances = monitoredApplication.instanceArray();
 		for( MInstance anInstance : instances ) {
 			if( anInstance.isRunning_M() ) {
-				NSDictionary statistics = anInstance.statistics();
+				Map statistics = anInstance.statistics();
 				if( statistics != null ) {
 					try {
-						String aValue = (String)statistics.valueForKey( statisticsKey );
+						String aValue = (String)statistics.get( statisticsKey );
 						sum = sum + Integer.parseInt( aValue );
 					}
 					catch( Throwable ex ) {
@@ -111,24 +112,24 @@ public class StatsUtilities {
 	}
 
 	public static Float totalAverageTransactionForApplication( MApplication anApp ) {
-		NSArray anInstArray = anApp.instanceArray();
+		List<MInstance> anInstArray = anApp.instanceArray();
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
 		float aTotalAvg = (float)0.0;
 		int i;
-		int anInstArrayCount = anInstArray.count();
+		int anInstArrayCount = anInstArray.size();
 
 		for( i = 0; i < anInstArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)anInstArray.objectAtIndex( i );
-			NSDictionary aStatsDict = anInstance.statistics();
+			MInstance anInstance = (MInstance)anInstArray.get( i );
+			Map aStatsDict = anInstance.statistics();
 
 			if( aStatsDict != null ) {
 				try {
-					String aValue = (String)aStatsDict.valueForKey( "transactions" );
+					String aValue = (String)aStatsDict.get( "transactions" );
 					Integer aTrans = Integer.valueOf( aValue );
 
 					if( aTrans.intValue() > 0 ) {
-						aValue = (String)aStatsDict.valueForKey( "avgTransactionTime" );
+						aValue = (String)aStatsDict.get( "avgTransactionTime" );
 						Float aTime = Float.valueOf( aValue );
 						aTotalTime = aTotalTime + (aTrans.intValue() * aTime.floatValue());
 						aTotalTrans = aTotalTrans + (aTrans.intValue());
@@ -148,24 +149,24 @@ public class StatsUtilities {
 	}
 
 	public static Float totalAverageIdleTimeForApplication( MApplication anApp ) {
-		NSArray anInstArray = anApp.instanceArray();
+		List<MInstance> anInstArray = anApp.instanceArray();
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
 		float aTotalAvg = (float)0.0;
 		int i;
-		int instArrayCount = anInstArray.count();
+		int instArrayCount = anInstArray.size();
 
 		for( i = 0; i < instArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)anInstArray.objectAtIndex( i );
-			NSDictionary aStatsDict = anInstance.statistics();
+			MInstance anInstance = anInstArray.get( i );
+			Map aStatsDict = anInstance.statistics();
 
 			if( aStatsDict != null ) {
 				try {
-					String aValue = (String)aStatsDict.valueForKey( "transactions" );
+					String aValue = (String)aStatsDict.get( "transactions" );
 					Integer aTrans = Integer.valueOf( aValue );
 
 					if( aTrans.intValue() > 0 ) {
-						String idleString = (String)aStatsDict.valueForKey( "averageIdlePeriod" );
+						String idleString = (String)aStatsDict.get( "averageIdlePeriod" );
 						Float aTime = Float.valueOf( idleString );
 						aTotalTime = aTotalTime + (aTrans.intValue() * aTime.floatValue());
 						aTotalTrans = aTotalTrans + (aTrans.intValue());
@@ -190,21 +191,21 @@ public class StatsUtilities {
 		NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%Y:%m:%d:%H:%M:%S %Z" );
 
 		float anOverallRate = (float)0.0;
-		NSArray anInstArray = anApp.instanceArray();
+		List<MInstance> anInstArray = anApp.instanceArray();
 		int i;
-		int anInstArrayCount = anInstArray.count();
+		int anInstArrayCount = anInstArray.size();
 
 		for( i = 0; i < anInstArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)anInstArray.objectAtIndex( i );
-			NSDictionary aStatsDict = anInstance.statistics();
+			MInstance anInstance = anInstArray.get( i );
+			Map aStatsDict = anInstance.statistics();
 			String aStartDate = "";
 			float anInstRate = (float)0.0;
 			Integer aTrans;
 
 			if( aStatsDict != null ) {
-				aStartDate = (String)aStatsDict.valueForKey( "startedAt" );
+				aStartDate = (String)aStatsDict.get( "startedAt" );
 				try {
-					aTrans = Integer.valueOf( (String)aStatsDict.valueForKey( "transactions" ) );
+					aTrans = Integer.valueOf( (String)aStatsDict.get( "transactions" ) );
 				}
 				catch( Throwable ex ) {
 					aTrans = null;
