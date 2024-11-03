@@ -237,12 +237,9 @@ public class MSiteConfig extends MObject {
 		_siteConfig.dataHasChanged();
 	}
 
-	/**********/
-
 	/********** Errors  **********/
-	public _NSThreadsafeMutableDictionary globalErrorDictionary = new _NSThreadsafeMutableDictionary( new NSMutableDictionary<Object, Object>() );
-	public _NSThreadsafeMutableArray hostErrorArray = new _NSThreadsafeMutableArray( new NSMutableArray<Object>() );
-	/**********/
+	public _NSThreadsafeMutableDictionary<String, String> globalErrorDictionary = new _NSThreadsafeMutableDictionary<>( new NSMutableDictionary<>() );
+	public _NSThreadsafeMutableArray<MHost> hostErrorArray = new _NSThreadsafeMutableArray<>( new NSMutableArray<>() );
 
 	/********** Object Graph  **********/
 	private final NSMutableArray<MHost> _hostArray = new NSMutableArray<>();
@@ -267,8 +264,6 @@ public class MSiteConfig extends MObject {
 		return _localHost;
 	}
 
-	/**********/
-
 	/********** Change Notifications **********/
 	protected boolean _hasChanges = true;
 
@@ -283,8 +278,6 @@ public class MSiteConfig extends MObject {
 	public void dataHasChanged() {
 		_hasChanges = true;
 	}
-
-	/**********/
 
 	/********** Adding and Deleting **********/
 	private InetAddress localHostAddress;

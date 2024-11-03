@@ -1,8 +1,9 @@
 package com.webobjects.monitor.application.starter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableSet;
 import com.webobjects.monitor._private.MApplication;
@@ -20,7 +21,7 @@ public abstract class ApplicationStarter extends Thread implements ErrorCollecto
 
 	private WOTaskdHandler _handler;
 
-	private NSMutableSet<String> _errors;
+	private Set<String> _errors;
 
 	private String _status;
 
@@ -60,8 +61,8 @@ public abstract class ApplicationStarter extends Thread implements ErrorCollecto
 		_errors.addAll( errors );
 	}
 
-	public synchronized NSArray<String> errors() {
-		return _errors.allObjects();
+	public synchronized List<String> errors() {
+		return new ArrayList<>( _errors );
 	}
 
 	@Override

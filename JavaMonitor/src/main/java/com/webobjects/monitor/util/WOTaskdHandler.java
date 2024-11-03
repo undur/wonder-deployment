@@ -56,7 +56,7 @@ public class WOTaskdHandler {
 			System.exit( 1 );
 		}
 
-		for( Object nextElement : _siteConfig.hostArray() ) {
+		for( MHost nextElement : _siteConfig.hostArray() ) {
 			_siteConfig.hostErrorArray.addObjectIfAbsent( nextElement );
 		}
 
