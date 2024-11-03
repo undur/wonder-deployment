@@ -545,7 +545,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		NSData content = new NSData( contentXML );
 
 		//        String urlString = MObject.adminActionStringPrefix + anInstance.application().realName() + MObject.adminActionStringPostfix;
-		String urlString = MObject.adminActionStringPrefix + anInstance.applicationName() + MObject.adminActionStringPostfix;
+		String urlString = MObject.ADMIN_ACTION_STRING_PREFIX + anInstance.applicationName() + MObject.ADMIN_ACTION_STRING_POSTFIX;
 		WORequest aRequest = new WORequest( MObject._POST, urlString, MObject._HTTP1, null, content, null );
 		WOResponse aResponse = null;
 

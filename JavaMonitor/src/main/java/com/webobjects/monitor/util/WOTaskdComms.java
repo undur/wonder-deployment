@@ -65,7 +65,7 @@ public class WOTaskdComms {
 			catch( InterruptedException ie ) {}
 		}
 
-		final WORequest aRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
+		final WORequest aRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, aConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
 		final List<MHost> finalWotaskdArray = wotaskdArray;
 		final boolean wc = willChange;
 
@@ -106,7 +106,7 @@ public class WOTaskdComms {
 			final NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>( data, "sync" );
 			final NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>( updateWotaskd, "updateWotaskd" );
 			final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ).getBytes() );
-			_syncRequest = new WORequest( MObject._POST, MObject.directActionString, MObject._HTTP1, aConfig.passwordDictionary(), content, null );
+			_syncRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, aConfig.passwordDictionary(), content, null );
 		}
 		return _syncRequest;
 	}

@@ -52,9 +52,9 @@ public class MObject implements NSKeyValueCoding {
 	public static final int DEAD = 4;
 	public static final int CRASHING = 5;
 
-	public static final String directActionString = "/cgi-bin/WebObjects/wotaskd.woa/wa/monitorRequest";
-	public static final String adminActionStringPrefix = "/cgi-bin/WebObjects/";
-	public static final String adminActionStringPostfix = ".woa/womp/instanceRequest";
+	public static final String WOTASKD_DIRECT_ACTION_URL = "/cgi-bin/WebObjects/wotaskd.woa/wa/monitorRequest";
+	public static final String ADMIN_ACTION_STRING_PREFIX = "/cgi-bin/WebObjects/";
+	public static final String ADMIN_ACTION_STRING_POSTFIX = ".woa/womp/instanceRequest";
 
 	MSiteConfig _siteConfig;
 
