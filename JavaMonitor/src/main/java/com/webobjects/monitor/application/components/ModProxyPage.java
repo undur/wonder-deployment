@@ -1,12 +1,11 @@
 package com.webobjects.monitor.application.components;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor.application.MonitorComponent;
@@ -56,7 +55,7 @@ public class ModProxyPage extends MonitorComponent {
 			String tmpAdaptor = siteConfig().woAdaptor();
 			tmpAdaptor = removeEnd( tmpAdaptor, "/" );
 
-			final List<String> tmpPath = NSArray.componentsSeparatedByString( tmpAdaptor, "/" );
+			final List<String> tmpPath = Arrays.asList( tmpAdaptor.split( "/" ) );
 
 			int count = tmpPath.size();
 			String adaptorPath = "/" + tmpPath.get( count - 2 ) + "/" + tmpPath.get( count - 1 ) + "/";
@@ -158,8 +157,8 @@ public class ModProxyPage extends MonitorComponent {
 		result.append( "RewriteEngine On\n\n" );
 		result.append( "# Rewrite rules\n" );
 
-		final NSMutableArray<String> rewriteRules = new NSMutableArray<>();
-		final NSMutableArray<String> properitesRules = new NSMutableArray<>();
+		final List<String> rewriteRules = new ArrayList<>();
+		final List<String> properitesRules = new ArrayList<>();
 
 		for( MApplication anApp : siteConfig().applicationArray() ) {
 			anApp.extractAdaptorValuesFromSiteConfig();
@@ -167,9 +166,9 @@ public class ModProxyPage extends MonitorComponent {
 			String tmpAdaptor = siteConfig().woAdaptor();
 			tmpAdaptor = removeEnd( tmpAdaptor, "/" );
 
-			NSArray<String> tmpPath = NSArray.componentsSeparatedByString( tmpAdaptor, "/" );
+			List<String> tmpPath = Arrays.asList( tmpAdaptor.split( "/" ) );
 
-			int count = tmpPath.count();
+			int count = tmpPath.size();
 			String adaptorPath = "/" + tmpPath.get( count - 2 ) + "/" + tmpPath.get( count - 1 ) + "/";
 
 			rewriteRules.add( "RewriteRule ^/" + anApp.name().toLowerCase() + "(.*)$ " + adaptorPath + anApp.name() + ".woa" );
@@ -178,12 +177,12 @@ public class ModProxyPage extends MonitorComponent {
 			properitesRules.add( "er.extensions.ERXApplication.replaceApplicationPath.replace=/" + anApp.name().toLowerCase() );
 		}
 
-		result.append( rewriteRules.componentsJoinedByString( "\n" ) );
+		result.append( String.join( "\n", rewriteRules ) );
 		result.append( "\n" );
 		result.append( "\n" );
 		result.append( "\n" );
 		result.append( "This is the content of the application properties file\n\n\n" );
-		result.append( properitesRules.componentsJoinedByString( "\n" ) );
+		result.append( String.join( "\n", properitesRules ) );
 
 		result.append( "\n" );
 

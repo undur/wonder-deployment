@@ -1,8 +1,11 @@
 package com.webobjects.monitor.application.components;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,9 +14,6 @@ import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver._private.WOProperties;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSMutableArray;
-import com.webobjects.foundation.NSMutableSet;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
@@ -41,8 +41,8 @@ public class AppDetailPage extends MonitorComponent {
 
 	private String _hrefToApp;
 
-	private NSArray<MInstance> _allInstances = new NSArray<>();
-	private NSArray<MInstance> _selectedInstances = new NSArray<>();
+	private List<MInstance> _allInstances = new ArrayList<>();
+	private List<MInstance> _selectedInstances = new ArrayList<>();
 	
 	public String filterErrorMessage;
 
@@ -104,16 +104,16 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOActionResults selectNoneAction() {
-		setSelectedInstances( new NSMutableArray() );
+		setSelectedInstances( new ArrayList() );
 		return null;
 	}
 
 	public void selectRunning() {
-		final NSMutableArray<MInstance> selected = new NSMutableArray<>();
+		final List<MInstance> selected = new ArrayList<>();
 
 		for( final MInstance instance : allInstances() ) {
 			if( instance.isRunning_M() ) {
-				selected.addObject( instance );
+				selected.add( instance );
 			}
 		}
 
@@ -121,11 +121,11 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public void selectNotRunning() {
-		final NSMutableArray<MInstance> selected = new NSMutableArray<>();
+		final List<MInstance> selected = new ArrayList<>();
 
 		for( final MInstance instance : allInstances() ) {
 			if( !instance.isRunning_M() ) {
-				selected.addObject( instance );
+				selected.add( instance );
 			}
 		}
 
@@ -134,7 +134,7 @@ public class AppDetailPage extends MonitorComponent {
 
 	public WOActionResults selectInstanceNamesMatchingFilter() {
 		filterErrorMessage = null;
-		final NSMutableArray<MInstance> selected = new NSMutableArray<>();
+		final List<MInstance> selected = new ArrayList<>();
 
 		if( instanceNameFilterValue != null ) {
 			try {
@@ -144,7 +144,7 @@ public class AppDetailPage extends MonitorComponent {
 					final Matcher matcherForInstanceName = p.matcher( instance.displayName() );
 
 					if( matcherForInstanceName.matches() ) {
-						selected.addObject( instance );
+						selected.add( instance );
 					}
 				}
 			}
@@ -167,30 +167,28 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public void _setIsSelectedInstance( boolean selected ) {
-		final NSMutableArray selectedObjects = selectedInstances().mutableClone();
+		final List<MInstance> selectedObjects = new ArrayList<>( selectedInstances() );
 
-		if( selected && !selectedObjects.containsObject( currentInstance ) ) {
-			selectedObjects.addObject( currentInstance );
+		if( selected && !selectedObjects.contains( currentInstance ) ) {
+			selectedObjects.add( currentInstance );
 		}
-		else if( !selected && selectedObjects.containsObject( currentInstance ) ) {
-			selectedObjects.removeObject( currentInstance );
+		else if( !selected && selectedObjects.contains( currentInstance ) ) {
+			selectedObjects.remove( currentInstance );
 		}
 
 		setSelectedInstances( selectedObjects );
 	}
 
-	public void setIsSelectedInstance( boolean selected ) {
-
-	}
+	public void setIsSelectedInstance( boolean selected ) {}
 
 	public boolean isSelectedInstance() {
 		return selectedInstances().contains( currentInstance );
 	}
 
 	public boolean hasInstances() {
-		final NSArray instancesArray = myApplication().instanceArray();
+		final List<MInstance> instancesArray = myApplication().instanceArray();
 
-		if( instancesArray == null || instancesArray.count() == 0 ) {
+		if( instancesArray == null || instancesArray.size() == 0 ) {
 			return false;
 		}
 
@@ -198,9 +196,9 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public boolean isRefreshEnabled() {
-		final NSArray instancesArray = myApplication().instanceArray();
+		final List<MInstance> instancesArray = myApplication().instanceArray();
 
-		if( instancesArray == null || instancesArray.count() == 0 ) {
+		if( instancesArray == null || instancesArray.size() == 0 ) {
 			return false;
 		}
 
@@ -235,7 +233,7 @@ public class AppDetailPage extends MonitorComponent {
 						siteConfig().removeInstance_M( instance );
 
 						if( siteConfig().hostArray().count() != 0 ) {
-							handler().sendRemoveInstancesToWotaskds( new NSArray( instance ), siteConfig().hostArray() );
+							handler().sendRemoveInstancesToWotaskds( List.of( instance ), siteConfig().hostArray() );
 						}
 					}
 					finally {
@@ -313,7 +311,7 @@ public class AppDetailPage extends MonitorComponent {
 	public WOComponent startInstance() {
 
 		if( (currentInstance.state == MObject.DEAD) || (currentInstance.state == MObject.STOPPING) || (currentInstance.state == MObject.CRASHING) || (currentInstance.state == MObject.UNKNOWN) ) {
-			handler().sendStartInstancesToWotaskds( new NSArray( currentInstance ), new NSArray( currentInstance.host() ) );
+			handler().sendStartInstancesToWotaskds( List.of( currentInstance ), List.of( currentInstance.host() ) );
 			currentInstance.state = MObject.STARTING;
 		}
 
@@ -323,7 +321,7 @@ public class AppDetailPage extends MonitorComponent {
 	public WOComponent stopInstance() {
 
 		if( (currentInstance.state == MObject.ALIVE) || (currentInstance.state == MObject.STARTING) ) {
-			handler().sendStopInstancesToWotaskds( new NSArray( currentInstance ), new NSArray( currentInstance.host() ) );
+			handler().sendStopInstancesToWotaskds( List.of( currentInstance ), List.of( currentInstance.host() ) );
 			currentInstance.state = MObject.STOPPING;
 		}
 
@@ -338,22 +336,22 @@ public class AppDetailPage extends MonitorComponent {
 			currentInstance.setAutoRecover( Boolean.TRUE );
 		}
 
-		sendUpdateInstances( new NSArray( currentInstance ) );
+		sendUpdateInstances( List.of( currentInstance ) );
 
 		return newDetailPage();
 	}
 
-	private void sendUpdateInstances( NSArray<MInstance> instances ) {
+	private void sendUpdateInstances( final List<MInstance> instances ) {
 		handler().startReading();
 
 		try {
-			final NSMutableSet<MHost> hosts = new NSMutableSet<>();
+			final Set<MHost> hosts = new HashSet<>();
 
 			for( MInstance instance : instances ) {
-				hosts.addObject( instance.host() );
+				hosts.add( instance.host() );
 			}
 
-			handler().sendUpdateInstancesToWotaskds( instances, hosts.allObjects() );
+			handler().sendUpdateInstancesToWotaskds( instances, new ArrayList<>( hosts ) );
 		}
 		finally {
 			handler().endReading();
@@ -361,7 +359,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent toggleRefuseNewSessions() {
-		handler().sendRefuseSessionToWotaskds( new NSArray( currentInstance ), new NSArray( currentInstance.host() ), !currentInstance.isRefusingNewSessions() );
+		handler().sendRefuseSessionToWotaskds( List.of( currentInstance ), List.of( currentInstance.host() ), !currentInstance.isRefusingNewSessions() );
 
 		return newDetailPage();
 	}
@@ -373,28 +371,29 @@ public class AppDetailPage extends MonitorComponent {
 		else {
 			currentInstance.setSchedulingEnabled( Boolean.TRUE );
 		}
-		sendUpdateInstances( new NSArray( currentInstance ) );
+
+		sendUpdateInstances( List.of( currentInstance ) );
 
 		return newDetailPage();
 	}
 
-	public NSArray<MInstance> allInstances() {
+	public List<MInstance> allInstances() {
 		return _allInstances;
 	}
 	
-	private void setAllInstances( NSArray<MInstance> value ) {
+	private void setAllInstances( List<MInstance> value ) {
 		_allInstances = value;
 	}
 
-	private NSArray<MInstance> selectedInstances() {
+	private List<MInstance> selectedInstances() {
 		return _selectedInstances;
 	}
 	
-	private void setSelectedInstances( NSArray<MInstance> value ) {
+	private void setSelectedInstances( List<MInstance> value ) {
 		_selectedInstances = value;
 	}
 
-	public NSArray<MInstance> runningInstances() {
+	public List<MInstance> runningInstances() {
 		return myApplication().runningInstances_M();
 	}
 
@@ -412,16 +411,16 @@ public class AppDetailPage extends MonitorComponent {
 		return newDetailPage();
 	}
 
-	private void startInstances( NSArray<MInstance> possibleInstances ) {
-		final NSMutableArray<MInstance> instances = new NSMutableArray<>();
+	private void startInstances( List<MInstance> possibleInstances ) {
+		final List<MInstance> instances = new ArrayList<>();
 
 		for( MInstance anInstance : possibleInstances ) {
 			if( (anInstance.state == MObject.DEAD) || (anInstance.state == MObject.STOPPING) || (anInstance.state == MObject.CRASHING) || (anInstance.state == MObject.UNKNOWN) ) {
-				instances.addObject( anInstance );
+				instances.add( anInstance );
 			}
 		}
 
-		if( instances.count() != 0 ) {
+		if( instances.size() != 0 ) {
 			handler().sendStartInstancesToWotaskds( instances, myApplication().hostArray() );
 
 			for( MInstance anInstance : instances ) {
@@ -434,22 +433,22 @@ public class AppDetailPage extends MonitorComponent {
 
 	public WOComponent stopAllClicked() {
 
-		final NSArray instances = selectedInstances().immutableClone();
+		final List<MInstance> instances = new ArrayList<>( selectedInstances() );
 		final MApplication application = myApplication();
 
 		return ConfirmationPage.create( context(), new ConfirmationDelegate(
 				APP_PAGE,
-				"Are you sure you want to stop the " + instances.count() + " instances of " + application.name() + "?",
+				"Are you sure you want to stop the " + instances.size() + " instances of " + application.name() + "?",
 				"Selecting 'Yes' will shutdown the selected instances of this application.",
 				() -> {
 					handler().startReading();
 					try {
-						if( application.hostArray().count() != 0 ) {
+						if( application.hostArray().size() != 0 ) {
 							handler().sendStopInstancesToWotaskds( instances, application.hostArray() );
 						}
 
-						for( int i = 0; i < instances.count(); i++ ) {
-							final MInstance anInst = (MInstance)instances.objectAtIndex( i );
+						for( int i = 0; i < instances.size(); i++ ) {
+							final MInstance anInst = instances.get( i );
 
 							if( anInst.state != MObject.DEAD ) {
 								anInst.state = MObject.STOPPING;
@@ -466,19 +465,19 @@ public class AppDetailPage extends MonitorComponent {
 
 	public WOComponent deleteAllInstancesClicked() {
 
-		final NSArray instances = selectedInstances().immutableClone();
+		final List<MInstance> instances = new ArrayList<>( selectedInstances() );
 		final MApplication application = myApplication();
 
 		return ConfirmationPage.create( context(), new ConfirmationDelegate(
 				APP_PAGE,
-				"Are you sure you want to delete the selected <i>" + instances.count() + "</i> instances of application " + application.name() + "?",
+				"Are you sure you want to delete the selected <i>" + instances.size() + "</i> instances of application " + application.name() + "?",
 				"Selecting 'Yes' will shutdown any shutdown the selected instances of this application, and delete all matching instance configurations.",
 				() -> {
 					handler().startWriting();
 					try {
 						siteConfig().removeInstances_M( application, instances );
 						
-						if( siteConfig().hostArray().count() != 0 ) {
+						if( siteConfig().hostArray().size() != 0 ) {
 							handler().sendRemoveInstancesToWotaskds( instances, siteConfig().hostArray() );
 						}
 					}
@@ -495,10 +494,10 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			final NSArray instancesArray = selectedInstances();
+			final List<MInstance> instancesArray = selectedInstances();
 
-			for( int i = 0; i < instancesArray.count(); i++ ) {
-				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
+			for( int i = 0; i < instancesArray.size(); i++ ) {
+				MInstance anInst = instancesArray.get( i );
 				anInst.setAutoRecover( Boolean.TRUE );
 			}
 
@@ -516,10 +515,10 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			final NSArray instancesArray = selectedInstances();
+			final List<MInstance> instancesArray = selectedInstances();
 
-			for( int i = 0; i < instancesArray.count(); i++ ) {
-				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
+			for( int i = 0; i < instancesArray.size(); i++ ) {
+				MInstance anInst = instancesArray.get( i );
 				anInst.setAutoRecover( Boolean.FALSE );
 			}
 
@@ -553,8 +552,9 @@ public class AppDetailPage extends MonitorComponent {
 		try {
 			handler().sendRefuseSessionToWotaskds( selectedInstances(), myApplication().hostArray(), true );
 
+			// FIXME: Why is this method invocation here? A relic of some method call, used to refresh a cache? // Hugi 2024-11-03
 			@SuppressWarnings("unused")
-			NSArray instancesArray = selectedInstances();
+			List<MInstance> instancesArray = selectedInstances();
 		}
 		finally {
 			handler().endReading();
@@ -568,10 +568,10 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			NSArray instancesArray = selectedInstances();
+			List<MInstance> instancesArray = selectedInstances();
 
-			for( int i = 0; i < instancesArray.count(); i++ ) {
-				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
+			for( int i = 0; i < instancesArray.size(); i++ ) {
+				MInstance anInst = instancesArray.get( i );
 				anInst.setSchedulingEnabled( Boolean.TRUE );
 			}
 
@@ -604,10 +604,10 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			final NSArray instancesArray = selectedInstances();
+			final List<MInstance> instancesArray = selectedInstances();
 
-			for( int i = 0; i < instancesArray.count(); i++ ) {
-				MInstance anInst = (MInstance)instancesArray.objectAtIndex( i );
+			for( int i = 0; i < instancesArray.size(); i++ ) {
+				MInstance anInst = instancesArray.get( i );
 				anInst.setSchedulingEnabled( Boolean.FALSE );
 			}
 
@@ -799,11 +799,11 @@ public class AppDetailPage extends MonitorComponent {
 	/**
 	 * @return A new page instance
 	 */
-	public static AppDetailPage create( final WOContext context, final MApplication mApplication, final NSArray<MInstance> selected ) {
+	public static AppDetailPage create( final WOContext context, final MApplication mApplication, final List<MInstance> selected ) {
 		final AppDetailPage page = ERXApplication.erxApplication().pageWithName( AppDetailPage.class, context );
 		page.setMyApplication( mApplication );
 
-		final NSMutableArray<MInstance> instances = new NSMutableArray<>( mApplication.instanceArray() );
+		final List<MInstance> instances = new ArrayList<>( mApplication.instanceArray() );
 		Collections.sort( instances, Comparator.comparing( MInstance::id ) );
 
 		// AK: the MInstances don't really support equals()...
@@ -813,11 +813,11 @@ public class AppDetailPage extends MonitorComponent {
 		}
 
 		if( selected != null ) {
-			final NSMutableArray<MInstance> active = new NSMutableArray<>();
+			final List<MInstance> active = new ArrayList<>();
 
 			for( MInstance instance : selected ) {
-				if( instances.containsObject( instance ) ) {
-					active.addObject( instance );
+				if( instances.contains( instance ) ) {
+					active.add( instance );
 				}
 			}
 
@@ -834,7 +834,7 @@ public class AppDetailPage extends MonitorComponent {
 	 * FIXME: Ouch.... // Hugi 2024-10-26
 	 */
 	public static AppDetailPage create( WOContext context, MApplication currentApplication ) {
-		NSArray selected = (context.page() instanceof AppDetailPage ? ((AppDetailPage)context.page()).selectedInstances() : null);
+		List<MInstance> selected = (context.page() instanceof AppDetailPage ? ((AppDetailPage)context.page()).selectedInstances() : null);
 		return create( context, currentApplication, selected );
 	}
 }
