@@ -35,7 +35,26 @@ public class MHost extends MObject {
 
 	private static final Logger logger = LoggerFactory.getLogger( MHost.class );
 
+	/**
+	 * FIXME: Move to wherever we decide to eventually keep properties // Hugi 2024-11-04
+	 */
+	@Deprecated
 	private final int _receiveTimeout = ERXProperties.intForKeyWithDefault( "JavaMonitor.receiveTimeout", 10000 );
+
+	/**
+	 * FIXME: It doesn't look like this variable is ever actually read in a meaningful way. Delete? // Hugi 2024-11-02
+	 */
+	@Deprecated
+	private NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
+
+	private NSMutableArray<MInstance> _instanceArray;
+
+	private InetAddress _address = null;
+
+	public String runningInstances = "?";
+	public String operatingSystem = "?";
+	public String processorType = "?";
+	public boolean isAvailable = false;
 
 	public String name() {
 		return (String)values.valueForKey( "name" );
@@ -54,14 +73,6 @@ public class MHost extends MObject {
 		values.takeValueForKey( MObject.validatedHostType( value ), "type" );
 		_siteConfig.dataHasChanged();
 	}
-
-	private NSMutableArray<MInstance> _instanceArray;
-
-	/**
-	 * FIXME: It doesn't look like this variable is ever actually read in a meaningful way. Delete? // Hugi 2024-11-02
-	 */
-	@Deprecated
-	private NSMutableArray<MApplication> _applicationArray = new NSMutableArray<>();
 
 	public NSMutableArray<MInstance> instanceArray() {
 		return _instanceArray;
@@ -127,8 +138,6 @@ public class MHost extends MObject {
 		}
 	}
 
-	private InetAddress _address = null;
-
 	public InetAddress address() {
 		return _address;
 	}
@@ -192,14 +201,6 @@ public class MHost extends MObject {
 	/**
 	 * Machine Information and Availability Check (Used by MONITOR)
 	 */
-	public String runningInstances = "?";
-
-	public String operatingSystem = "?";
-
-	public String processorType = "?";
-
-	public boolean isAvailable = false;
-
 	public void _setHostInfo( Map map ) {
 		Object value = null;
 
@@ -217,15 +218,6 @@ public class MHost extends MObject {
 		if( value != null ) {
 			processorType = value.toString();
 		}
-	}
-
-	/**
-	 * @return Fake response content for an "error response"
-	 *
-	 * FIXME: Part of weird error handling mechanism // Hugi 2024-11-03
-	 */
-	private static String errorResponseContent( final MHost host ) {
-		return new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
 	}
 
 	/**
@@ -269,7 +261,7 @@ public class MHost extends MObject {
 				_siteConfig.hostErrorArray.addObjectIfAbsent( this );
 			}
 			aResponse = new WOResponse();
-			aResponse.setContent( errorResponseContent( this ) );
+			aResponse.setContent( errorResponseContentForHost( this ) );
 		}
 		else {
 			// if we successfully synced, clear the error dictionary
@@ -282,6 +274,15 @@ public class MHost extends MObject {
 		}
 
 		return aResponse;
+	}
+
+	/**
+	 * @return Fake response content for an "error response"
+	 *
+	 * FIXME: Part of weird error handling mechanism // Hugi 2024-11-03
+	 */
+	private static String errorResponseContentForHost( final MHost host ) {
+		return new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
 	}
 
 	@Override
