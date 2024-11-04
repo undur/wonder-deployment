@@ -479,8 +479,6 @@ public class MInstance extends MObject {
 		return null;
 	}
 
-	/** ******* */
-
 	/** ******** Archiving Support ********* */
 	public NSDictionary dictionaryForArchive() {
 		return values;
@@ -499,8 +497,7 @@ public class MInstance extends MObject {
 		adaptorValues.takeValueForKey( values.valueForKey( "sendBufSize" ), "sendBufSize" );
 		adaptorValues.takeValueForKey( values.valueForKey( "recvBufSize" ), "recvBufSize" );
 
-		// get MApplication application settings for setting that are still not
-		// set
+		// get MApplication application settings for setting that are still not set
 		if( adaptorValues.valueForKey( "sendTimeout" ) == null ) {
 			adaptorValues.takeValueForKey( _application.values.valueForKey( "sendTimeout" ), "sendTimeout" );
 		}
@@ -517,8 +514,7 @@ public class MInstance extends MObject {
 			adaptorValues.takeValueForKey( _application.values.valueForKey( "recvBufSize" ), "recvBufSize" );
 		}
 
-		// get MSiteConfig application settings for settings that are still not
-		// set
+		// get MSiteConfig application settings for settings that are still not set
 		if( adaptorValues.valueForKey( "sendTimeout" ) == null ) {
 			adaptorValues.takeValueForKey( _siteConfig.values.valueForKey( "sendTimeout" ), "sendTimeout" );
 		}
@@ -536,9 +532,6 @@ public class MInstance extends MObject {
 		}
 	}
 
-	/** ******* */
-
-	/** ******** Display Name Strings ********* */
 	public String displayName() {
 		return applicationName() + "-" + id();
 	}
@@ -547,9 +540,6 @@ public class MInstance extends MObject {
 		return hostName() + ":" + port();
 	}
 
-	/** ******* */
-
-	/** ******** Statistics Support ********* */
 	private NSMutableDictionary _statistics = new NSMutableDictionary();
 
 	public NSDictionary statistics() {
@@ -780,35 +770,36 @@ public class MInstance extends MObject {
 	}
 
 	public void sendDeathNotificationEmail() {
-		NSTimestamp currentTime = new NSTimestamp();
-		String currentDate = currentTime.toString();
 
-		long cutOffTime = _lastRegistration.getTime() + lifebeatCheckInterval();
+		final NSTimestamp currentTime = new NSTimestamp();
+		final String currentDate = currentTime.toString();
+
+		final long cutOffTime = _lastRegistration.getTime() + lifebeatCheckInterval();
+
 		String assumedToBeDead = "";
+
 		if( currentTime.getTime() > cutOffTime ) {
 			long secondsDifference = (currentTime.getTime() - _lastRegistration.getTime()) / 1000;
-			assumedToBeDead = "The app did not respond for " + secondsDifference + " seconds " +
-					"which is greater than the allowed threshold of " + lifebeatCheckInterval() + " seconds " +
-					"(Lifebeat Interval * WOAssumeApplicationIsDeadMultiplier) so it is assumed to be dead.\n";
+			assumedToBeDead = "The app did not respond for " + secondsDifference + " seconds " + "which is greater than the allowed threshold of " + lifebeatCheckInterval() + " seconds " + "(Lifebeat Interval * WOAssumeApplicationIsDeadMultiplier) so it is assumed to be dead.\n";
 		}
-		String message = "Application '" + displayName() + "' on " + _host.name() + ":" + port() +
-				" stopped running at " + (currentDate) + ".\n" +
-				"The app's current state was: " + stateArray[state] + ".\n" +
-				assumedToBeDead +
-				"The last successful communication occurred at: " + _lastRegistration.toString() + ". " +
-				"This may be the result of a crash or an intentional shutdown from outside of wotaskd";
+
+		final String message = "Application '" + displayName() + "' on " + _host.name() + ":" + port() + " stopped running at " + (currentDate) + ".\n" + "The app's current state was: " + stateArray[state] + ".\n" + assumedToBeDead + "The last successful communication occurred at: " + _lastRegistration.toString() + ". " + "This may be the result of a crash or an intentional shutdown from outside of wotaskd";
 
 		NSLog.err.appendln( message );
 
 		boolean shouldEmail = false;
 		Boolean aBool = _application.notificationEmailEnabled();
+
 		if( aBool != null ) {
 			shouldEmail = aBool.booleanValue();
 		}
 
+		/**
+		 * FIXME: Replace WOMailDelivery with a working mailer // Hugi 2024-11-04
+		 */
 		if( shouldEmail ) {
 			try {
-				WOMailDelivery mailer = WOMailDelivery.sharedInstance();
+				final WOMailDelivery mailer = WOMailDelivery.sharedInstance();
 				String fromAddress = siteConfig().emailReturnAddr();
 				NSArray<String> toAddress = null;
 				String subject = "App stopped running: " + displayName();
@@ -828,8 +819,6 @@ public class MInstance extends MObject {
 			}
 		}
 	}
-
-	/** ****** */
 
 	/** ******** Deaths ********* */
 	public NSMutableArray<String> deaths() {
@@ -851,8 +840,6 @@ public class MInstance extends MObject {
 	public void removeAllDeaths() {
 		_deaths = new NSMutableArray<>();
 	}
-
-	/** ******* */
 
 	/** ******** Command Line Arguments ********* */
 	private List<String> additionalArgumentsAsArray() {
@@ -964,8 +951,6 @@ public class MInstance extends MObject {
 		return String.join( " ", commandLineArgumentsAsArray() ).replace( '\n', ' ' ).replace( '\r', ' ' );
 	}
 
-	/** ******* */
-
 	/** ******** Overridden Methods for Scheduling ********* */
 	@Override
 	public void setValues( NSMutableDictionary newValues ) {
@@ -982,8 +967,6 @@ public class MInstance extends MObject {
 			calculateNextScheduledShutdown();
 		}
 	}
-
-	/** ******* */
 
 	/** ******** Scheduling ********* */
 	NSTimestamp _nextScheduledShutdown = NSTimestamp.DistantPast;
@@ -1053,6 +1036,7 @@ public class MInstance extends MObject {
 	// This should only cause problems if you change the timezone of the
 	// appserver.
 	public void calculateNextScheduledShutdown() {
+
 		if( !isScheduled() ) {
 			return;
 		}
@@ -1090,8 +1074,7 @@ public class MInstance extends MObject {
 				startTime += interval;
 			}
 
-			setNextScheduledShutdown( new NSTimestamp( currentYear, currentMonth, currentDayOfMonth, startTime, 0, 0,
-					currentTimeZone ) );
+			setNextScheduledShutdown( new NSTimestamp( currentYear, currentMonth, currentDayOfMonth, startTime, 0, 0, currentTimeZone ) );
 
 		}
 		else if( type.equals( "DAILY" ) ) {
@@ -1107,8 +1090,7 @@ public class MInstance extends MObject {
 				currentDayOfMonth++;
 			}
 
-			setNextScheduledShutdown( new NSTimestamp( currentYear, currentMonth, currentDayOfMonth, startTime, 0, 0,
-					currentTimeZone ) );
+			setNextScheduledShutdown( new NSTimestamp( currentYear, currentMonth, currentDayOfMonth, startTime, 0, 0, currentTimeZone ) );
 
 		}
 		else if( type.equals( "WEEKLY" ) ) {
@@ -1131,8 +1113,7 @@ public class MInstance extends MObject {
 				currentDayOfMonth += 7;
 			}
 
-			setNextScheduledShutdown( new NSTimestamp( currentYear, currentMonth, currentDayOfMonth, startTime, 0, 0,
-					currentTimeZone ) );
+			setNextScheduledShutdown( new NSTimestamp( currentYear, currentMonth, currentDayOfMonth, startTime, 0, 0, currentTimeZone ) );
 
 		}
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelInformational, NSLog.DebugGroupDeployment ) ) {
