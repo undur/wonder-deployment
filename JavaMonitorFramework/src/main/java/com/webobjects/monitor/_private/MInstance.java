@@ -37,19 +37,32 @@ public class MInstance extends MObject {
 
 	private static final NSTimestampFormatter shutdownFormatter = new NSTimestampFormatter( "%a @ %H:00" );
 
-	/*
-	 * String hostName; Integer id; Integer port; String applicationName;
-	 * Boolean autoRecover; Integer minimumActiveSessionsCount; String path;
-	 * Boolean cachingEnabled; Boolean debuggingEnabled; String outputPath;
-	 * Boolean autoOpenInBrowser; Integer lifebeatInterval; String
-	 * additionalArgs; Boolean schedulingEnabled; String schedulingType; //
-	 * HOURLY | WEEKLY | DAILY Integer schedulingHourlyStartTime; // 1-24
-	 * O'clock Integer schedulingDailyStartTime; // 1-24 O'clock Integer
-	 * schedulingWeeklyStartTime; // 1-24 O'clock Integer schedulingStartDay; //
-	 * 1-7 (Mon-Sun) Integer schedulingInterval; // in hours Boolean
-	 * gracefulScheduling; Integer sendTimeout; Integer recvTimeout; Integer
-	 * cnctTimeout; Integer sendBufSize; Integer recvBufSize;
-	 */
+	//	String hostName;
+	//	Integer id;
+	//	Integer port;
+	//	String applicationName;
+	//	Boolean autoRecover;
+	//	Integer minimumActiveSessionsCount;
+	//	String path;
+	//	Boolean cachingEnabled;
+	//	Boolean debuggingEnabled;
+	//	String outputPath;
+	//	Boolean autoOpenInBrowser;
+	//	Integer lifebeatInterval;
+	//	String additionalArgs;
+	//	Boolean schedulingEnabled;
+	//	String schedulingType; // HOURLY | WEEKLY | DAILY
+	//	Integer schedulingHourlyStartTime; // 1-24 O'clock
+	//	Integer schedulingDailyStartTime; // 1-24 O'clock
+	//	Integer schedulingWeeklyStartTime; // 1-24 O'clock
+	//	Integer schedulingStartDay; // 1-7 (Mon-Sun)
+	//	Integer schedulingInterval; // in hours
+	//	Boolean gracefulScheduling;
+	//	Integer sendTimeout;
+	//	Integer recvTimeout;
+	//	Integer cnctTimeout;
+	//	Integer sendBufSize;
+	//	Integer recvBufSize;
 
 	/** ******** 'values' accessors ********* */
 	public String hostName() {
@@ -432,10 +445,11 @@ public class MInstance extends MObject {
 	}
 
 	public String generateOutputPath( String pathEndingWithSeperator ) {
+
 		if( pathEndingWithSeperator != null ) {
-			return NSPathUtilities._standardizedPath( NSPathUtilities.stringByAppendingPathComponent(
-					pathEndingWithSeperator, displayName() ) );
+			return NSPathUtilities._standardizedPath( NSPathUtilities.stringByAppendingPathComponent( pathEndingWithSeperator, displayName() ) );
 		}
+
 		return null;
 	}
 
@@ -592,6 +606,8 @@ public class MInstance extends MObject {
 
 	public void failedToConnect() {
 		_connectFailureCount++;
+
+		// FIXME: The number of failures required to consider the instance dead should be a constant (or at least documented) // Hugi 2024-11-04
 		if( _connectFailureCount > 2 ) {
 			state = MObject.DEAD;
 			_lastRegistration = NSTimestamp.DistantPast;
@@ -743,7 +759,7 @@ public class MInstance extends MObject {
 		NSLog.err.appendln( message );
 
 		boolean shouldEmail = false;
-		Boolean aBool = _application.notificationEmailEnabled();
+		final Boolean aBool = _application.notificationEmailEnabled();
 
 		if( aBool != null ) {
 			shouldEmail = aBool.booleanValue();
@@ -759,18 +775,21 @@ public class MInstance extends MObject {
 				NSArray<String> toAddress = null;
 				String subject = "App stopped running: " + displayName();
 				String bodyText = message;
+
 				if( fromAddress != null ) {
 					fromAddress = "root@" + _host.name();
 				}
+
 				if( _application.notificationEmailAddr() != null ) {
 					toAddress = NSArray.componentsSeparatedByString( _application.notificationEmailAddr(), "," );
 				}
+
 				if( mailer != null && toAddress != null && toAddress.count() > 0 ) {
 					mailer.composePlainTextEmail( fromAddress, toAddress, null, subject, bodyText, true );
 				}
 			}
-			catch( Throwable localException ) {
-				NSLog.err.appendln( "Error attempting to send email: " + localException );
+			catch( Throwable e ) {
+				NSLog.err.appendln( "Error attempting to send email: " + e );
 			}
 		}
 	}
