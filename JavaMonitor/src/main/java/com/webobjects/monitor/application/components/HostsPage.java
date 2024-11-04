@@ -19,7 +19,7 @@ public class HostsPage extends MonitorComponent {
 	public MHost currentHost;
 	public String newHostName;
 	public String hostTypeSelection = "Unix";
-	public List<String> hostTypeList = MObject.hostTypeArray;
+	public List<String> hostTypeList = MObject.HOST_TYPES;
 
 	public HostsPage( WOContext aWocontext ) {
 		super( aWocontext );

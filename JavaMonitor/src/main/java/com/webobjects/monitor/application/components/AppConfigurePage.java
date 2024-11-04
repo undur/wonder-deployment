@@ -389,13 +389,13 @@ public class AppConfigurePage extends MonitorComponent {
 
 	public MInstance currentScheduledInstance;
 
-	public List<String> weekList = MObject.weekArray;
+	public List<String> weekList = MObject.WEEKDAYS;
 
-	public List<String> timeOfDayList = MObject.timeOfDayArray;
+	public List<String> timeOfDayList = MObject.TIMES_OF_DAY;
 
-	public List<String> schedulingTypeList = MObject.schedulingTypeArray;
+	public List<String> schedulingTypeList = MObject.SCHEDULING_TYPES;
 
-	public List<Integer> schedulingIntervalList = MObject.schedulingIntervalArray;
+	public List<Integer> schedulingIntervalList = MObject.SCHEDULING_INTERVALS;
 
 	public String weekSelection() {
 		return MObject.morphedSchedulingStartDay( currentScheduledInstance.schedulingStartDay() );
@@ -452,17 +452,17 @@ public class AppConfigurePage extends MonitorComponent {
 
 	public String loadSchedulerItem;
 
-	public List<String> loadSchedulerList = MObject.loadSchedulerArray;
+	public List<String> loadSchedulerList = MObject.LOAD_SCHEDULERS;
 
 	public Integer urlVersionItem;
 
-	public List<Integer> urlVersionList = MObject.urlVersionArray;
+	public List<Integer> urlVersionList = MObject.URL_VERSIONS;
 
 	public String customSchedulerName;
 
 	public String loadSchedulerSelection() {
 		if( myApplication().scheduler() != null ) {
-			int indexOfScheduler = MObject.loadSchedulerArrayValues.indexOf( myApplication().scheduler() );
+			int indexOfScheduler = MObject.LOAD_SCHEDULER_VALUES.indexOf( myApplication().scheduler() );
 			if( indexOfScheduler != -1 ) {
 				_loadSchedulerSelection = loadSchedulerList.get( indexOfScheduler );
 			}
@@ -502,7 +502,7 @@ public class AppConfigurePage extends MonitorComponent {
 				}
 			}
 			else {
-				newValue = MObject.loadSchedulerArrayValues.get( i );
+				newValue = MObject.LOAD_SCHEDULER_VALUES.get( i );
 			}
 			myApplication().setScheduler( newValue );
 

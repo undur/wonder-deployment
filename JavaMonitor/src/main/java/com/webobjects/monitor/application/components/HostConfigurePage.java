@@ -23,7 +23,7 @@ import com.webobjects.monitor.application.MonitorComponent;
 public class HostConfigurePage extends MonitorComponent {
 
 	private String _hostTypeSelection;
-	public List<String> hostTypeList = MObject.hostTypeArray;
+	public List<String> hostTypeList = MObject.HOST_TYPES;
 
 	public HostConfigurePage( WOContext aWocontext ) {
 		super( aWocontext );
