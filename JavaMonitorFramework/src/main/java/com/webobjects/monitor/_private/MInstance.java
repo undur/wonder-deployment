@@ -51,46 +51,6 @@ public class MInstance extends MObject {
 	 * cnctTimeout; Integer sendBufSize; Integer recvBufSize;
 	 */
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((_application == null) ? 0 : _application.hashCode());
-		result = prime * result + ((id() == null) ? 0 : id().hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals( Object obj ) {
-		if( this == obj ) {
-			return true;
-		}
-		if( obj == null ) {
-			return false;
-		}
-		if( getClass() != obj.getClass() ) {
-			return false;
-		}
-		final MInstance other = (MInstance)obj;
-		if( _application == null ) {
-			if( other._application != null ) {
-				return false;
-			}
-		}
-		else if( !_application.equals( other._application ) ) {
-			return false;
-		}
-		if( id() == null ) {
-			if( other.id() != null ) {
-				return false;
-			}
-		}
-		else if( !id().equals( other.id() ) ) {
-			return false;
-		}
-		return true;
-	}
-
 	/** ******** 'values' accessors ********* */
 	public String hostName() {
 		return (String)values.valueForKey( "hostName" );
@@ -482,11 +442,6 @@ public class MInstance extends MObject {
 	/** ******** Archiving Support ********* */
 	public NSDictionary dictionaryForArchive() {
 		return values;
-	}
-
-	@Override
-	public String toString() {
-		return "MInstance@" + applicationName() + "-" + id();
 	}
 
 	public void extractAdaptorValuesFromApplication() {
@@ -1235,5 +1190,50 @@ public class MInstance extends MObject {
 			_forceQuitTask = task;
 			taskTimer().schedule( _forceQuitTask, delay, period );
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "MInstance@" + applicationName() + "-" + id();
+	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		if( this == obj ) {
+			return true;
+		}
+		if( obj == null ) {
+			return false;
+		}
+		if( getClass() != obj.getClass() ) {
+			return false;
+		}
+		final MInstance other = (MInstance)obj;
+		if( _application == null ) {
+			if( other._application != null ) {
+				return false;
+			}
+		}
+		else if( !_application.equals( other._application ) ) {
+			return false;
+		}
+		if( id() == null ) {
+			if( other.id() != null ) {
+				return false;
+			}
+		}
+		else if( !id().equals( other.id() ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_application == null) ? 0 : _application.hashCode());
+		result = prime * result + ((id() == null) ? 0 : id().hashCode());
+		return result;
 	}
 }
