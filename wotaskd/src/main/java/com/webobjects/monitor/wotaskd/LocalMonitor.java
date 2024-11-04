@@ -541,16 +541,15 @@ public class LocalMonitor extends ProtoLocalMonitor {
 	 */
 	private WOResponse sendInstanceRequest( MInstance anInstance, NSDictionary xmlDict ) throws MonitorException {
 
-		String contentXML = (new CoderWrapper()).encodeRootObjectForKey( xmlDict, "instanceRequest" );
-		NSData content = new NSData( contentXML );
+		final String requestContentXML = new CoderWrapper().encodeRootObjectForKey( xmlDict, "instanceRequest" );
+		final NSData requestContentData = new NSData( requestContentXML.getBytes() );
+		final String urlString = MObject.ADMIN_ACTION_STRING_PREFIX + anInstance.applicationName() + MObject.ADMIN_ACTION_STRING_POSTFIX;
+		final WORequest aRequest = new WORequest( MObject._POST, urlString, MObject._HTTP1, null, requestContentData, null );
 
-		//        String urlString = MObject.adminActionStringPrefix + anInstance.application().realName() + MObject.adminActionStringPostfix;
-		String urlString = MObject.ADMIN_ACTION_STRING_PREFIX + anInstance.applicationName() + MObject.ADMIN_ACTION_STRING_POSTFIX;
-		WORequest aRequest = new WORequest( MObject._POST, urlString, MObject._HTTP1, null, content, null );
 		WOResponse aResponse = null;
 
 		try {
-			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( anInstance.host().name(), anInstance.port().intValue() );
+			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( anInstance.host().name(), anInstance.port().intValue() );
 			anHTTPConnection.setReceiveTimeout( _receiveTimeout );
 
 			boolean requestSucceeded = anHTTPConnection.sendRequest( aRequest );
@@ -561,6 +560,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 			else {
 				throw new MonitorException( _hostName + ": Failed to receive response from " + anInstance.displayName() );
 			}
+
 			anInstance.succeededInConnection();
 		}
 		catch( NSForwardException ne ) {
@@ -578,6 +578,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 			anInstance.failedToConnect();
 			throw new MonitorException( _hostName + ": Error while communicating with " + anInstance.displayName() + ": " + e );
 		}
+
 		return aResponse;
 	}
 
