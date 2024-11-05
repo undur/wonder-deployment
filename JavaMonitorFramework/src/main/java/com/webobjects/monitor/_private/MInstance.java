@@ -321,9 +321,9 @@ public class MInstance extends MObject {
 	}
 
 	/** ******** Object Graph ********* */
-	MHost _host;
+	protected MHost _host;
 
-	MApplication _application;
+	protected MApplication _application;
 
 	public MHost host() {
 		return _host;
