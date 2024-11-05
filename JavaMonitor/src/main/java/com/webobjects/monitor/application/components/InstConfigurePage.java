@@ -42,7 +42,6 @@ public class InstConfigurePage extends MonitorComponent {
 		return aPage;
 	}
 
-	/* ******** Startup Section ********* */
 	private WOComponent _pathPickerWizardClicked( String callbackKeyPath ) {
 		PathWizardPage1 aPage = PathWizardPage1.create( context(), myApplication() );
 		aPage.setCallbackKeypath( callbackKeyPath );
@@ -64,18 +63,19 @@ public class InstConfigurePage extends MonitorComponent {
 	}
 
 	public void setPort( Integer value ) {
-		if( value == null )
-			return;
-		if( !value.equals( myInstance().port() ) ) {
-			if( myInstance().state != MObject.DEAD ) {
-				session().addErrorIfAbsent( "This instance is still running; unable to change port" );
-				return;
-			}
-			if( !myInstance().host().isPortInUse( value ) ) {
-				myInstance().setPort( value );
-			}
-			else {
-				session().addErrorIfAbsent( "This port is in use" );
+		if( value != null ) {
+			if( !value.equals( myInstance().port() ) ) {
+				if( myInstance().state != MObject.DEAD ) {
+					session().addErrorIfAbsent( "This instance is still running; unable to change port" );
+					return;
+				}
+
+				if( !myInstance().host().isPortInUse( value ) ) {
+					myInstance().setPort( value );
+				}
+				else {
+					session().addErrorIfAbsent( "This port is in use" );
+				}
 			}
 		}
 	}
@@ -84,25 +84,25 @@ public class InstConfigurePage extends MonitorComponent {
 		return myInstance().id();
 	}
 
+	public void setId( Integer value ) {
+		if( value != null ) {
+			if( !value.equals( myInstance().id() ) ) {
+				if( !myInstance().application().isIDInUse( value ) ) {
+					myInstance().setId( value );
+				}
+				else {
+					session().addErrorIfAbsent( "This ID is in use" );
+				}
+			}
+		}
+	}
+
 	public String displayName() {
 		return myInstance().displayName();
 	}
 
 	public void setDisplayName( Object foo ) {
 		// ak: should switch to non-sync
-	}
-
-	public void setId( Integer value ) {
-		if( value == null )
-			return;
-		if( !value.equals( myInstance().id() ) ) {
-			if( !myInstance().application().isIDInUse( value ) ) {
-				myInstance().setId( value );
-			}
-			else {
-				session().addErrorIfAbsent( "This ID is in use" );
-			}
-		}
 	}
 
 	public WOComponent startupUpdateClicked() {
@@ -116,9 +116,6 @@ public class InstConfigurePage extends MonitorComponent {
 		return null;
 	}
 
-	/* ******* */
-
-	/* ******** Adaptor Settings Section ********* */
 	public WOComponent adaptorSettingsUpdateClicked() {
 		handler().startReading();
 		try {
@@ -213,6 +210,7 @@ public class InstConfigurePage extends MonitorComponent {
 	public String cachingDiff() {
 		return diffString( myInstance().cachingEnabled(), myInstance().application().cachingEnabled() );
 	}
+
 	public String browserDiff() {
 		return diffString( myInstance().autoOpenInBrowser(), myInstance().application().autoOpenInBrowser() );
 	}
