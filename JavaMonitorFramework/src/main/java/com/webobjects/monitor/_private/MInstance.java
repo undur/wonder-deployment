@@ -80,6 +80,41 @@ public class MInstance extends MObject {
 	private String _statisticsError = null;
 	private int _connectFailureCount = 0;
 
+	// This constructor is for adding new instances through the UI
+	public MInstance( MHost aHost, MApplication anApplication, Integer anID, MSiteConfig aConfig ) {
+		shutdownFormatter.setDefaultFormatTimeZone( NSTimeZone.timeZoneWithName( "UTC", true ) );
+		values = new NSMutableDictionary();
+		_host = aHost;
+		_application = anApplication;
+		_siteConfig = aConfig;
+
+		setApplicationName( _application.name() );
+		setHostName( _host.name() );
+		setId( anID );
+
+		takeValuesFromApplication();
+
+		setSchedulingEnabled( Boolean.FALSE );
+		setSchedulingType( "DAILY" );
+		setSchedulingHourlyStartTime( Integer.valueOf( 3 ) );
+		setSchedulingDailyStartTime( Integer.valueOf( 3 ) );
+		setSchedulingWeeklyStartTime( Integer.valueOf( 3 ) );
+		setSchedulingStartDay( Integer.valueOf( 1 ) ); // Sunday
+		setSchedulingInterval( Integer.valueOf( 12 ) );
+		setGracefulScheduling( Boolean.TRUE );
+	}
+
+	// This constructor is for unarchiving Instances
+	public MInstance( NSDictionary aDict, MSiteConfig aConfig ) {
+		shutdownFormatter.setDefaultFormatTimeZone( NSTimeZone.timeZoneWithName( "UTC", true ) );
+		values = new NSMutableDictionary( aDict );
+
+		_host = aConfig.hostWithName( hostName() );
+		_application = aConfig.applicationWithName( applicationName() );
+		_siteConfig = aConfig;
+		calculateNextScheduledShutdown();
+	}
+
 	public String hostName() {
 		return (String)values.valueForKey( "hostName" );
 	}
@@ -341,41 +376,6 @@ public class MInstance extends MObject {
 
 	public MApplication application() {
 		return _application;
-	}
-
-	// This constructor is for adding new instances through the UI
-	public MInstance( MHost aHost, MApplication anApplication, Integer anID, MSiteConfig aConfig ) {
-		shutdownFormatter.setDefaultFormatTimeZone( NSTimeZone.timeZoneWithName( "UTC", true ) );
-		values = new NSMutableDictionary();
-		_host = aHost;
-		_application = anApplication;
-		_siteConfig = aConfig;
-
-		setApplicationName( _application.name() );
-		setHostName( _host.name() );
-		setId( anID );
-
-		takeValuesFromApplication();
-
-		setSchedulingEnabled( Boolean.FALSE );
-		setSchedulingType( "DAILY" );
-		setSchedulingHourlyStartTime( Integer.valueOf( 3 ) );
-		setSchedulingDailyStartTime( Integer.valueOf( 3 ) );
-		setSchedulingWeeklyStartTime( Integer.valueOf( 3 ) );
-		setSchedulingStartDay( Integer.valueOf( 1 ) ); // Sunday
-		setSchedulingInterval( Integer.valueOf( 12 ) );
-		setGracefulScheduling( Boolean.TRUE );
-	}
-
-	// This constructor is for unarchiving Instances
-	public MInstance( NSDictionary aDict, MSiteConfig aConfig ) {
-		shutdownFormatter.setDefaultFormatTimeZone( NSTimeZone.timeZoneWithName( "UTC", true ) );
-		values = new NSMutableDictionary( aDict );
-
-		_host = aConfig.hostWithName( hostName() );
-		_application = aConfig.applicationWithName( applicationName() );
-		_siteConfig = aConfig;
-		calculateNextScheduledShutdown();
 	}
 
 	public void _takeNameFromApplication() {

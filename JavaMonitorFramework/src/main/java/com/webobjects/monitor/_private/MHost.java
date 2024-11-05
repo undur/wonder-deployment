@@ -56,6 +56,11 @@ public class MHost extends MObject {
 	public String processorType = "?";
 	public boolean isAvailable = false;
 
+	// From the UI
+	public MHost( MSiteConfig aConfig, String name, String type ) {
+		this( new NSDictionary<Object, Object>( new Object[] { name, type }, new Object[] { "name", "type" } ), aConfig );
+	}
+
 	public String name() {
 		return (String)values.valueForKey( "name" );
 	}
@@ -76,11 +81,6 @@ public class MHost extends MObject {
 
 	public NSMutableArray<MInstance> instanceArray() {
 		return _instanceArray;
-	}
-
-	// From the UI
-	public MHost( MSiteConfig aConfig, String name, String type ) {
-		this( new NSDictionary<Object, Object>( new Object[] { name, type }, new Object[] { "name", "type" } ), aConfig );
 	}
 
 	// Unarchiving or Monitor Update
