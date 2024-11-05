@@ -21,48 +21,69 @@ import com.webobjects.foundation.NSMutableDictionary;
 
 public class MApplication extends MObject {
 
-	/*
-	String name;
-	Integer startingPort;
-	Integer timeForStartup;
-	Boolean phasedStartup;
-	Boolean autoRecover;
-	Integer minimumActiveSessionsCount;
-	String unixPath;
-	String winPath;
-	String macPath;
-	Boolean cachingEnabled;
-	String adaptor;
-	Integer adaptorThreads;
-	Integer listenQueueSize;
-	Integer adaptorThreadsMin;
-	Integer adaptorThreadsMax;
-	String projectSearchPath;
-	Integer sessionTimeOut;
-	String statisticsPassword;
-	Boolean debuggingEnabled;
-	String unixOutputPath;
-	String winOutputPath;
-	String macOutputPath;
-	Boolean autoOpenInBrowser;
-	Integer lifebeatInterval;
-	String additionalArgs;
-	Boolean notificationEmailEnabled;
-	String notificationEmailAddr;
-	Integer retries;
-	String scheduler;	// "RANDOM" | "ROUNDROBIN" | "LOADAVERAGE"
-	Integer dormant;
-	String redir;
-	Integer sendTimeout;
-	Integer recvTimeout;
-	Integer cnctTimeout;
-	Integer sendBufSize;
-	Integer recvBufSize;
-	Integer poolsize;
-	Integer urlVersion;	// 3 | 4
-	 */
+	//	String name;
+	//	Integer startingPort;
+	//	Integer timeForStartup;
+	//	Boolean phasedStartup;
+	//	Boolean autoRecover;
+	//	Integer minimumActiveSessionsCount;
+	//	String unixPath;
+	//	String winPath;
+	//	String macPath;
+	//	Boolean cachingEnabled;
+	//	String adaptor;
+	//	Integer adaptorThreads;
+	//	Integer listenQueueSize;
+	//	Integer adaptorThreadsMin;
+	//	Integer adaptorThreadsMax;
+	//	String projectSearchPath;
+	//	Integer sessionTimeOut;
+	//	String statisticsPassword;
+	//	Boolean debuggingEnabled;
+	//	String unixOutputPath;
+	//	String winOutputPath;
+	//	String macOutputPath;
+	//	Boolean autoOpenInBrowser;
+	//	Integer lifebeatInterval;
+	//	String additionalArgs;
+	//	Boolean notificationEmailEnabled;
+	//	String notificationEmailAddr;
+	//	Integer retries;
+	//	String scheduler;	// "RANDOM" | "ROUNDROBIN" | "LOADAVERAGE"
+	//	Integer dormant;
+	//	String redir;
+	//	Integer sendTimeout;
+	//	Integer recvTimeout;
+	//	Integer cnctTimeout;
+	//	Integer sendBufSize;
+	//	Integer recvBufSize;
+	//	Integer poolsize;
+	//	Integer urlVersion;	// 3 | 4
 
-	/********** 'values' accessors **********/
+	private NSMutableArray<MInstance> _instanceArray = new NSMutableArray<>();
+	private NSMutableArray<MHost> _hostArray = new NSMutableArray<>();
+
+	// Used for the ApplicationsPage
+	private Integer runningInstancesCount = 0;
+
+	// For UI
+	public MApplication( String aName, MSiteConfig aConfig ) {
+		this( new NSDictionary<Object, Object>( new Object[] { aName }, new Object[] { "name" } ), aConfig );
+		takeValuesFromDefaults();
+	}
+
+	// For Unarchiving
+	public MApplication( NSDictionary aDict, MSiteConfig aConfig ) {
+		_siteConfig = aConfig;
+		updateValues( aDict );
+	}
+
+	// For Cheating on the AppConfigurePage
+	public MApplication( NSMutableDictionary aDict, MSiteConfig aConfig, Object o ) {
+		_siteConfig = aConfig;
+		values = aDict.mutableClone();
+	}
+
 	public String name() {
 		return (String)values.valueForKey( "name" );
 	}
@@ -408,19 +429,20 @@ public class MApplication extends MObject {
 		_siteConfig.dataHasChanged();
 	}
 
-	/**********/
-
-	/********** 'values' accessors **********/
+	/**
+	 * ??
+	 */
 	public String oldname() {
 		return (String)values.valueForKey( "oldname" );
 	}
 
+	/**
+	 * ??
+	 */
 	public void setOldname( String value ) {
 		values.takeValueForKey( value, "oldname" );
 		_siteConfig.dataHasChanged();
 	}
-
-	/**********/
 
 	/********** Adding and Removing Instance primitives **********/
 	public void _addInstancePrimitive( MInstance anInstance ) {
@@ -445,39 +467,12 @@ public class MApplication extends MObject {
 		}
 	}
 
-	/**********/
-
-	/********** Object Graph **********/
-	private NSMutableArray<MInstance> _instanceArray = new NSMutableArray<>();
-	private NSMutableArray<MHost> _hostArray = new NSMutableArray<>();
-
 	public NSArray<MInstance> instanceArray() {
 		return _instanceArray;
 	}
 
 	public NSArray<MHost> hostArray() {
 		return _hostArray;
-	}
-
-	/**********/
-
-	/********** Constructors **********/
-	// For UI
-	public MApplication( String aName, MSiteConfig aConfig ) {
-		this( new NSDictionary<Object, Object>( new Object[] { aName }, new Object[] { "name" } ), aConfig );
-		takeValuesFromDefaults();
-	}
-
-	// For Unarchiving
-	public MApplication( NSDictionary aDict, MSiteConfig aConfig ) {
-		_siteConfig = aConfig;
-		updateValues( aDict );
-	}
-
-	// For Cheating on the AppConfigurePage
-	public MApplication( NSMutableDictionary aDict, MSiteConfig aConfig, Object o ) {
-		_siteConfig = aConfig;
-		values = aDict.mutableClone();
 	}
 
 	private static NSDictionary<Object, Object> _defaults = new NSDictionary<>( new Object[] {
@@ -537,9 +532,9 @@ public class MApplication extends MObject {
 		}
 	}
 
-	/**********/
-
-	/********** Archiving Support **********/
+	/**
+	 * Archiving Support
+	 */
 	public NSDictionary dictionaryForArchive() {
 		return values;
 	}
@@ -574,8 +569,6 @@ public class MApplication extends MObject {
 		}
 	}
 
-	/**********/
-
 	public Integer nextID() {
 		int instanceArrayCount = _instanceArray.count();
 		int lastSequence = 0;
@@ -590,44 +583,39 @@ public class MApplication extends MObject {
 	}
 
 	public boolean isIDInUse( Integer ID ) {
-		if( instanceWithID( ID ) == null ) {
-			return false;
-		}
-		return true;
+		return instanceWithID( ID ) != null;
 	}
 
 	public MInstance instanceWithID( Integer ID ) {
 		int instanceArrayCount = _instanceArray.count();
+
 		for( int i = 0; i < instanceArrayCount; i++ ) {
 			MInstance anInst = _instanceArray.objectAtIndex( i );
 			if( anInst.id().equals( ID ) ) {
 				return anInst;
 			}
 		}
+
 		return null;
 	}
 
 	public Integer runningInstancesCount_W() {
 		int runningInstances = 0;
 		int numInstances = _instanceArray.count();
+
 		for( int i = 0; i < numInstances; i++ ) {
 			MInstance anInstance = _instanceArray.objectAtIndex( i );
 			if( anInstance.isRunning_W() ) {
 				runningInstances++;
 			}
 		}
+
 		return Integer.valueOf( runningInstances );
 	}
 
 	public boolean isRunning_W() {
-		if( runningInstancesCount_W().intValue() > 0 ) {
-			return true;
-		}
-		return false;
+		return runningInstancesCount_W().intValue() > 0;
 	}
-
-	// Used for the ApplicationsPage
-	private Integer runningInstancesCount = 0;
 
 	public boolean isRunning() {
 		// AK: this one is called from the overview page (may or may not be correct)
@@ -663,20 +651,19 @@ public class MApplication extends MObject {
 	}
 
 	public boolean isRunning_M() {
-		if( runningInstancesCount_M().intValue() > 0 ) {
-			return true;
-		}
-		return false;
+		return runningInstancesCount_M().intValue() > 0;
 	}
 
 	public boolean isStopped_M() {
 		int numInstances = _instanceArray.count();
+
 		for( int i = 0; i < numInstances; i++ ) {
 			MInstance anInstance = _instanceArray.objectAtIndex( i );
 			if( anInstance.state != MObject.DEAD ) {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
