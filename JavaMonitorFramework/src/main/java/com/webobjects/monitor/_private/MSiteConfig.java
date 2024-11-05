@@ -355,7 +355,7 @@ public class MSiteConfig extends MObject {
 
 		backup( "removeApplication-" + anApplication.name() );
 
-		final NSArray<MInstance> tempArray = new NSArray<>( anApplication._instanceArray );
+		final NSArray<MInstance> tempArray = new NSArray<>( anApplication.instanceArray() );
 
 		for( int i = 0; i < tempArray.count(); i++ ) {
 			removeInstance_M( tempArray.objectAtIndex( i ), false );
@@ -366,7 +366,7 @@ public class MSiteConfig extends MObject {
 
 	public void removeApplication_W( MApplication anApplication ) {
 
-		final NSArray<MInstance> tempArray = new NSArray<>( anApplication._instanceArray );
+		final NSArray<MInstance> tempArray = new NSArray<>( anApplication.instanceArray() );
 
 		for( int i = 0; i < tempArray.count(); i++ ) {
 			removeInstance_W( tempArray.objectAtIndex( i ) );
@@ -623,14 +623,14 @@ public class MSiteConfig extends MObject {
 		}
 		final NSDictionary<String, String> monitorRequest = new NSDictionary<>( "SITE", "queryWotaskd" );
 		final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
-	
+
 		final WORequest aRequest = new ERXRequest( MObject._POST, MObject.directActionString, MObject._HTTP1, NSDictionary.EmptyDictionary, content, null );
 		WOResponse aResponse = null;
-	
+
 		try {
 			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( configHostName, aPort );
 			anHTTPConnection.setReceiveTimeout( 5000 );
-	
+
 			if( anHTTPConnection.sendRequest( aRequest ) ) {
 				aResponse = anHTTPConnection.readResponse();
 			}
@@ -639,7 +639,7 @@ public class MSiteConfig extends MObject {
 			logger.error( "Failed to connect to Host: {} and Port: {}", configHostName, aPort );
 			throw new MonitorException( "Failed to connect to Host: " + configHostName + " and Port: " + aPort );
 		}
-	
+
 		NSDictionary xmlDict = NSDictionary.EmptyDictionary;
 		if( aResponse != null ) {
 			try {
@@ -650,7 +650,7 @@ public class MSiteConfig extends MObject {
 				throw new MonitorException( "Got non-parsable data from Host: " + configHostName + " + and Port: " + aPort + ". Data received was: " + aResponse.contentString() + ". It is possible that the Wotaskd on the remote host is of the wrong version" );
 			}
 		}
-	
+
 		final NSArray errorResponse = (NSArray)xmlDict.valueForKey( "errorResponse" );
 		if( errorResponse != null ) {
 			String errorString = "";
@@ -659,7 +659,7 @@ public class MSiteConfig extends MObject {
 			}
 			throw new MonitorException( errorString );
 		}
-	
+
 		final NSDictionary queryWotaskdResponse = (NSDictionary)xmlDict.valueForKey( "queryWotaskdResponse" );
 		if( queryWotaskdResponse != null ) {
 			return new MSiteConfig( (NSDictionary)queryWotaskdResponse.valueForKey( "SiteConfig" ) );

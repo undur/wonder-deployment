@@ -479,8 +479,8 @@ public class MApplication extends MObject {
 	/**********/
 
 	/********** Object Graph **********/
-	NSMutableArray<MInstance> _instanceArray = new NSMutableArray<>();
-	NSMutableArray<MHost> _hostArray = new NSMutableArray<>();
+	private NSMutableArray<MInstance> _instanceArray = new NSMutableArray<>();
+	private NSMutableArray<MHost> _hostArray = new NSMutableArray<>();
 
 	public NSArray<MInstance> instanceArray() {
 		return _instanceArray;
