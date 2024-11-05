@@ -48,7 +48,7 @@ public class MObject implements NSKeyValueCoding {
 	public static final String ADMIN_ACTION_STRING_PREFIX = "/cgi-bin/WebObjects/";
 	public static final String ADMIN_ACTION_STRING_POSTFIX = ".woa/womp/instanceRequest";
 
-	MSiteConfig _siteConfig;
+	protected MSiteConfig _siteConfig;
 
 	protected NSMutableDictionary<String, ?> values;
 	protected _NSThreadsafeMutableDictionary<String, ?> adaptorValues = new _NSThreadsafeMutableDictionary<>( new NSMutableDictionary<>() );
