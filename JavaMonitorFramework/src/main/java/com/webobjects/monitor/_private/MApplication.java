@@ -62,37 +62,6 @@ public class MApplication extends MObject {
 	Integer urlVersion;	// 3 | 4
 	 */
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name() == null) ? 0 : name().hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals( Object obj ) {
-		if( this == obj ) {
-			return true;
-		}
-		if( obj == null ) {
-			return false;
-		}
-		if( getClass() != obj.getClass() ) {
-			return false;
-		}
-		final MApplication other = (MApplication)obj;
-		if( name() == null ) {
-			if( other.name() != null ) {
-				return false;
-			}
-		}
-		else if( !name().equals( other.name() ) ) {
-			return false;
-		}
-		return true;
-	}
-
 	/********** 'values' accessors **********/
 	public String name() {
 		return (String)values.valueForKey( "name" );
@@ -575,11 +544,6 @@ public class MApplication extends MObject {
 		return values;
 	}
 
-	@Override
-	public String toString() {
-		return "MApplication@" + name();
-	}
-
 	public void extractAdaptorValuesFromSiteConfig() {
 		// get my application settings
 		adaptorValues.takeValueForKey( values.valueForKey( "retries" ), "retries" );
@@ -714,5 +678,41 @@ public class MApplication extends MObject {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "MApplication@" + name();
+	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		if( this == obj ) {
+			return true;
+		}
+		if( obj == null ) {
+			return false;
+		}
+		if( getClass() != obj.getClass() ) {
+			return false;
+		}
+		final MApplication other = (MApplication)obj;
+		if( name() == null ) {
+			if( other.name() != null ) {
+				return false;
+			}
+		}
+		else if( !name().equals( other.name() ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name() == null) ? 0 : name().hashCode());
+		return result;
 	}
 }
