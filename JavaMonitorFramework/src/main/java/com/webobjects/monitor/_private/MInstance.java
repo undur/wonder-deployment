@@ -33,10 +33,6 @@ import com.webobjects.foundation.NSTimestampFormatter;
 
 public class MInstance extends MObject {
 
-	private static final NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%m/%d/%Y %H:%M:%S %Z" );
-
-	private static final NSTimestampFormatter shutdownFormatter = new NSTimestampFormatter( "%a @ %H:00" );
-
 	//	String hostName;
 	//	Integer id;
 	//	Integer port;
@@ -64,7 +60,26 @@ public class MInstance extends MObject {
 	//	Integer sendBufSize;
 	//	Integer recvBufSize;
 
-	/** ******** 'values' accessors ********* */
+	private static final NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%m/%d/%Y %H:%M:%S %Z" );
+	private static final NSTimestampFormatter shutdownFormatter = new NSTimestampFormatter( "%a @ %H:00" );
+
+	protected MHost _host;
+	protected MApplication _application;
+	private NSTimestamp _lastRegistration = NSTimestamp.DistantPast;
+	private NSMutableArray<String> _deaths = new NSMutableArray<>();
+	private boolean isRefusingNewSessions = false;
+	public int state = MObject.DEAD;
+	private NSMutableDictionary _statistics = new NSMutableDictionary();
+	private Timer _taskTimer;
+	private TimerTask _forceQuitTask;
+	private NSTimestamp _nextScheduledShutdown = NSTimestamp.DistantPast;
+	private String _nextScheduledShutdownString = "-";
+	public boolean isActivelyBeingScheduled = false;
+	public static long TIME_FOR_STARTUP = 30;
+	private NSTimestamp _finishStartingByDate = new NSTimestamp();
+	private String _statisticsError = null;
+	private int _connectFailureCount = 0;
+
 	public String hostName() {
 		return (String)values.valueForKey( "hostName" );
 	}
@@ -320,11 +335,6 @@ public class MInstance extends MObject {
 		_siteConfig.dataHasChanged();
 	}
 
-	/** ******** Object Graph ********* */
-	protected MHost _host;
-
-	protected MApplication _application;
-
 	public MHost host() {
 		return _host;
 	}
@@ -332,16 +342,6 @@ public class MInstance extends MObject {
 	public MApplication application() {
 		return _application;
 	}
-
-	/** ******* */
-
-	private NSTimestamp _lastRegistration = NSTimestamp.DistantPast;
-
-	private NSMutableArray<String> _deaths = new NSMutableArray<>();
-
-	private boolean isRefusingNewSessions = false;
-
-	public int state = MObject.DEAD;
 
 	// This constructor is for adding new instances through the UI
 	public MInstance( MHost aHost, MApplication anApplication, Integer anID, MSiteConfig aConfig ) {
@@ -453,7 +453,6 @@ public class MInstance extends MObject {
 		return null;
 	}
 
-	/** ******** Archiving Support ********* */
 	public NSDictionary dictionaryForArchive() {
 		return values;
 	}
@@ -508,8 +507,6 @@ public class MInstance extends MObject {
 	public String displayHostAndPort() {
 		return hostName() + ":" + port();
 	}
-
-	private NSMutableDictionary _statistics = new NSMutableDictionary();
 
 	public NSDictionary statistics() {
 		return _statistics;
@@ -567,8 +564,6 @@ public class MInstance extends MObject {
 		return "-";
 	}
 
-	private String _statisticsError = null;
-
 	public void setStatisticsError( String errorString ) {
 		_statisticsError = errorString;
 	}
@@ -581,11 +576,9 @@ public class MInstance extends MObject {
 		_statisticsError = null;
 	}
 
-	/** ******** Startup Calculations ********* */
-	public static long TIME_FOR_STARTUP = 30;
-
-	NSTimestamp _finishStartingByDate = new NSTimestamp();
-
+	/**
+	 * Startup Calculations
+	 */
 	public void willAttemptToStart() {
 		state = MObject.STARTING;
 		long timeForStartup;
@@ -600,9 +593,6 @@ public class MInstance extends MObject {
 
 		_finishStartingByDate = new NSTimestamp( new NSTimestamp().getTime() + (timeForStartup * 1000) );
 	}
-
-	/** ******** State Support ********* */
-	private int _connectFailureCount = 0;
 
 	public void failedToConnect() {
 		_connectFailureCount++;
@@ -714,7 +704,6 @@ public class MInstance extends MObject {
 		return b;
 	}
 
-	/** ******** Registration and Lifebeats ********* */
 	public NSTimestamp lastRegistration() {
 		return _lastRegistration;
 	}
@@ -925,7 +914,9 @@ public class MInstance extends MObject {
 		return String.join( " ", commandLineArgumentsAsArray() ).replace( '\n', ' ' ).replace( '\r', ' ' );
 	}
 
-	/** ******** Overridden Methods for Scheduling ********* */
+	/**
+	 * Overridden for Scheduling
+	 */
 	@Override
 	public void setValues( NSMutableDictionary newValues ) {
 		super.setValues( newValues );
@@ -934,6 +925,9 @@ public class MInstance extends MObject {
 		}
 	}
 
+	/**
+	 * Overridden for Scheduling
+	 */
 	@Override
 	public void updateValues( NSDictionary aDict ) {
 		super.updateValues( aDict );
@@ -941,13 +935,6 @@ public class MInstance extends MObject {
 			calculateNextScheduledShutdown();
 		}
 	}
-
-	/** ******** Scheduling ********* */
-	NSTimestamp _nextScheduledShutdown = NSTimestamp.DistantPast;
-
-	String _nextScheduledShutdownString = "-";
-
-	public boolean isActivelyBeingScheduled = false;
 
 	public boolean isScheduled() {
 		Boolean aBool = schedulingEnabled();
@@ -1154,9 +1141,6 @@ public class MInstance extends MObject {
 	}
 
 	/** ******** Force quit task ********* */
-
-	private Timer _taskTimer;
-	private TimerTask _forceQuitTask;
 
 	public Timer taskTimer() {
 		if( _taskTimer == null ) {
