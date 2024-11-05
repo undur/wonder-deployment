@@ -62,6 +62,7 @@ public class MInstance extends MObject {
 
 	private static final NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%m/%d/%Y %H:%M:%S %Z" );
 	private static final NSTimestampFormatter shutdownFormatter = new NSTimestampFormatter( "%a @ %H:00" );
+	public static long TIME_FOR_STARTUP = 30;
 
 	protected MHost _host;
 	protected MApplication _application;
@@ -74,8 +75,6 @@ public class MInstance extends MObject {
 	private TimerTask _forceQuitTask;
 	private NSTimestamp _nextScheduledShutdown = NSTimestamp.DistantPast;
 	private String _nextScheduledShutdownString = "-";
-	public boolean isActivelyBeingScheduled = false;
-	public static long TIME_FOR_STARTUP = 30;
 	private NSTimestamp _finishStartingByDate = new NSTimestamp();
 	private String _statisticsError = null;
 	private int _connectFailureCount = 0;
