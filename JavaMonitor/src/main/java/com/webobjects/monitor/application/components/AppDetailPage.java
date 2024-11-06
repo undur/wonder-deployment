@@ -92,10 +92,6 @@ public class AppDetailPage extends MonitorComponent {
 		return newDetailPage();
 	}
 
-	public MInstance currentInstance() {
-		return currentInstance;
-	}
-
 	public WOActionResults selectAllAction() {
 		setSelectedInstances( allInstances() );
 		return null;
