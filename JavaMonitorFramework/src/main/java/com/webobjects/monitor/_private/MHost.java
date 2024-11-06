@@ -39,7 +39,7 @@ public class MHost extends MObject {
 	 * FIXME: Move to wherever we decide to eventually keep properties // Hugi 2024-11-04
 	 */
 	@Deprecated
-	private final int _receiveTimeout = ERXProperties.intForKeyWithDefault( "JavaMonitor.receiveTimeout", 10000 );
+	private static final int RECEIVE_TIMEOUT = ERXProperties.intForKeyWithDefault( "JavaMonitor.receiveTimeout", 10000 );
 
 	/**
 	 * FIXME: It doesn't look like this variable is ever actually read in a meaningful way. Delete? // Hugi 2024-11-02
@@ -231,7 +231,7 @@ public class MHost extends MObject {
 
 		try {
 			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( name(), WOApplication.application().lifebeatDestinationPort() );
-			anHTTPConnection.setReceiveTimeout( _receiveTimeout );
+			anHTTPConnection.setReceiveTimeout( RECEIVE_TIMEOUT );
 
 			boolean requestSucceeded = anHTTPConnection.sendRequest( aRequest );
 
