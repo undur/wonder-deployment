@@ -36,7 +36,6 @@ public class WOTaskdHandler {
 		public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors );
 	}
 
-//	private static _NSCollectionReaderWriterLock _lock = new _NSCollectionReaderWriterLock();
 	private static ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
 
 	private static MSiteConfig _siteConfig;
@@ -76,35 +75,19 @@ public class WOTaskdHandler {
 	}
 
 	public void startReading() {
-//		_lock.startReading();
-		log( "Acquiring read lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.readLock().lock();
-		log( "Acquired read lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void endReading() {
-//		_lock.endReading();
-		log( "Releasing read lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.readLock().unlock();
-		log( "Released read lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void startWriting() {
-//		_lock.startWriting();
-		log( "Acquiring write lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.writeLock().lock();
-		log( "Acquired write lock:  " + Thread.currentThread().getName(), new Throwable() );
 	}
 
 	public void endWriting() {
-//		_lock.endWriting();
-		log( "Releasing write lock: " + Thread.currentThread().getName(), new Throwable() );
 		_lock.writeLock().unlock();
-		log( "Released write lock:  " + Thread.currentThread().getName(), new Throwable() );
-	}
-
-	private static void log( String message, Throwable throwable ) {
-//		logger.info( message, new Throwable() );
 	}
 
 	/**
