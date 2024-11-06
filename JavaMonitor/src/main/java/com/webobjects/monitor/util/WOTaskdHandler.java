@@ -369,9 +369,11 @@ public class WOTaskdHandler {
 		final NSDictionary[] responseDicts = new NSDictionary[responses.length];
 
 		for( int i = 0; i < responses.length; i++ ) {
-			if( (responses[i] != null) && (responses[i].content() != null) ) {
+			final WOResponse currentResponse = responses[i];
+
+			if( currentResponse != null && currentResponse.content() != null ) {
 				try {
-					responseDicts[i] = (NSDictionary)(new CoderWrapper()).decodeRootObject( responses[i].content() );
+					responseDicts[i] = (NSDictionary)new CoderWrapper().decodeRootObject( currentResponse.content() );
 				}
 				catch( WOXMLException wxe ) {
 					responseDicts[i] = responseParsingFailed;
@@ -381,6 +383,7 @@ public class WOTaskdHandler {
 				responseDicts[i] = emptyResponse;
 			}
 		}
+
 		return responseDicts;
 	}
 

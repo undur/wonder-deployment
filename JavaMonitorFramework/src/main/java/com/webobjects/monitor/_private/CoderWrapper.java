@@ -14,6 +14,11 @@ public class CoderWrapper {
 		_wrappedDecoder = new _JavaMonitorDecoder();
 	}
 
+	public Object decodeRootObject( byte[] bytes ) {
+		return _wrappedDecoder.decodeRootObject( new NSData( bytes ) );
+	}
+
+	@Deprecated
 	public Object decodeRootObject( NSData data ) {
 		return _wrappedDecoder.decodeRootObject( data );
 	}
