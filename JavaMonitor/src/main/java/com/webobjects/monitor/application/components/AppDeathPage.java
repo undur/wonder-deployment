@@ -19,6 +19,10 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor.application.MonitorComponent;
 
+/**
+ * FIXME: I'm thinking this page should probably be called InstDeathPage, since it really applies to an instance, not an app // Hugi 2024-11-06 
+ */
+
 public class AppDeathPage extends MonitorComponent {
 
 	public Object aDeath;
@@ -38,7 +42,7 @@ public class AppDeathPage extends MonitorComponent {
 	}
 
 	public int anIndexPlusOne() {
-		return (anIndex + 1);
+		return anIndex + 1;
 	}
 
 	public static AppDeathPage create( WOContext context, MInstance instance ) {
