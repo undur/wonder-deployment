@@ -488,7 +488,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 
 		catchInstanceErrors( anInstance );
 		NSDictionary xmlDict = createInstanceRequestDictionary( "TERMINATE", null, anInstance );
-		return sendInstanceRequest( anInstance, xmlDict );
+		return sendInstanceRequest( _hostName, anInstance, xmlDict );
 	}
 
 	@Override
@@ -511,20 +511,20 @@ public class LocalMonitor extends ProtoLocalMonitor {
 
 		catchInstanceErrors( anInstance );
 		NSDictionary xmlDict = createInstanceRequestDictionary( "REFUSE", null, anInstance );
-		return sendInstanceRequest( anInstance, xmlDict );
+		return sendInstanceRequest( _hostName, anInstance, xmlDict );
 	}
 
 	public WOResponse setAcceptInstance( MInstance anInstance ) throws MonitorException {
 		catchInstanceErrors( anInstance );
 		NSDictionary xmlDict = createInstanceRequestDictionary( "ACCEPT", null, anInstance );
-		return sendInstanceRequest( anInstance, xmlDict );
+		return sendInstanceRequest( _hostName, anInstance, xmlDict );
 	}
 
 	@Override
 	public WOResponse queryInstance( MInstance anInstance ) throws MonitorException {
 		catchInstanceErrors( anInstance );
 		NSDictionary xmlDict = createInstanceRequestDictionary( null, "STATISTICS", anInstance );
-		return sendInstanceRequest( anInstance, xmlDict );
+		return sendInstanceRequest( _hostName, anInstance, xmlDict );
 	}
 
 	private void catchInstanceErrors( MInstance anInstance ) throws MonitorException {
@@ -540,7 +540,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 	/**
 	 * FIXME: Switch to java http client // Hugi 2024-11-01
 	 */
-	private WOResponse sendInstanceRequest( MInstance anInstance, NSDictionary xmlDict ) throws MonitorException {
+	private static WOResponse sendInstanceRequest( final String hostName, final MInstance anInstance, final NSDictionary xmlDict ) throws MonitorException {
 
 		final String requestContentXML = new CoderWrapper().encodeRootObjectForKey( xmlDict, "instanceRequest" );
 		final NSData requestContentData = new NSData( requestContentXML.getBytes() );
@@ -559,7 +559,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 				aResponse = anHTTPConnection.readResponse();
 			}
 			else {
-				throw new MonitorException( _hostName + ": Failed to receive response from " + anInstance.displayName() );
+				throw new MonitorException( hostName + ": Failed to receive response from " + anInstance.displayName() );
 			}
 
 			anInstance.succeededInConnection();
@@ -567,7 +567,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		catch( NSForwardException ne ) {
 			if( ne.originalException() instanceof IOException ) {
 				anInstance.failedToConnect();
-				throw new MonitorException( _hostName + ": Timeout while connecting to " + anInstance.displayName() );
+				throw new MonitorException( hostName + ": Timeout while connecting to " + anInstance.displayName() );
 			}
 			throw ne;
 		}
@@ -577,7 +577,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		}
 		catch( Exception e ) {
 			anInstance.failedToConnect();
-			throw new MonitorException( _hostName + ": Error while communicating with " + anInstance.displayName() + ": " + e );
+			throw new MonitorException( hostName + ": Error while communicating with " + anInstance.displayName() + ": " + e );
 		}
 
 		return aResponse;
