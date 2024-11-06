@@ -19,7 +19,7 @@ public class WOTaskdComms {
 	/**
 	 * Communications Goop
 	 */
-	public static WOResponse[] sendRequestToWotaskdArray( String contentString, List<MHost> wotaskdArray, boolean willChange ) {
+	public static WOResponse[] sendRequestToWotaskdArray( final String contentString, final List<MHost> wotaskdArray, final boolean willChange ) {
 
 		final MHost aHost = wotaskdArray.get( 0 );
 
@@ -28,13 +28,13 @@ public class WOTaskdComms {
 			return null;
 		}
 
-		final MSiteConfig aConfig = aHost.siteConfig();
+		final MSiteConfig siteConfig = aHost.siteConfig();
 
 		// we had errors reaching a host last time - do it again!
-		if( aConfig.hostErrorArray.count() > 0 ) {
+		if( siteConfig.hostErrorArray.count() > 0 ) {
 			_syncRequest = null;
-			final WORequest aSyncRequest = syncRequest( aConfig );
-			final _NSThreadsafeMutableArray<MHost> syncHosts = aConfig.hostErrorArray;
+			final WORequest syncRequest = syncRequest( siteConfig );
+			final _NSThreadsafeMutableArray<MHost> syncHosts = siteConfig.hostErrorArray;
 
 			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 				NSLog.debug.appendln( "Sending sync requests to: " + syncHosts.array() );
@@ -49,7 +49,7 @@ public class WOTaskdComms {
 					@Override
 					public void run() {
 						MHost aHost = syncHosts.objectAtIndex( j );
-						aHost.sendRequestToWotaskd( aSyncRequest, true, true );
+						aHost.sendRequestToWotaskd( syncRequest, true, true );
 					}
 				};
 
@@ -65,7 +65,7 @@ public class WOTaskdComms {
 			catch( InterruptedException ie ) {}
 		}
 
-		final WORequest aRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, aConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
+		final WORequest aRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
 		final List<MHost> finalWotaskdArray = wotaskdArray;
 		final boolean wc = willChange;
 
@@ -100,13 +100,13 @@ public class WOTaskdComms {
 	
 	private static WORequest _syncRequest = null;
 
-	private static WORequest syncRequest( MSiteConfig aConfig ) {
+	private static WORequest syncRequest( final MSiteConfig siteConfig ) {
 		if( _syncRequest == null ) {
-			final NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( aConfig.dictionaryForArchive(), "SiteConfig" );
+			final NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( siteConfig.dictionaryForArchive(), "SiteConfig" );
 			final NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>( data, "sync" );
 			final NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>( updateWotaskd, "updateWotaskd" );
 			final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ).getBytes() );
-			_syncRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, aConfig.passwordDictionary(), content, null );
+			_syncRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), content, null );
 		}
 		return _syncRequest;
 	}
