@@ -12,21 +12,25 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor._private;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpRequest.Builder;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webobjects.appserver.WOApplication;
-import com.webobjects.appserver.WOHTTPConnection;
-import com.webobjects.appserver.WORequest;
-import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
-import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 
@@ -222,60 +226,64 @@ public class MHost extends MObject {
 		}
 	}
 
-	public ResponseWrapper sendRequestToWotaskd( String contentString, NSDictionary<String, NSMutableArray<String>> headers, boolean willChange, boolean isSync ) {
-		final WORequest request = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, headers, new NSData( contentString.getBytes() ), null );
-		return sendRequestToWotaskd( request, willChange, isSync );
-	}
-
 	/**
-	 * FIXME: Switch to java http client // Hugi 2024-11-01
+	 * Sends the given request to this host's wotaskd, returning wotaskd's response
+	 *
+	 * FIXME: We need to go over this, especially WRT error handling, reporting and management // Hugi 2024-11-06
 	 */
-	@Deprecated
-	private ResponseWrapper sendRequestToWotaskd( WORequest aRequest, boolean willChange, boolean isSync ) {
-
-		//		logger.info( "Sending request: {}", aRequest );
+	public ResponseWrapper sendRequestToWotaskd( final String contentString, final NSDictionary<String, NSMutableArray<String>> headers, final boolean willChange, final boolean isSync ) {
 
 		ResponseWrapper responseWrapper = new ResponseWrapper();
 
 		try {
-			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( name(), WOApplication.application().lifebeatDestinationPort() );
-			anHTTPConnection.setReceiveTimeout( RECEIVE_TIMEOUT );
+			// CHECKME: We can reuse the client. Future performance thoughts
+			final HttpClient client = HttpClient
+					.newBuilder()
+					.build();
 
-			boolean requestSucceeded = anHTTPConnection.sendRequest( aRequest );
+			final Builder requestBuilder = HttpRequest
+					.newBuilder()
+					.uri( URI.create( "http://%s:%s%s".formatted( name(), WOApplication.application().lifebeatDestinationPort(), MObject.WOTASKD_DIRECT_ACTION_URL ) ) )
+					.timeout( Duration.ofMillis( RECEIVE_TIMEOUT ) )
+					.POST( BodyPublishers.ofString( contentString ) );
 
-			isAvailable = true;
-
-			if( requestSucceeded ) {
-				responseWrapper._woResponse = anHTTPConnection.readResponse();
+			if( headers.get( "password" ) != null ) {
+				requestBuilder.setHeader( "password", headers.get( "password" ).getFirst() );
 			}
-			else {
+
+			final HttpRequest request = requestBuilder.build();
+
+			logger.info( "--> Sending request: =======" );
+			logger.info( "{}", request );
+			logger.info( contentString );
+
+			try {
+				final HttpResponse<byte[]> response = client.send( request, BodyHandlers.ofByteArray() );
+				logger.info( "--> Response received =======" );
+				responseWrapper._content = response.body();
+			}
+			catch( IOException | InterruptedException e ) {
+				e.printStackTrace();
 				isAvailable = false;
 			}
 
-			if( responseWrapper._woResponse == null ) {
-				isAvailable = false;
-			}
+			logger.info( "--> End request phase =======" );
 		}
-		catch( Throwable localException ) {
-			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-				NSLog.err.appendln( localException );
-			}
+		catch( Throwable e ) {
+			e.printStackTrace();
 			isAvailable = false;
 		}
 
 		// For error handling
-		if( responseWrapper._woResponse == null ) {
+		if( responseWrapper.contentString() == null ) {
 			if( willChange ) {
 				_siteConfig.hostErrorArray.add( this );
 			}
-			responseWrapper._woResponse = errorResponseForHost( this );
+			responseWrapper._content = errorResponseString( this ).getBytes();
 		}
 		else {
 			// if we successfully synced, clear the error dictionary
 			if( isSync && isAvailable ) {
-				if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-					NSLog.debug.appendln( "Cleared sync request for host " + name() );
-				}
 				_siteConfig.hostErrorArray.remove( this );
 			}
 		}
@@ -288,12 +296,8 @@ public class MHost extends MObject {
 	 *
 	 * FIXME: Part of weird error handling mechanism // Hugi 2024-11-03
 	 */
-	private static WOResponse errorResponseForHost( final MHost host ) {
-		final String contentString = new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
-
-		final WOResponse response = new WOResponse();
-		response.setContent( contentString );
-		return response;
+	private static String errorResponseString( final MHost host ) {
+		return new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
 	}
 
 	@Override
