@@ -258,7 +258,7 @@ public class MHost extends MObject {
 		// For error handling
 		if( aResponse == null ) {
 			if( willChange ) {
-				_siteConfig.hostErrorArray.addObjectIfAbsent( this );
+				_siteConfig.hostErrorArray.add( this );
 			}
 			aResponse = errorResponseForHost( this );
 		}
@@ -268,7 +268,7 @@ public class MHost extends MObject {
 				if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 					NSLog.debug.appendln( "Cleared sync request for host " + name() );
 				}
-				_siteConfig.hostErrorArray.removeObject( this );
+				_siteConfig.hostErrorArray.remove( this );
 			}
 		}
 

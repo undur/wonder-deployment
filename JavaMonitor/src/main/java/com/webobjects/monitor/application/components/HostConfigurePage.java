@@ -65,7 +65,7 @@ public class HostConfigurePage extends MonitorComponent {
 
 	public WOComponent syncHostClicked() {
 		MHost host = myHost();
-		siteConfig().hostErrorArray.addObjectIfAbsent( host );
+		siteConfig().hostErrorArray.add( host );
 		handler().sendUpdateHostToWotaskds( host, List.of( host ) );
 
 		return HostConfigurePage.create( context(), myHost() );

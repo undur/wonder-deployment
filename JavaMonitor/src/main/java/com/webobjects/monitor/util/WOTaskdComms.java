@@ -1,5 +1,6 @@
 package com.webobjects.monitor.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.webobjects.appserver.WORequest;
@@ -8,7 +9,6 @@ import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableDictionary;
-import com.webobjects.foundation._NSThreadsafeMutableArray;
 import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
@@ -31,37 +31,8 @@ public class WOTaskdComms {
 		final MSiteConfig siteConfig = aHost.siteConfig();
 
 		// we had errors reaching a host last time - do it again!
-		if( siteConfig.hostErrorArray.count() > 0 ) {
-			final WORequest syncRequest = syncRequest( siteConfig );
-			final _NSThreadsafeMutableArray<MHost> syncHosts = siteConfig.hostErrorArray;
-
-			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-				NSLog.debug.appendln( "Sending sync requests to: " + syncHosts.array() );
-			}
-
-			final Thread[] workers = new Thread[syncHosts.count()];
-
-			for( int i = 0; i < workers.length; i++ ) {
-				final int j = i;
-
-				final Runnable work = new Runnable() {
-					@Override
-					public void run() {
-						MHost aHost = syncHosts.objectAtIndex( j );
-						aHost.sendRequestToWotaskd( syncRequest, true, true );
-					}
-				};
-
-				workers[j] = new Thread( work );
-				workers[j].start();
-			}
-
-			try {
-				for( int i = 0; i < workers.length; i++ ) {
-					workers[i].join();
-				}
-			}
-			catch( InterruptedException ie ) {}
+		if( !siteConfig.hostErrorArray.isEmpty() ) {
+			syncHostsWithErrors( siteConfig );
 		}
 
 		final WORequest aRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
@@ -95,6 +66,39 @@ public class WOTaskdComms {
 		}
 
 		return responses;
+	}
+
+	private static void syncHostsWithErrors( final MSiteConfig siteConfig ) {
+		final WORequest syncRequest = syncRequest( siteConfig );
+		final List<MHost> syncHosts = new ArrayList<>( siteConfig.hostErrorArray );
+
+		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
+			NSLog.debug.appendln( "Sending sync requests to: " + syncHosts );
+		}
+
+		final Thread[] workers = new Thread[syncHosts.size()];
+
+		for( int i = 0; i < workers.length; i++ ) {
+			final int j = i;
+
+			final Runnable work = new Runnable() {
+				@Override
+				public void run() {
+					MHost aHost = syncHosts.get( j );
+					aHost.sendRequestToWotaskd( syncRequest, true, true );
+				}
+			};
+
+			workers[j] = new Thread( work );
+			workers[j].start();
+		}
+
+		try {
+			for( int i = 0; i < workers.length; i++ ) {
+				workers[i].join();
+			}
+		}
+		catch( InterruptedException ie ) {}
 	}
 
 	private static WORequest syncRequest( final MSiteConfig siteConfig ) {

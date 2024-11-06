@@ -22,9 +22,12 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPOutputStream;
 
@@ -43,7 +46,6 @@ import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation.NSTimestampFormatter;
 import com.webobjects.foundation._NSStringUtilities;
-import com.webobjects.foundation._NSThreadsafeMutableArray;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 
 public class MSiteConfig extends MObject {
@@ -239,7 +241,8 @@ public class MSiteConfig extends MObject {
 
 	/********** Errors  **********/
 	public _NSThreadsafeMutableDictionary<String, String> globalErrorDictionary = new _NSThreadsafeMutableDictionary<>( new NSMutableDictionary<>() );
-	public _NSThreadsafeMutableArray<MHost> hostErrorArray = new _NSThreadsafeMutableArray<>( new NSMutableArray<>() );
+
+	public Set<MHost> hostErrorArray = Collections.synchronizedSet( new HashSet<>() );
 
 	/********** Object Graph  **********/
 	private final NSMutableArray<MHost> _hostArray = new NSMutableArray<>();

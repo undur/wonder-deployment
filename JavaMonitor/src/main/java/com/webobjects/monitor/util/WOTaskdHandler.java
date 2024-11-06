@@ -55,11 +55,12 @@ public class WOTaskdHandler {
 		}
 
 		for( MHost nextElement : _siteConfig.hostArray() ) {
-			_siteConfig.hostErrorArray.addObjectIfAbsent( nextElement );
+			_siteConfig.hostErrorArray.add( nextElement );
 		}
 
+		// FIXME: OK, this whole localhost thing needs to be resolved... // Hugi 2024-11-06
 		if( _siteConfig.localHost() != null ) {
-			_siteConfig.hostErrorArray.removeObject( _siteConfig.localHost() );
+			_siteConfig.hostErrorArray.remove( _siteConfig.localHost() );
 		}
 	}
 
