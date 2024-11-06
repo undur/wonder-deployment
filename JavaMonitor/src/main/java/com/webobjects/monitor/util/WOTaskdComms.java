@@ -14,12 +14,14 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 
+import x.ResponseWrapper;
+
 public class WOTaskdComms {
 
 	/**
 	 * Communications Goop
 	 */
-	public static WOResponse[] sendRequestToWotaskdArray( final String contentString, final List<MHost> hosts, final boolean willChange ) {
+	public static ResponseWrapper[] sendRequestToWotaskdArray( final String contentString, final List<MHost> hosts, final boolean willChange ) {
 
 		final MHost aHost = hosts.get( 0 );
 
@@ -38,7 +40,7 @@ public class WOTaskdComms {
 		final WORequest request = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
 
 		final Thread[] workers = new Thread[hosts.size()];
-		final WOResponse[] responses = new WOResponse[workers.length];
+		final ResponseWrapper[] responses = new ResponseWrapper[workers.length];
 
 		for( int i = 0; i < workers.length; i++ ) {
 			final int j = i;

@@ -8,11 +8,7 @@ import com.webobjects.appserver.WOResponse;
 
 public class ResponseWrapper {
 
-	private WOResponse _woResponse;
-
-	public ResponseWrapper( WOResponse woResponse ) {
-		_woResponse = woResponse;
-	}
+	public WOResponse _woResponse;
 
 	public WOResponse woResponse() {
 		return _woResponse;
@@ -29,5 +25,18 @@ public class ResponseWrapper {
 		}
 
 		return _woResponse.content().bytes();
+	}
+
+	public String contentString() {
+
+		if( _woResponse == null ) {
+			return null;
+		}
+
+		if( _woResponse.contentString() == null ) {
+			return null;
+		}
+
+		return _woResponse.contentString();
 	}
 }

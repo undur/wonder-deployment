@@ -30,6 +30,7 @@ import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 
 import er.extensions.foundation.ERXProperties;
+import x.ResponseWrapper;
 
 public class MHost extends MObject {
 
@@ -223,11 +224,11 @@ public class MHost extends MObject {
 	/**
 	 * FIXME: Switch to java http client // Hugi 2024-11-01
 	 */
-	public WOResponse sendRequestToWotaskd( WORequest aRequest, boolean willChange, boolean isSync ) {
+	public ResponseWrapper sendRequestToWotaskd( WORequest aRequest, boolean willChange, boolean isSync ) {
 
 		//		logger.info( "Sending request: {}", aRequest );
 
-		WOResponse aResponse = null;
+		ResponseWrapper responseWrapper = new ResponseWrapper();
 
 		try {
 			WOHTTPConnection anHTTPConnection = new WOHTTPConnection( name(), WOApplication.application().lifebeatDestinationPort() );
@@ -238,13 +239,13 @@ public class MHost extends MObject {
 			isAvailable = true;
 
 			if( requestSucceeded ) {
-				aResponse = anHTTPConnection.readResponse();
+				responseWrapper._woResponse = anHTTPConnection.readResponse();
 			}
 			else {
 				isAvailable = false;
 			}
 
-			if( aResponse == null ) {
+			if( responseWrapper._woResponse == null ) {
 				isAvailable = false;
 			}
 		}
@@ -256,11 +257,11 @@ public class MHost extends MObject {
 		}
 
 		// For error handling
-		if( aResponse == null ) {
+		if( responseWrapper._woResponse == null ) {
 			if( willChange ) {
 				_siteConfig.hostErrorArray.add( this );
 			}
-			aResponse = errorResponseForHost( this );
+			responseWrapper._woResponse = errorResponseForHost( this );
 		}
 		else {
 			// if we successfully synced, clear the error dictionary
@@ -272,7 +273,7 @@ public class MHost extends MObject {
 			}
 		}
 
-		return aResponse;
+		return responseWrapper;
 	}
 
 	/**
