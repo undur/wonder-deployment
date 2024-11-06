@@ -301,7 +301,9 @@ public class AppDetailPage extends MonitorComponent {
 
 	public WOComponent startInstance() {
 
-		if( (currentInstance.state == MObject.DEAD) || (currentInstance.state == MObject.STOPPING) || (currentInstance.state == MObject.CRASHING) || (currentInstance.state == MObject.UNKNOWN) ) {
+		final boolean canBeStarted = (currentInstance.state == MObject.DEAD) || (currentInstance.state == MObject.STOPPING) || (currentInstance.state == MObject.CRASHING) || (currentInstance.state == MObject.UNKNOWN);
+
+		if( canBeStarted ) {
 			handler().sendStartInstancesToWotaskds( List.of( currentInstance ), List.of( currentInstance.host() ) );
 			currentInstance.state = MObject.STARTING;
 		}
@@ -311,7 +313,9 @@ public class AppDetailPage extends MonitorComponent {
 
 	public WOComponent stopInstance() {
 
-		if( (currentInstance.state == MObject.ALIVE) || (currentInstance.state == MObject.STARTING) ) {
+		final boolean canBeStopped = (currentInstance.state == MObject.ALIVE) || (currentInstance.state == MObject.STARTING);
+
+		if( canBeStopped ) {
 			handler().sendStopInstancesToWotaskds( List.of( currentInstance ), List.of( currentInstance.host() ) );
 			currentInstance.state = MObject.STOPPING;
 		}
@@ -325,6 +329,25 @@ public class AppDetailPage extends MonitorComponent {
 		}
 		else {
 			currentInstance.setAutoRecover( Boolean.TRUE );
+		}
+
+		sendUpdateInstances( List.of( currentInstance ) );
+
+		return newDetailPage();
+	}
+
+	public WOComponent toggleRefuseNewSessions() {
+		handler().sendRefuseSessionToWotaskds( List.of( currentInstance ), List.of( currentInstance.host() ), !currentInstance.isRefusingNewSessions() );
+
+		return newDetailPage();
+	}
+
+	public WOComponent toggleScheduling() {
+		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
+			currentInstance.setSchedulingEnabled( Boolean.FALSE );
+		}
+		else {
+			currentInstance.setSchedulingEnabled( Boolean.TRUE );
 		}
 
 		sendUpdateInstances( List.of( currentInstance ) );
@@ -347,25 +370,6 @@ public class AppDetailPage extends MonitorComponent {
 		finally {
 			handler().endReading();
 		}
-	}
-
-	public WOComponent toggleRefuseNewSessions() {
-		handler().sendRefuseSessionToWotaskds( List.of( currentInstance ), List.of( currentInstance.host() ), !currentInstance.isRefusingNewSessions() );
-
-		return newDetailPage();
-	}
-
-	public WOComponent toggleScheduling() {
-		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
-			currentInstance.setSchedulingEnabled( Boolean.FALSE );
-		}
-		else {
-			currentInstance.setSchedulingEnabled( Boolean.TRUE );
-		}
-
-		sendUpdateInstances( List.of( currentInstance ) );
-
-		return newDetailPage();
 	}
 
 	public List<MInstance> allInstances() {
