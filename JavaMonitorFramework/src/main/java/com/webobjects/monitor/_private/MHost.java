@@ -231,7 +231,7 @@ public class MHost extends MObject {
 	 *
 	 * FIXME: We need to go over this, especially WRT error handling, reporting and management // Hugi 2024-11-06
 	 */
-	public ResponseWrapper sendRequestToWotaskd( final String contentString, final NSDictionary<String, NSMutableArray<String>> headers, final boolean willChange, final boolean isSync ) {
+	public ResponseWrapper sendRequestToWotaskd( final String contentString, final String password, final boolean willChange, final boolean isSync ) {
 
 		ResponseWrapper responseWrapper = new ResponseWrapper();
 
@@ -247,8 +247,9 @@ public class MHost extends MObject {
 					.timeout( Duration.ofMillis( RECEIVE_TIMEOUT ) )
 					.POST( BodyPublishers.ofString( contentString ) );
 
-			if( headers.get( "password" ) != null ) {
-				requestBuilder.setHeader( "password", headers.get( "password" ).getFirst() );
+			// FIXME: We're going to have to check the semantics of resetting the password (used to be handled when constructing the password header map in MSiteConfig.passwordDictionary()) // Hugi 2024-11-06
+			if( password != null ) {
+				requestBuilder.setHeader( "password", password );
 			}
 
 			final HttpRequest request = requestBuilder.build();
