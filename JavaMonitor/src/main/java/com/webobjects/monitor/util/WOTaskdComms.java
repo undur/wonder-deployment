@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.webobjects.foundation.NSDictionary;
-import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MHost;
@@ -65,10 +64,6 @@ public class WOTaskdComms {
 
 	private static void syncHostsWithErrors( final MSiteConfig siteConfig ) {
 		final List<MHost> hosts = new ArrayList<>( siteConfig.hostErrorArray );
-
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-			NSLog.debug.appendln( "Sending sync requests to: " + hosts );
-		}
 
 		final Thread[] workers = new Thread[hosts.size()];
 
