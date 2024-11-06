@@ -2,6 +2,7 @@ package com.webobjects.monitor.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
@@ -286,7 +287,7 @@ public class WOTaskdHandler {
 		final NSMutableDictionary updateWotaskd = new NSMutableDictionary( data, type );
 		final NSMutableDictionary monitorRequest = new NSMutableDictionary( updateWotaskd, "updateWotaskd" );
 
-		final ResponseWrapper[] responses = sendRequest( monitorRequest, new NSArray( aHost ), true );
+		final ResponseWrapper[] responses = sendRequest( monitorRequest, List.of( aHost ), true );
 		final NSDictionary[] responseDicts = generateResponseDictionaries( responses );
 		getUpdateErrors( responseDicts, type, false, false, false, false );
 	}
@@ -472,14 +473,14 @@ public class WOTaskdHandler {
 				final NSDictionary responseDict = responseDicts[i];
 				getGlobalErrorFromResponse( responseDict, errorArray );
 
-				final NSArray commandWotaskdResponse = (NSArray)responseDict.valueForKey( "commandWotaskdResponse" );
+				final List<Map<String,String>> commandWotaskdResponse = (List<Map<String, String>>)responseDict.valueForKey( "commandWotaskdResponse" );
 
 				if( (commandWotaskdResponse != null) && (commandWotaskdResponse.size() > 0) ) {
 					int count = commandWotaskdResponse.size();
 
 					for( int j = 1; j < count; j++ ) {
-						final NSDictionary aDict = (NSDictionary)commandWotaskdResponse.get( j );
-						final String errorMessage = (String)aDict.valueForKey( "errorMessage" );
+						final Map<String,String> aDict = commandWotaskdResponse.get( j );
+						final String errorMessage = aDict.get( "errorMessage" );
 
 						if( errorMessage != null ) {
 							errorArray.addObject( errorMessage );
