@@ -37,7 +37,7 @@ public class InstConfigurePage extends MonitorComponent {
 	}
 
 	public WOComponent appConfigLinkClicked() {
-		AppConfigurePage aPage = AppConfigurePage.create( context(), myApplication() );
+		AppConfigurePage aPage = AppConfigurePage.create( context(), myInstance().application() );
 		aPage.isNewInstanceSectionVisible = true;
 		return aPage;
 	}
