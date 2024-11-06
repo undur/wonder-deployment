@@ -19,9 +19,9 @@ public class WOTaskdComms {
 	/**
 	 * Communications Goop
 	 */
-	public static WOResponse[] sendRequestToWotaskdArray( final String contentString, final List<MHost> wotaskdArray, final boolean willChange ) {
+	public static WOResponse[] sendRequestToWotaskdArray( final String contentString, final List<MHost> hosts, final boolean willChange ) {
 
-		final MHost aHost = wotaskdArray.get( 0 );
+		final MHost aHost = hosts.get( 0 );
 
 		// FIXME: A little danger sign here... // Hugi 2024-11-02
 		if( aHost == null ) {
@@ -36,10 +36,8 @@ public class WOTaskdComms {
 		}
 
 		final WORequest aRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
-		final List<MHost> finalWotaskdArray = wotaskdArray;
-		final boolean wc = willChange;
 
-		final Thread[] workers = new Thread[wotaskdArray.size()];
+		final Thread[] workers = new Thread[hosts.size()];
 		final WOResponse[] responses = new WOResponse[workers.length];
 
 		for( int i = 0; i < workers.length; i++ ) {
@@ -48,7 +46,7 @@ public class WOTaskdComms {
 			Runnable work = new Runnable() {
 				@Override
 				public void run() {
-					responses[j] = finalWotaskdArray.get( j ).sendRequestToWotaskd( aRequest, wc, false );
+					responses[j] = hosts.get( j ).sendRequestToWotaskd( aRequest, willChange, false );
 				}
 			};
 
