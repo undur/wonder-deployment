@@ -3,15 +3,11 @@ package com.webobjects.monitor.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.webobjects.appserver.WORequest;
-import com.webobjects.appserver.WOResponse;
-import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MHost;
-import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 
 import x.ResponseWrapper;
@@ -37,8 +33,6 @@ public class WOTaskdComms {
 			syncHostsWithErrors( siteConfig );
 		}
 
-		final WORequest request = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
-
 		final Thread[] workers = new Thread[hosts.size()];
 		final ResponseWrapper[] responses = new ResponseWrapper[workers.length];
 
@@ -49,7 +43,7 @@ public class WOTaskdComms {
 				@Override
 				public void run() {
 					final MHost host = hosts.get( j );
-					responses[j] = host.sendRequestToWotaskd( request, willChange, false );
+					responses[j] = host.sendRequestToWotaskd( contentString, siteConfig.passwordDictionary(), willChange, false );
 				}
 			};
 
@@ -70,7 +64,6 @@ public class WOTaskdComms {
 	}
 
 	private static void syncHostsWithErrors( final MSiteConfig siteConfig ) {
-		final WORequest request = syncRequest( siteConfig );
 		final List<MHost> hosts = new ArrayList<>( siteConfig.hostErrorArray );
 
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
@@ -86,7 +79,7 @@ public class WOTaskdComms {
 				@Override
 				public void run() {
 					MHost host = hosts.get( j );
-					host.sendRequestToWotaskd( request, true, true );
+					host.sendRequestToWotaskd( syncRequestContent( siteConfig ), siteConfig.passwordDictionary(), true, true );
 				}
 			};
 
@@ -102,11 +95,11 @@ public class WOTaskdComms {
 		catch( InterruptedException ie ) {}
 	}
 
-	private static WORequest syncRequest( final MSiteConfig siteConfig ) {
+	private static String syncRequestContent( final MSiteConfig siteConfig ) {
 		final NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( siteConfig.dictionaryForArchive(), "SiteConfig" );
 		final NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>( data, "sync" );
 		final NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>( updateWotaskd, "updateWotaskd" );
-		final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ).getBytes() );
-		return new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), content, null );
+		final String syncRequestString = new CoderWrapper().encodeRootObjectForKey( monitorRequest, "monitorRequest" );
+		return syncRequestString;
 	}
 }

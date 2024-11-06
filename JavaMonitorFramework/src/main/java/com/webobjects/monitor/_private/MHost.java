@@ -24,6 +24,7 @@ import com.webobjects.appserver.WOHTTPConnection;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
@@ -221,10 +222,16 @@ public class MHost extends MObject {
 		}
 	}
 
+	public ResponseWrapper sendRequestToWotaskd( String contentString, NSDictionary<String, NSMutableArray<String>> headers, boolean willChange, boolean isSync ) {
+		final WORequest request = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, headers, new NSData( contentString.getBytes() ), null );
+		return sendRequestToWotaskd( request, willChange, isSync );
+	}
+
 	/**
 	 * FIXME: Switch to java http client // Hugi 2024-11-01
 	 */
-	public ResponseWrapper sendRequestToWotaskd( WORequest aRequest, boolean willChange, boolean isSync ) {
+	@Deprecated
+	private ResponseWrapper sendRequestToWotaskd( WORequest aRequest, boolean willChange, boolean isSync ) {
 
 		//		logger.info( "Sending request: {}", aRequest );
 
