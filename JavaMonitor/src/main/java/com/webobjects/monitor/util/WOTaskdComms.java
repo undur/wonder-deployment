@@ -35,7 +35,7 @@ public class WOTaskdComms {
 			syncHostsWithErrors( siteConfig );
 		}
 
-		final WORequest aRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
+		final WORequest request = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), new NSData( contentString.getBytes() ), null );
 
 		final Thread[] workers = new Thread[hosts.size()];
 		final WOResponse[] responses = new WOResponse[workers.length];
@@ -46,7 +46,8 @@ public class WOTaskdComms {
 			Runnable work = new Runnable() {
 				@Override
 				public void run() {
-					responses[j] = hosts.get( j ).sendRequestToWotaskd( aRequest, willChange, false );
+					final MHost host = hosts.get( j );
+					responses[j] = host.sendRequestToWotaskd( request, willChange, false );
 				}
 			};
 
@@ -67,14 +68,14 @@ public class WOTaskdComms {
 	}
 
 	private static void syncHostsWithErrors( final MSiteConfig siteConfig ) {
-		final WORequest syncRequest = syncRequest( siteConfig );
-		final List<MHost> syncHosts = new ArrayList<>( siteConfig.hostErrorArray );
+		final WORequest request = syncRequest( siteConfig );
+		final List<MHost> hosts = new ArrayList<>( siteConfig.hostErrorArray );
 
 		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-			NSLog.debug.appendln( "Sending sync requests to: " + syncHosts );
+			NSLog.debug.appendln( "Sending sync requests to: " + hosts );
 		}
 
-		final Thread[] workers = new Thread[syncHosts.size()];
+		final Thread[] workers = new Thread[hosts.size()];
 
 		for( int i = 0; i < workers.length; i++ ) {
 			final int j = i;
@@ -82,8 +83,8 @@ public class WOTaskdComms {
 			final Runnable work = new Runnable() {
 				@Override
 				public void run() {
-					MHost aHost = syncHosts.get( j );
-					aHost.sendRequestToWotaskd( syncRequest, true, true );
+					MHost host = hosts.get( j );
+					host.sendRequestToWotaskd( request, true, true );
 				}
 			};
 
