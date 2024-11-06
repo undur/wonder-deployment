@@ -39,11 +39,9 @@ public class AppDetailPage extends MonitorComponent {
 	public int numberOfInstancesToAdd = 1;
 	public String instanceNameFilterValue;
 
-	private String _hrefToApp;
-
 	private List<MInstance> _allInstances = new ArrayList<>();
 	private List<MInstance> _selectedInstances = new ArrayList<>();
-	
+
 	public String filterErrorMessage;
 
 	public AppDetailPage( WOContext aWocontext ) {
@@ -263,18 +261,21 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public String hrefToApp() {
-		if( _hrefToApp == null ) {
-			String adaptorURL = siteConfig().woAdaptor();
-			if( adaptorURL == null ) {
-				adaptorURL = WOApplication.application().cgiAdaptorURL();
-			}
-			if( adaptorURL.charAt( adaptorURL.length() - 1 ) == '/' ) {
-				_hrefToApp = adaptorURL + myApplication().name();
-			}
-			else {
-				_hrefToApp = adaptorURL + "/" + myApplication().name();
-			}
+		String adaptorURL = siteConfig().woAdaptor();
+
+		if( adaptorURL == null ) {
+			adaptorURL = WOApplication.application().cgiAdaptorURL();
 		}
+
+		String _hrefToApp;
+
+		if( adaptorURL.charAt( adaptorURL.length() - 1 ) == '/' ) {
+			_hrefToApp = adaptorURL + myApplication().name();
+		}
+		else {
+			_hrefToApp = adaptorURL + "/" + myApplication().name();
+		}
+		
 		return _hrefToApp;
 	}
 
@@ -380,7 +381,7 @@ public class AppDetailPage extends MonitorComponent {
 	public List<MInstance> allInstances() {
 		return _allInstances;
 	}
-	
+
 	private void setAllInstances( List<MInstance> value ) {
 		_allInstances = value;
 	}
@@ -388,7 +389,7 @@ public class AppDetailPage extends MonitorComponent {
 	private List<MInstance> selectedInstances() {
 		return _selectedInstances;
 	}
-	
+
 	private void setSelectedInstances( List<MInstance> value ) {
 		_selectedInstances = value;
 	}
@@ -476,7 +477,7 @@ public class AppDetailPage extends MonitorComponent {
 					handler().startWriting();
 					try {
 						siteConfig().removeInstances_M( application, instances );
-						
+
 						if( siteConfig().hostArray().size() != 0 ) {
 							handler().sendRemoveInstancesToWotaskds( instances, siteConfig().hostArray() );
 						}
@@ -534,21 +535,21 @@ public class AppDetailPage extends MonitorComponent {
 	public WOComponent acceptNewSessionsAllClicked() {
 
 		handler().startReading();
-		
+
 		try {
 			handler().sendRefuseSessionToWotaskds( selectedInstances(), myApplication().hostArray(), false );
 		}
 		finally {
 			handler().endReading();
 		}
-		
+
 		return newDetailPage();
 	}
 
 	public WOComponent refuseNewSessionsAllClicked() {
-		
+
 		handler().startReading();
-		
+
 		try {
 			handler().sendRefuseSessionToWotaskds( selectedInstances(), myApplication().hostArray(), true );
 
@@ -564,7 +565,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent schedulingEnableAllClicked() {
-		
+
 		handler().startReading();
 
 		try {
@@ -687,7 +688,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public String refuseNewSessionsLabel() {
-		return currentInstance.isRefusingNewSessions() ?"On" : "Off";
+		return currentInstance.isRefusingNewSessions() ? "On" : "Off";
 	}
 
 	public String schedulingLabel() {
@@ -723,7 +724,7 @@ public class AppDetailPage extends MonitorComponent {
 		if( value == null ) {
 			return false;
 		}
-		
+
 		return value.booleanValue();
 	}
 
