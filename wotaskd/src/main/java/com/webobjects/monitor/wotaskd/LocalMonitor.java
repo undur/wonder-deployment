@@ -56,9 +56,10 @@ public class LocalMonitor extends ProtoLocalMonitor {
 	boolean _shouldUseSpawn = true;
 	String spawningGrounds = null;
 	Application theApplication = (Application)WOApplication.application();
-	final int _forceQuitDelay = ERXProperties.intForKeyWithDefault( "WOTaskd.killTimeout", 120000 );
-	final int _receiveTimeout = ERXProperties.intForKeyWithDefault( "WOTaskd.receiveTimeout", 5000 );
-	final boolean _forceQuitTaskEnabled = ERXProperties.booleanForKeyWithDefault( "WOTaskd.forceQuitTaskEnabled", false );
+
+	private static final int FORCE_QUIT_DELAY = ERXProperties.intForKeyWithDefault( "WOTaskd.killTimeout", 120000 );
+	private static final int RECEIVE_TIMEOUT = ERXProperties.intForKeyWithDefault( "WOTaskd.receiveTimeout", 5000 );
+	private static final boolean FORCE_QUIT_TASK_ENABLED = ERXProperties.booleanForKeyWithDefault( "WOTaskd.forceQuitTaskEnabled", false );
 
 	public LocalMonitor() {
 		MSiteConfig aConfig = theApplication.siteConfig();
@@ -476,12 +477,12 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		//if WOTaskd.forceQuitTaskEnabled is true, setup a task to check
 		//the instance, if it still doesn't die, then force a QUIT command when
 		//the timer elapses, minimum is 60 seconds, default 120 seconds
-		if( _forceQuitTaskEnabled ) {
-			if( _forceQuitDelay >= 60000 ) {
-				anInstance.scheduleForceQuit( new MInstanceTask.ForceQuit( anInstance ), _forceQuitDelay );
+		if( FORCE_QUIT_TASK_ENABLED ) {
+			if( FORCE_QUIT_DELAY >= 60000 ) {
+				anInstance.scheduleForceQuit( new MInstanceTask.ForceQuit( anInstance ), FORCE_QUIT_DELAY );
 			}
 			else {
-				NSLog.err.appendln( "WOtaskd.killTimeout: " + _forceQuitDelay + " is too small. 60000 milliseconds is the minimum" );
+				NSLog.err.appendln( "WOtaskd.killTimeout: " + FORCE_QUIT_DELAY + " is too small. 60000 milliseconds is the minimum" );
 			}
 		}
 
@@ -499,12 +500,12 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		//the timer elapses minimum is 60 seconds, default 3600 seconds (the default session timeout)
 		//a force quit if WOTaskd.refuseNumRetries is reached and the instance is still alive
 		//an ACCEPT will cancel the monitoring
-		if( _forceQuitTaskEnabled ) {
-			if( _forceQuitDelay >= 60000 ) {
-				anInstance.scheduleRefuseTask( new MInstanceTask.Refuse( anInstance, ERXProperties.intForKeyWithDefault( "WOTaskd.refuseNumRetries", 3 ) ), _forceQuitDelay, _forceQuitDelay );
+		if( FORCE_QUIT_TASK_ENABLED ) {
+			if( FORCE_QUIT_DELAY >= 60000 ) {
+				anInstance.scheduleRefuseTask( new MInstanceTask.Refuse( anInstance, ERXProperties.intForKeyWithDefault( "WOTaskd.refuseNumRetries", 3 ) ), FORCE_QUIT_DELAY, FORCE_QUIT_DELAY );
 			}
 			else {
-				NSLog.err.appendln( "WOtaskd.killTimeout: " + _forceQuitDelay + " is too small. 60000 milliseconds is the minimum" );
+				NSLog.err.appendln( "WOtaskd.killTimeout: " + FORCE_QUIT_DELAY + " is too small. 60000 milliseconds is the minimum" );
 			}
 		}
 
@@ -550,7 +551,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 
 		try {
 			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( anInstance.host().name(), anInstance.port().intValue() );
-			anHTTPConnection.setReceiveTimeout( _receiveTimeout );
+			anHTTPConnection.setReceiveTimeout( RECEIVE_TIMEOUT );
 
 			boolean requestSucceeded = anHTTPConnection.sendRequest( aRequest );
 
