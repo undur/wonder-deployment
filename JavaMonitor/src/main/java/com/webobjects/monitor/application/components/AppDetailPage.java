@@ -182,7 +182,7 @@ public class AppDetailPage extends MonitorComponent {
 	public boolean hasInstances() {
 		final List<MInstance> instancesArray = myApplication().instanceArray();
 
-		if( instancesArray == null || instancesArray.size() == 0 ) {
+		if( instancesArray == null || instancesArray.isEmpty() ) {
 			return false;
 		}
 
@@ -190,13 +190,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public boolean isRefreshEnabled() {
-		final List<MInstance> instancesArray = myApplication().instanceArray();
-
-		if( instancesArray == null || instancesArray.size() == 0 ) {
-			return false;
-		}
-
-		return siteConfig().viewRefreshEnabled().booleanValue();
+		return hasInstances() && siteConfig().viewRefreshEnabled().booleanValue();
 	}
 
 	public WOComponent configureApplicationClicked() {
