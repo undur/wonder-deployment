@@ -55,6 +55,7 @@ public class WOTaskdHandler {
 			System.exit( 1 );
 		}
 
+		// FIXME: This is *probably* so that the hosts in question get marked a requiring synchronization before first use. In which case "hostErrorArray" isn't really a nice variable name // Hugi 2024-11-06
 		for( MHost nextElement : _siteConfig.hostArray() ) {
 			_siteConfig.hostErrorArray.add( nextElement );
 		}
