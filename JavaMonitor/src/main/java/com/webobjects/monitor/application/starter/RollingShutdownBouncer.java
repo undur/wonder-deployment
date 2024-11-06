@@ -99,9 +99,9 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 		NSMutableArray<MInstance> startingInstances = new NSMutableArray<>();
 		for( int i = 0; i < numInstancesToStartPerHost; i++ ) {
 			for( MHost host : activeHosts ) {
-				NSArray<MInstance> inactiveInstancesForHost = MInstance.HOST.eq( host ).filtered( inactiveInstances );
-				if( inactiveInstancesForHost != null && inactiveInstancesForHost.count() >= i ) {
-					MInstance instance = inactiveInstancesForHost.objectAtIndex( i );
+				List<MInstance> inactiveInstancesForHost = MInstance.HOST.eq( host ).filtered( inactiveInstances );
+				if( inactiveInstancesForHost != null && inactiveInstancesForHost.size() >= i ) {
+					MInstance instance = inactiveInstancesForHost.get( i );
 					log( "Starting inactive instance " + instance.displayName() + " on host " + host.addressAsString() );
 					startingInstances.addObject( instance );
 				}
