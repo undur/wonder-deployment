@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webobjects.appserver.WOComponent;
-import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.xml.WOXMLException;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
