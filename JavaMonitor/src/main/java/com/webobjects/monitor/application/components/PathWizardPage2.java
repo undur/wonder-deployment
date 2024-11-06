@@ -14,8 +14,6 @@ package com.webobjects.monitor.application.components;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.foundation.NSKeyValueCodingAdditions;
-import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor.application.MonitorComponent;
 
@@ -38,10 +36,6 @@ public class PathWizardPage2 extends MonitorComponent {
 
 	public void setCallbackKeypath( String aValue ) {
 		callbackKeypath = aValue;
-		if( myApplication() != null ) {
-			String key = lastPropertyKeyInKeyPath( callbackKeypath );
-			aPath = (String)myApplication().valueForKey( key );
-		}
 	}
 
 	public void setCallbackExpand( String aValue ) {
@@ -71,24 +65,7 @@ public class PathWizardPage2 extends MonitorComponent {
 		return aPage;
 	}
 
-	public static PathWizardPage2 create( WOContext context, MApplication application ) {
-		PathWizardPage2 aPage = (PathWizardPage2)context.page().pageWithName( PathWizardPage2.class.getName() );
-		aPage.setMyApplication( application );
-		return aPage;
-	}
-	
-	@Deprecated
-	private static final String lastPropertyKeyInKeyPath( String keyPath ) {
-		String part = null;
-		if( keyPath != null ) {
-			int index = keyPath.lastIndexOf( NSKeyValueCodingAdditions.KeyPathSeparator );
-			if( index != -1 ) {
-				part = keyPath.substring( index + 1 );
-			}
-			else {
-				part = keyPath;
-			}
-		}
-		return part;
+	public static PathWizardPage2 create( WOContext context ) {
+		return (PathWizardPage2)context.page().pageWithName( PathWizardPage2.class.getName() );
 	}
 }

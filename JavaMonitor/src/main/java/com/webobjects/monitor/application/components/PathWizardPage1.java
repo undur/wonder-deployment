@@ -16,7 +16,6 @@ import java.util.List;
  */
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor.application.MonitorComponent;
 
@@ -53,7 +52,7 @@ public class PathWizardPage1 extends MonitorComponent {
 	}
 
 	public WOComponent hostClicked() {
-		PathWizardPage2 aPage = PathWizardPage2.create( context(), myApplication() );
+		PathWizardPage2 aPage = PathWizardPage2.create( context() );
 		aPage.setHost( aCurrentHost );
 		aPage.setCallbackKeypath( callbackKeypath );
 		aPage.setCallbackExpand( callbackExpand );
@@ -93,7 +92,7 @@ public class PathWizardPage1 extends MonitorComponent {
 	}
 
 	public WOComponent onlyHostClicked() {
-		PathWizardPage2 aPage = PathWizardPage2.create( context(), myApplication() );
+		PathWizardPage2 aPage = PathWizardPage2.create( context() );
 		aPage.setHost( hostList().get( 0 ) );
 		aPage.setCallbackKeypath( callbackKeypath );
 		aPage.setCallbackExpand( callbackExpand );
@@ -102,9 +101,7 @@ public class PathWizardPage1 extends MonitorComponent {
 		return aPage;
 	}
 
-	public static PathWizardPage1 create( WOContext context, MApplication appliation ) {
-		PathWizardPage1 aPage = (PathWizardPage1)context.page().pageWithName( PathWizardPage1.class.getName() );
-		aPage.setMyApplication( appliation );
-		return aPage;
+	public static PathWizardPage1 create( WOContext context ) {
+		return (PathWizardPage1)context.page().pageWithName( PathWizardPage1.class.getName() );
 	}
 }
