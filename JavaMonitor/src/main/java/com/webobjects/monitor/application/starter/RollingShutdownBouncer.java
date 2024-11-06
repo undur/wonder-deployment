@@ -95,22 +95,25 @@ public class RollingShutdownBouncer extends ApplicationStarter {
 	// FIXME: Fix up that old ERXKey thing // Hugi 2024-11-03
 	protected List<MInstance> instancesToStart( List<MInstance> inactiveInstances, List<MHost> activeHosts, int numInstancesToStartPerHost ) {
 		throw new RuntimeException( "Missing ERXKey, look into this" ); // FIXME Hugi 2021-11-13
+
 		/*
-		NSMutableArray<MInstance> startingInstances = new NSMutableArray<>();
+		final List<MInstance> startingInstances = new ArrayList<>();
+
 		for( int i = 0; i < numInstancesToStartPerHost; i++ ) {
 			for( MHost host : activeHosts ) {
 				List<MInstance> inactiveInstancesForHost = MInstance.HOST.eq( host ).filtered( inactiveInstances );
 				if( inactiveInstancesForHost != null && inactiveInstancesForHost.size() >= i ) {
 					MInstance instance = inactiveInstancesForHost.get( i );
 					log( "Starting inactive instance " + instance.displayName() + " on host " + host.addressAsString() );
-					startingInstances.addObject( instance );
+					startingInstances.add( instance );
 				}
 				else {
 					log( "Not enough inactive instances on host: " + host.addressAsString() );
 				}
 			}
 		}
-		return startingInstances.immutableClone();
+
+		return startingInstances;
 		*/
 	}
 
