@@ -42,6 +42,8 @@ import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.MonitorException;
 
+import x.ResponseWrapper;
+
 public class DirectAction extends WODirectAction {
 	private NSMutableDictionary hostResponse;
 	private NSDictionary element;
@@ -631,7 +633,7 @@ public class DirectAction extends WODirectAction {
 			return;
 
 		Thread[] workers = new Thread[theCount];
-		final WOResponse[] responses = new WOResponse[theCount];
+		final ResponseWrapper[] responses = new ResponseWrapper[theCount];
 
 		for( int i = 0; i < theCount; i++ ) {
 			final int j = i;
@@ -668,7 +670,7 @@ public class DirectAction extends WODirectAction {
 		}
 
 		for( int i = 0; i < theCount; i++ ) {
-			WOResponse aResponse = responses[i];
+			ResponseWrapper aResponse = responses[i];
 			MInstance anInstance = (MInstance)instArray.objectAtIndex( i );
 			if( aResponse != null ) {
 				anInstance.updateRegistration( new NSTimestamp() );
@@ -680,7 +682,7 @@ public class DirectAction extends WODirectAction {
 				}
 
 				NSDictionary instanceResponse = null;
-				NSData responseContent = aResponse.content();
+				NSData responseContent = new NSData( aResponse.content() );
 				try {
 					instanceResponse = (NSDictionary)new CoderWrapper().decodeRootObject( responseContent );
 				}

@@ -12,16 +12,17 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor._private;
 
-import com.webobjects.appserver.WOResponse;
+import x.ResponseWrapper;
 
 public abstract class ProtoLocalMonitor {
+
 	public abstract String startInstance( MInstance anInstance ) throws MonitorException;
 
-	public abstract WOResponse terminateInstance( MInstance anInstance ) throws MonitorException;
+	public abstract ResponseWrapper terminateInstance( MInstance anInstance ) throws MonitorException;
 
-	public abstract WOResponse stopInstance( MInstance anInstance ) throws MonitorException;
+	public abstract ResponseWrapper stopInstance( MInstance anInstance ) throws MonitorException;
 
-	public abstract WOResponse queryInstance( MInstance anInstance ) throws MonitorException;
+	public abstract ResponseWrapper queryInstance( MInstance anInstance ) throws MonitorException;
 
 	public abstract StringBuffer generateAdaptorConfigXML();
 }

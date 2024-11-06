@@ -16,17 +16,24 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpRequest.Builder;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 import java.util.Enumeration;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.webobjects.appserver.WOApplication;
-import com.webobjects.appserver.WOHTTPConnection;
-import com.webobjects.appserver.WORequest;
-import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.WOTimer;
 import com.webobjects.appserver._private.WOHostUtilities;
 import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSForwardException;
 import com.webobjects.foundation.NSLog;
@@ -46,6 +53,7 @@ import com.webobjects.monitor._private.ProtoLocalMonitor;
 import com.webobjects.monitor._private.StringExtensions;
 
 import er.extensions.foundation.ERXProperties;
+import x.ResponseWrapper;
 
 public class LocalMonitor extends ProtoLocalMonitor {
 	WOTimer aScheduleTimer;
@@ -470,7 +478,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 	}
 
 	@Override
-	public WOResponse terminateInstance( MInstance anInstance ) throws MonitorException {
+	public ResponseWrapper terminateInstance( MInstance anInstance ) throws MonitorException {
 		if( !anInstance.isRunning_W() )
 			return null;
 
@@ -492,7 +500,7 @@ public class LocalMonitor extends ProtoLocalMonitor {
 	}
 
 	@Override
-	public WOResponse stopInstance( MInstance anInstance ) throws MonitorException {
+	public ResponseWrapper stopInstance( MInstance anInstance ) throws MonitorException {
 		if( !anInstance.isRunning_W() )
 			return null;
 
@@ -514,14 +522,14 @@ public class LocalMonitor extends ProtoLocalMonitor {
 		return sendInstanceRequest( _hostName, anInstance, xmlDict );
 	}
 
-	public WOResponse setAcceptInstance( MInstance anInstance ) throws MonitorException {
+	public ResponseWrapper setAcceptInstance( MInstance anInstance ) throws MonitorException {
 		catchInstanceErrors( anInstance );
 		NSDictionary xmlDict = createInstanceRequestDictionary( "ACCEPT", null, anInstance );
 		return sendInstanceRequest( _hostName, anInstance, xmlDict );
 	}
 
 	@Override
-	public WOResponse queryInstance( MInstance anInstance ) throws MonitorException {
+	public ResponseWrapper queryInstance( MInstance anInstance ) throws MonitorException {
 		catchInstanceErrors( anInstance );
 		NSDictionary xmlDict = createInstanceRequestDictionary( null, "STATISTICS", anInstance );
 		return sendInstanceRequest( _hostName, anInstance, xmlDict );
@@ -537,31 +545,43 @@ public class LocalMonitor extends ProtoLocalMonitor {
 			throw new MonitorException( _hostName + ": " + anInstance.displayName() + " is not running" );
 	}
 
+	private static final Logger logger = LoggerFactory.getLogger( LocalMonitor.class );
+
 	/**
 	 * FIXME: Switch to java http client // Hugi 2024-11-01
 	 */
-	private static WOResponse sendInstanceRequest( final String hostName, final MInstance anInstance, final NSDictionary xmlDict ) throws MonitorException {
+	private static ResponseWrapper sendInstanceRequest( final String hostName, final MInstance anInstance, final NSDictionary xmlDict ) throws MonitorException {
 
 		final String requestContentXML = new CoderWrapper().encodeRootObjectForKey( xmlDict, "instanceRequest" );
-		final NSData requestContentData = new NSData( requestContentXML.getBytes() );
 		final String urlString = MObject.ADMIN_ACTION_STRING_PREFIX + anInstance.applicationName() + MObject.ADMIN_ACTION_STRING_POSTFIX;
-		final WORequest aRequest = new WORequest( MObject._POST, urlString, MObject._HTTP1, null, requestContentData, null );
 
-		WOResponse aResponse = null;
+		// FIXME: We should not have to create this here...
+		ResponseWrapper responseWrapper = null;
 
 		try {
-			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( anInstance.host().name(), anInstance.port().intValue() );
-			anHTTPConnection.setReceiveTimeout( RECEIVE_TIMEOUT );
+			final HttpClient client = HttpClient
+					.newBuilder()
+					.build();
 
-			boolean requestSucceeded = anHTTPConnection.sendRequest( aRequest );
+			final Builder requestBuilder = HttpRequest
+					.newBuilder()
+					.uri( URI.create( "http://%s:%s%s".formatted( anInstance.host().name(), anInstance.port(), urlString ) ) )
+					.timeout( Duration.ofMillis( RECEIVE_TIMEOUT ) )
+					.POST( BodyPublishers.ofString( requestContentXML ) );
 
-			if( requestSucceeded ) {
-				aResponse = anHTTPConnection.readResponse();
-			}
-			else {
-				throw new MonitorException( hostName + ": Failed to receive response from " + anInstance.displayName() );
-			}
+			final HttpRequest request = requestBuilder.build();
 
+			logger.info( "--> Sending request: =======" );
+			logger.info( "{}", request );
+			logger.info( requestContentXML );
+
+			final HttpResponse<byte[]> response = client.send( request, BodyHandlers.ofByteArray() );
+			logger.info( "--> Response received =======" );
+			responseWrapper = new ResponseWrapper();
+			responseWrapper._content = response.body();
+			responseWrapper._headers = response.headers();
+			logger.info( "--> End request phase =======" );
+			
 			anInstance.succeededInConnection();
 		}
 		catch( NSForwardException ne ) {
@@ -571,16 +591,12 @@ public class LocalMonitor extends ProtoLocalMonitor {
 			}
 			throw ne;
 		}
-		catch( MonitorException me ) {
-			anInstance.failedToConnect();
-			throw me;
-		}
 		catch( Exception e ) {
 			anInstance.failedToConnect();
 			throw new MonitorException( hostName + ": Error while communicating with " + anInstance.displayName() + ": " + e );
 		}
 
-		return aResponse;
+		return responseWrapper;
 	}
 
 	private NSMutableDictionary createInstanceRequestDictionary( String commandString, String queryString, MInstance anInstance ) {
