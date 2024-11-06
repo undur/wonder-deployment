@@ -31,11 +31,13 @@ public class HostConfigurePage extends MonitorComponent {
 
 	public String hostTypeSelection() {
 		if( _hostTypeSelection == null ) {
-			String type = myHost().osType();
+			final String type = myHost().osType();
+
 			for( int i = hostTypeList.size() - 1; i >= 0; i-- ) {
-				String myHostTypeSelection = (String)hostTypeList.get( i );
-				if( type.equalsIgnoreCase( myHostTypeSelection ) ) {
-					_hostTypeSelection = myHostTypeSelection;
+				String hostType = hostTypeList.get( i );
+
+				if( type.equalsIgnoreCase( hostType ) ) {
+					_hostTypeSelection = hostType;
 				}
 			}
 		}

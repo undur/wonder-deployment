@@ -163,44 +163,48 @@ public class InstConfigurePage extends MonitorComponent {
 	 * FIXME: Introduce an enum in MHost for the type, so we can use an exhaustive switch for those things // Hugi 2024-10-31
 	 */
 	public String pathDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		MHost myHost = myInstance.host();
+		
+		final MInstance anInstance = myInstance();
+		final MApplication anApplication = anInstance.application();
+		final MHost aHost = anInstance.host();
+		
 		String appPath = null;
 
-		if( myHost.osType().equals( "UNIX" ) ) {
-			appPath = myApplication.unixPath();
+		if( aHost.osType().equals( "UNIX" ) ) {
+			appPath = anApplication.unixPath();
 		}
-		else if( myHost.osType().equals( "WINDOWS" ) ) {
-			appPath = myApplication.winPath();
+		else if( aHost.osType().equals( "WINDOWS" ) ) {
+			appPath = anApplication.winPath();
 		}
-		else if( myHost.osType().equals( "MACOSX" ) ) {
-			appPath = myApplication.macPath();
+		else if( aHost.osType().equals( "MACOSX" ) ) {
+			appPath = anApplication.macPath();
 		}
 
-		return diffString( myInstance.path(), appPath );
+		return diffString( anInstance.path(), appPath );
 	}
 
 	/**
 	 * FIXME: Introduce an enum in MHost for the type, so we can use an exhaustive switch for those things // Hugi 2024-10-31
 	 */
 	public String outputDiff() {
-		MInstance myInstance = myInstance();
-		MApplication myApplication = myInstance.application();
-		MHost myHost = myInstance.host();
+
+		final MInstance anInstance = myInstance();
+		final MApplication anApplication = anInstance.application();
+		final MHost aHost = anInstance.host();
+
 		String appOutputPath = null;
 
-		if( myHost.osType().equals( "UNIX" ) ) {
-			appOutputPath = myInstance.generateOutputPath( myApplication.unixOutputPath() );
+		if( aHost.osType().equals( "UNIX" ) ) {
+			appOutputPath = anInstance.generateOutputPath( anApplication.unixOutputPath() );
 		}
-		else if( myHost.osType().equals( "WINDOWS" ) ) {
-			appOutputPath = myInstance.generateOutputPath( myApplication.winOutputPath() );
+		else if( aHost.osType().equals( "WINDOWS" ) ) {
+			appOutputPath = anInstance.generateOutputPath( anApplication.winOutputPath() );
 		}
-		else if( myHost.osType().equals( "MACOSX" ) ) {
-			appOutputPath = myInstance.generateOutputPath( myApplication.macOutputPath() );
+		else if( aHost.osType().equals( "MACOSX" ) ) {
+			appOutputPath = anInstance.generateOutputPath( anApplication.macOutputPath() );
 		}
 
-		return diffString( myInstance.outputPath(), appOutputPath );
+		return diffString( anInstance.outputPath(), appOutputPath );
 	}
 
 	public String minDiff() {
