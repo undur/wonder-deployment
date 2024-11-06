@@ -32,7 +32,6 @@ public class WOTaskdComms {
 
 		// we had errors reaching a host last time - do it again!
 		if( siteConfig.hostErrorArray.count() > 0 ) {
-			_syncRequest = null;
 			final WORequest syncRequest = syncRequest( siteConfig );
 			final _NSThreadsafeMutableArray<MHost> syncHosts = siteConfig.hostErrorArray;
 
@@ -97,17 +96,12 @@ public class WOTaskdComms {
 
 		return responses;
 	}
-	
-	private static WORequest _syncRequest = null;
 
 	private static WORequest syncRequest( final MSiteConfig siteConfig ) {
-		if( _syncRequest == null ) {
-			final NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( siteConfig.dictionaryForArchive(), "SiteConfig" );
-			final NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>( data, "sync" );
-			final NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>( updateWotaskd, "updateWotaskd" );
-			final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ).getBytes() );
-			_syncRequest = new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), content, null );
-		}
-		return _syncRequest;
+		final NSMutableDictionary<String, NSDictionary> data = new NSMutableDictionary<>( siteConfig.dictionaryForArchive(), "SiteConfig" );
+		final NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>> updateWotaskd = new NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>( data, "sync" );
+		final NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>> monitorRequest = new NSMutableDictionary<String, NSMutableDictionary<String, NSMutableDictionary<String, NSDictionary>>>( updateWotaskd, "updateWotaskd" );
+		final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ).getBytes() );
+		return new WORequest( MObject._POST, MObject.WOTASKD_DIRECT_ACTION_URL, MObject._HTTP1, siteConfig.passwordDictionary(), content, null );
 	}
 }
