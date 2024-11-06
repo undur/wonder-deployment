@@ -9,12 +9,17 @@ import com.webobjects.appserver.WOResponse;
 public class ResponseWrapper {
 
 	public WOResponse _woResponse;
+	public byte[] _content;
 
 	public WOResponse woResponse() {
 		return _woResponse;
 	}
 
 	public byte[] content() {
+
+		if( _content != null ) {
+			return _content;
+		}
 
 		if( _woResponse == null ) {
 			return null;
@@ -28,6 +33,10 @@ public class ResponseWrapper {
 	}
 
 	public String contentString() {
+
+		if( _content != null ) {
+			return new String( _content );
+		}
 
 		if( _woResponse == null ) {
 			return null;
