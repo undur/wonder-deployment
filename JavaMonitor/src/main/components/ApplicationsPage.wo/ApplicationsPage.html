@@ -37,14 +37,16 @@
 	</div>
 	<div class="card p-3">
 		<div class="row">
-			<wo:form action="$addApplicationClicked" class="col">
-				<label class="mb-2"><strong>Add Application Named:</strong></label>
-				<span class="input-group">
-					<wo:textfield value="$newApplicationName" placeholder="new application name..." class="form-control" />
-					<wo:submit action="$addApplicationClicked" class="btn" value="Add Application" />
-				</span>
-			</wo:form>
-			<div class="col">
+			<div class="col-md-6">
+				<wo:form action="$addApplicationClicked">
+					<label class="mb-2"><strong>Add Application Named:</strong></label>
+					<span class="input-group">
+						<wo:textfield value="$newApplicationName" placeholder="new application name..." class="form-control" />
+						<wo:submit action="$addApplicationClicked" class="btn" value="Add Application" />
+					</span>
+				</wo:form>
+			</div>
+			<div class="col-md-6 pt-3">
 				<ul>
 					<li>Application names may only contain alpha-numeric or '-'.</li>
 			    	<li>Application names do not need to match the Application executable's filename.</li>

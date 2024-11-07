@@ -33,16 +33,18 @@
 	</div>
 	<div class="card p-3">
 		<div class="row">
-			<wo:form class="col">
-				<label class="mb-2"><strong>Add Host:</strong></label>
-				<span class="input-group">
-					<wo:textfield value="$newHostName" placeholder="hostname or IP address..." class="form-control" />
-					<span class="input-group-text"> of type </span>
-					<wo:popUpButton list="$hostTypeList" selection="$hostTypeSelection" class="form-control" />
-					<wo:submit action="$addHostClicked" value="Add Host" class="btn" />
-				</span> 
-			</wo:form>
-			<div class="col">
+			<div class="col-md-6">
+				<wo:form>
+					<label class="mb-2"><strong>Add Host:</strong></label>
+					<span class="input-group">
+						<wo:textfield value="$newHostName" placeholder="hostname or IP address..." class="form-control" />
+						<span class="input-group-text"> of type </span>
+						<wo:popUpButton list="$hostTypeList" selection="$hostTypeSelection" class="form-control" />
+						<wo:submit action="$addHostClicked" value="Add Host" class="btn" />
+					</span> 
+				</wo:form>
+			</div>
+			<div class="col-md-6 pt-3">
 				<ul>
 					<li>Hosts may be added as either hostnames or IP addresses**</li>
 					<li>* A host is <i>available</i> if it is running the <b>wotaskd</b> service/daemon.</li>
