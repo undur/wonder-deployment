@@ -5,8 +5,10 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
+import com.webobjects.appserver.WOResponse;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.StringExtensions;
@@ -125,13 +127,14 @@ public class HostsPage extends MonitorComponent {
 		return HostConfigurePage.create( context(), currentHost );
 	}
 
-	public WOComponent displayWotaskdInfoClicked() {
+	public WOActionResults displayWotaskdInfoClicked() {
 		final String hostName = currentHost.name();
 		final int port = application().lifebeatDestinationPort();
 
-		final WotaskdInfoPage aPage = pageWithName( WotaskdInfoPage.class );
-		aPage.wotaskdText = JMUtil.fetchWotaskdConfigurationString( hostName, port, siteConfig().password() );
-		return aPage;
+		final WOResponse response = new WOResponse();
+		response.setHeader( "text/html", "content-type" );
+		response.setContent( JMUtil.fetchWotaskdConfigurationString( hostName, port, siteConfig().password() ) );
+		return response;
 	}
 
 	public static HostsPage create( WOContext context ) {
