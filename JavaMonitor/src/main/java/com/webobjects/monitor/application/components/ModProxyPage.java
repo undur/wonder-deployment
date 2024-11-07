@@ -33,6 +33,21 @@ public class ModProxyPage extends MonitorComponent {
 		return _generateModRewriteConfig();
 	}
 
+	/**
+	 * Addded to allow for a null/no configured WO adaptor URL
+	 * 
+	 * FIXME: I'm not sure we should allow this, we should at least show a warning to the user if no adaptor URL is configured // Hugi 2024-11-06
+	 */
+	private String adaptorURL() {
+		String adaptorURL = siteConfig().woAdaptor();
+
+		if( adaptorURL == null ) {
+			adaptorURL = application().cgiAdaptorURL();
+		}
+		
+		return adaptorURL;
+	}
+
 	private String _generateModProxyConfig() {
 		StringBuilder result = new StringBuilder();
 
@@ -52,7 +67,7 @@ public class ModProxyPage extends MonitorComponent {
 		for( MApplication anApp : siteConfig().applicationArray() ) {
 			anApp.extractAdaptorValuesFromSiteConfig();
 
-			String tmpAdaptor = siteConfig().woAdaptor();
+			String tmpAdaptor = adaptorURL();
 			tmpAdaptor = removeEnd( tmpAdaptor, "/" );
 
 			final List<String> tmpPath = Arrays.asList( tmpAdaptor.split( "/" ) );
@@ -163,7 +178,7 @@ public class ModProxyPage extends MonitorComponent {
 		for( MApplication anApp : siteConfig().applicationArray() ) {
 			anApp.extractAdaptorValuesFromSiteConfig();
 
-			String tmpAdaptor = siteConfig().woAdaptor();
+			String tmpAdaptor = adaptorURL();
 			tmpAdaptor = removeEnd( tmpAdaptor, "/" );
 
 			List<String> tmpPath = Arrays.asList( tmpAdaptor.split( "/" ) );
