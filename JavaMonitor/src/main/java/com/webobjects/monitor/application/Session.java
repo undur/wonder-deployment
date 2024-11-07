@@ -37,7 +37,7 @@ public class Session extends ERXSession implements ErrorCollector {
 	/**
 	 * Error/Informational Messages
 	 */
-	private List<String> errorMessages = Collections.synchronizedList( new ArrayList<>() );
+	private List<String> _errorMessages = Collections.synchronizedList( new ArrayList<>() );
 
 	/**
 	 * Indicates that a user is currently logged in
@@ -88,8 +88,10 @@ public class Session extends ERXSession implements ErrorCollector {
 		}
 	}
 
+	/**
+	 * FIXME: OK, this works, but it hurts a little to read... Take a better look // Hugi 2024-11-07 
+	 */
 	public String message() {
-		String _message = null;
 
 		final MSiteConfig siteConfig = WOTaskdHandler.siteConfig();
 
@@ -102,19 +104,18 @@ public class Session extends ERXSession implements ErrorCollector {
 			}
 		}
 
-		logger.debug( "message(): " + errorMessages );
-
-		if( !errorMessages.isEmpty() ) {
-			_message = String.join( ",", errorMessages );
-			errorMessages = Collections.synchronizedList( new ArrayList<>() );
+		if( !_errorMessages.isEmpty() ) {
+			final String message = String.join( ",", _errorMessages );
+			_errorMessages = Collections.synchronizedList( new ArrayList<>() );
+			return message;
 		}
 
-		return _message;
+		return null;
 	}
 
 	public void addErrorIfAbsent( final String error ) {
-		if( !errorMessages.contains( error ) ) {
-			errorMessages.add( error );
+		if( !_errorMessages.contains( error ) ) {
+			_errorMessages.add( error );
 		}
 	}
 
