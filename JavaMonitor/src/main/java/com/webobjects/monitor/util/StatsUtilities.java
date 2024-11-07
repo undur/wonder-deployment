@@ -12,10 +12,11 @@ SUCH DAMAGE.
  */
 package com.webobjects.monitor.util;
 
-import java.util.List;
 import java.util.Map;
 
-import com.webobjects.foundation.NSLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation.NSTimestampFormatter;
 import com.webobjects.monitor._private.MApplication;
@@ -23,19 +24,21 @@ import com.webobjects.monitor._private.MInstance;
 
 public class StatsUtilities {
 
+	private static final Logger logger = LoggerFactory.getLogger( StatsUtilities.class );
+
 	/**
 	 * @return The total number of transactions for all instances of the application 
 	 */
 	public static int totalTransactionsForApplication( final MApplication anApp ) {
-		int totalTransactionsForApplication = 0;
+		int result = 0;
 
-		for( MInstance anInstance : anApp.instanceArray() ) {
-			Map aStatsDict = anInstance.statistics();
+		for( final MInstance instance : anApp.instanceArray() ) {
+			final Map map = instance.statistics();
 
-			if( aStatsDict != null ) {
+			if( map != null ) {
 				try {
-					String transactions = (String)aStatsDict.get( "transactions" );
-					totalTransactionsForApplication += Integer.parseInt( transactions );
+					String value = (String)map.get( "transactions" );
+					result += Integer.parseInt( value );
 				}
 				catch( Throwable ex ) {
 					// do nothing
@@ -43,7 +46,8 @@ public class StatsUtilities {
 				}
 			}
 		}
-		return totalTransactionsForApplication;
+
+		return result;
 	}
 
 	/**
@@ -55,26 +59,23 @@ public class StatsUtilities {
 	}
 
 	public static Integer totalActiveSessionsForApplication( MApplication anApp ) {
-		List<MInstance> anInstArray = anApp.instanceArray();
-		int aTotalActiveSessions = 0;
-		int i;
-		int anInstArrayCount = anInstArray.size();
+		int result = 0;
 
-		for( i = 0; i < anInstArrayCount; i++ ) {
-			MInstance anInstance = anInstArray.get( i );
-			Map aStatsDict = anInstance.statistics();
+		for( final MInstance instance : anApp.instanceArray() ) {
+			final Map map = instance.statistics();
 
-			if( aStatsDict != null ) {
+			if( map != null ) {
 				try {
-					String aValue = (String)aStatsDict.get( "activeSessions" );
-					aTotalActiveSessions = aTotalActiveSessions + Integer.parseInt( aValue );
+					String value = (String)map.get( "activeSessions" );
+					result = result + Integer.parseInt( value );
 				}
 				catch( Throwable ex ) {
 					// do nothing
+					// FIXME: Don't fail silently! // Hugi 2024-10-25
 				}
 			}
 		}
-		return Integer.valueOf( aTotalActiveSessions );
+		return Integer.valueOf( result );
 	}
 
 	/**
@@ -82,8 +83,7 @@ public class StatsUtilities {
 	 * If the monitored application has no running instances, returns Integer.valueOf(0)
 	 */
 	public static Integer totalActiveSessionsForActiveInstancesOfApplication( final MApplication anApp ) {
-		Integer totalActiveSessions = sumStatisticOfActiveInstances( anApp, "activeSessions" );
-		return totalActiveSessions;
+		return sumStatisticOfActiveInstances( anApp, "activeSessions" );
 	}
 
 	/**
@@ -91,52 +91,52 @@ public class StatsUtilities {
 	 * the running instances of the given monitored application.
 	 */
 	private static Integer sumStatisticOfActiveInstances( final MApplication anApp, final String statisticsKey ) {
-		int sum = 0;
-		List<MInstance> instances = anApp.instanceArray();
-		for( MInstance anInstance : instances ) {
-			if( anInstance.isRunning_M() ) {
-				Map statistics = anInstance.statistics();
-				if( statistics != null ) {
+		int result = 0;
+
+		for( final MInstance instance : anApp.instanceArray() ) {
+			if( instance.isRunning_M() ) {
+				final Map map = instance.statistics();
+
+				if( map != null ) {
 					try {
-						String aValue = (String)statistics.get( statisticsKey );
-						sum = sum + Integer.parseInt( aValue );
+						String value = (String)map.get( statisticsKey );
+						result = result + Integer.parseInt( value );
 					}
 					catch( Throwable ex ) {
 						// do nothing
+						// FIXME: Don't fail silently! // Hugi 2024-10-25
 					}
 				}
 			}
 		}
-		Integer sumAsInteger = Integer.valueOf( sum );
-		return sumAsInteger;
+
+		return Integer.valueOf( result );
 	}
 
 	public static Float totalAverageTransactionForApplication( final MApplication anApp ) {
-		List<MInstance> anInstArray = anApp.instanceArray();
+
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
 		float aTotalAvg = (float)0.0;
-		int i;
-		int anInstArrayCount = anInstArray.size();
 
-		for( i = 0; i < anInstArrayCount; i++ ) {
-			MInstance anInstance = (MInstance)anInstArray.get( i );
-			Map aStatsDict = anInstance.statistics();
+		for( MInstance instance : anApp.instanceArray() ) {
+			final Map map = instance.statistics();
 
-			if( aStatsDict != null ) {
+			if( map != null ) {
 				try {
-					String aValue = (String)aStatsDict.get( "transactions" );
-					Integer aTrans = Integer.valueOf( aValue );
+					String value = (String)map.get( "transactions" );
+					Integer aTrans = Integer.valueOf( value );
 
 					if( aTrans.intValue() > 0 ) {
-						aValue = (String)aStatsDict.get( "avgTransactionTime" );
-						Float aTime = Float.valueOf( aValue );
+						value = (String)map.get( "avgTransactionTime" );
+						Float aTime = Float.valueOf( value );
 						aTotalTime = aTotalTime + (aTrans.intValue() * aTime.floatValue());
 						aTotalTrans = aTotalTrans + (aTrans.intValue());
 					}
 				}
 				catch( Throwable ex ) {
 					// do nothing
+					// FIXME: Don't fail silently! // Hugi 2024-10-25
 				}
 			}
 		}
@@ -149,24 +149,21 @@ public class StatsUtilities {
 	}
 
 	public static Float totalAverageIdleTimeForApplication( final MApplication anApp ) {
-		List<MInstance> anInstArray = anApp.instanceArray();
+
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
 		float aTotalAvg = (float)0.0;
-		int i;
-		int instArrayCount = anInstArray.size();
 
-		for( i = 0; i < instArrayCount; i++ ) {
-			MInstance anInstance = anInstArray.get( i );
-			Map aStatsDict = anInstance.statistics();
+		for( final MInstance instance : anApp.instanceArray() ) {
+			final Map map = instance.statistics();
 
-			if( aStatsDict != null ) {
+			if( map != null ) {
 				try {
-					String aValue = (String)aStatsDict.get( "transactions" );
-					Integer aTrans = Integer.valueOf( aValue );
+					String value = (String)map.get( "transactions" );
+					Integer aTrans = Integer.valueOf( value );
 
 					if( aTrans.intValue() > 0 ) {
-						String idleString = (String)aStatsDict.get( "averageIdlePeriod" );
+						String idleString = (String)map.get( "averageIdlePeriod" );
 						Float aTime = Float.valueOf( idleString );
 						aTotalTime = aTotalTime + (aTrans.intValue() * aTime.floatValue());
 						aTotalTrans = aTotalTrans + (aTrans.intValue());
@@ -174,6 +171,7 @@ public class StatsUtilities {
 				}
 				catch( Throwable ex ) {
 					// do nothing
+					// FIXME: Don't fail silently! // Hugi 2024-10-25
 				}
 			}
 		}
@@ -190,48 +188,48 @@ public class StatsUtilities {
 		// FIXME: We're going to replace this with java.time stuff eventually // Hugi 2024-10-25
 		NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%Y:%m:%d:%H:%M:%S %Z" );
 
-		float anOverallRate = (float)0.0;
-		List<MInstance> anInstArray = anApp.instanceArray();
-		int i;
-		int anInstArrayCount = anInstArray.size();
+		float result = (float)0.0;
 
-		for( i = 0; i < anInstArrayCount; i++ ) {
-			MInstance anInstance = anInstArray.get( i );
-			Map aStatsDict = anInstance.statistics();
-			String aStartDate = "";
-			float anInstRate = (float)0.0;
-			Integer aTrans;
+		for( final MInstance instance : anApp.instanceArray() ) {
 
-			if( aStatsDict != null ) {
-				aStartDate = (String)aStatsDict.get( "startedAt" );
+			final Map map = instance.statistics();
+
+			if( map != null ) {
+				String startedAt = (String)map.get( "startedAt" );
+				Integer aTrans;
+				float anInstRate = (float)0.0;
+
 				try {
-					aTrans = Integer.valueOf( (String)aStatsDict.get( "transactions" ) );
+					aTrans = Integer.valueOf( (String)map.get( "transactions" ) );
 				}
 				catch( Throwable ex ) {
 					aTrans = null;
 				}
+
 				if( aTrans != null && (aTrans.intValue() > 0) ) {
 					NSTimestamp aDate;
 					float aRunningTime;
 
 					try {
 						// Important! This relies on the fact that the stats will deliver startdate based on GMT, since new NSTimestamp is also base on GMT!
-						aDate = (NSTimestamp)dateFormatter.parseObject( aStartDate );
+						aDate = (NSTimestamp)dateFormatter.parseObject( startedAt );
 						aRunningTime = (aDate.getTime() - System.currentTimeMillis()) / 1000;
 					}
 					catch( java.text.ParseException ex ) {
 						aRunningTime = (float)0.0;
-						NSLog.err.appendln( "Format error in StatsUtilities: " + aStartDate );
-						NSLog.err.appendln( ex.getErrorOffset() );
-						NSLog.err.appendln( "Actual Transactions Per Second rate is inaccurate." );
+						logger.error( "Format error in StatsUtilities: " + startedAt );
+						logger.error( "{}", ex.getErrorOffset() );
+						logger.error( "Actual Transactions Per Second rate is inaccurate." );
 					}
+
 					if( aRunningTime > 0.0 ) {
 						anInstRate = (aTrans.floatValue()) / aRunningTime;
 					}
 				}
+				result = result + anInstRate;
 			}
-			anOverallRate = anOverallRate + anInstRate;
 		}
-		return Float.valueOf( anOverallRate );
+
+		return Float.valueOf( result );
 	}
 }
