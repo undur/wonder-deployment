@@ -16,12 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.webobjects.foundation.NSDictionary;
-import com.webobjects.foundation.NSKeyValueCoding;
-import com.webobjects.foundation.NSKeyValueCodingAdditions;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation._NSThreadsafeMutableDictionary;
 
-public class MObject implements NSKeyValueCoding {
+public class MObject /* implements NSKeyValueCoding */ {
 
 	public static final List<String> LOAD_SCHEDULERS = new ArrayList<>( List.of( "Default", "Round Robin", "Random", "Load Average", "Custom" ) );
 	public static final List<String> LOAD_SCHEDULER_VALUES = new ArrayList<>( List.of( "DEFAULT", "ROUNDROBIN", "RANDOM", "LOADAVERAGE", "CUSTOM" ) );
@@ -194,40 +192,40 @@ public class MObject implements NSKeyValueCoding {
 		return null;
 	}
 
-	public static boolean canAccessFieldsDirectly() {
-		return true;
-	}
-
+	//	public static boolean canAccessFieldsDirectly() {
+	//		return true;
+	//	}
+	//
 	/**
 	 * FIXME: I… Uhm… Why? I don't really think we need to implement NSKeyValueCoding? // Hugi 2024-11-02
 	 */
-	@Override
-	public Object valueForKey( String key ) {
-		return NSKeyValueCoding.DefaultImplementation.valueForKey( this, key );
-	}
-
-	@Override
-	public void takeValueForKey( Object value, String key ) {
-		NSKeyValueCoding.DefaultImplementation.takeValueForKey( this, value, key );
-	}
-
-	public Object handleQueryWithUnboundKey( String key ) {
-		return NSKeyValueCoding.DefaultImplementation.handleQueryWithUnboundKey( this, key );
-	}
-
-	public void handleTakeValueForUnboundKey( Object value, String key ) {
-		NSKeyValueCoding.DefaultImplementation.handleTakeValueForUnboundKey( this, value, key );
-	}
-
-	public void unableToSetNullForKey( String key ) {
-		NSKeyValueCoding.DefaultImplementation.unableToSetNullForKey( this, key );
-	}
-
-	public Object valueForKeyPath( String keyPath ) {
-		return NSKeyValueCodingAdditions.DefaultImplementation.valueForKeyPath( this, keyPath );
-	}
-
-	public void takeValueForKeyPath( Object value, String keyPath ) {
-		NSKeyValueCodingAdditions.DefaultImplementation.takeValueForKeyPath( this, value, keyPath );
-	}
+	//	@Override
+	//	public Object valueForKey( String key ) {
+	//		return NSKeyValueCoding.DefaultImplementation.valueForKey( this, key );
+	//	}
+	//
+	//	@Override
+	//	public void takeValueForKey( Object value, String key ) {
+	//		NSKeyValueCoding.DefaultImplementation.takeValueForKey( this, value, key );
+	//	}
+	//
+	//	public Object handleQueryWithUnboundKey( String key ) {
+	//		return NSKeyValueCoding.DefaultImplementation.handleQueryWithUnboundKey( this, key );
+	//	}
+	//
+	//	public void handleTakeValueForUnboundKey( Object value, String key ) {
+	//		NSKeyValueCoding.DefaultImplementation.handleTakeValueForUnboundKey( this, value, key );
+	//	}
+	//
+	//	public void unableToSetNullForKey( String key ) {
+	//		NSKeyValueCoding.DefaultImplementation.unableToSetNullForKey( this, key );
+	//	}
+	//
+	//	public Object valueForKeyPath( String keyPath ) {
+	//		return NSKeyValueCodingAdditions.DefaultImplementation.valueForKeyPath( this, keyPath );
+	//	}
+	//
+	//	public void takeValueForKeyPath( Object value, String keyPath ) {
+	//		NSKeyValueCodingAdditions.DefaultImplementation.takeValueForKeyPath( this, value, keyPath );
+	//	}
 }
