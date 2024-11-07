@@ -24,11 +24,11 @@ public class StringExtensions {
 			return false;
 		}
 
-		return (s.equalsIgnoreCase( "_YES" ) ||
+		return s.equalsIgnoreCase( "_YES" ) ||
 				s.equalsIgnoreCase( "Y" ) ||
 				s.equalsIgnoreCase( "YES" ) ||
 				s.equalsIgnoreCase( "true" ) ||
-				s.equalsIgnoreCase( "1" ));
+				s.equalsIgnoreCase( "1" );
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class StringExtensions {
 	@Deprecated
 	public static boolean isValidXMLString( final String s ) {
 
-		if( s == null || s.length() == 0 ) {
+		if( s == null || s.isEmpty() ) {
 			return false;
 		}
 
