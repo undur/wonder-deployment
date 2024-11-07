@@ -23,7 +23,7 @@ public abstract class MonitorComponent extends ERXComponent {
 	private WOTaskdHandler _handler;
 	private MApplication _myApplication;
 	private MInstance _myInstance;
-	private MHost _myHost;
+	
 	private String _message;
 
 	public MonitorComponent( WOContext aWocontext ) {
@@ -82,13 +82,5 @@ public abstract class MonitorComponent extends ERXComponent {
 		assert instance != null;
 		_myInstance = instance;
 		_myApplication = instance.application();
-	}
-
-	public final MHost myHost() {
-		return _myHost;
-	}
-
-	public void setMyHost( MHost host ) {
-		_myHost = host;
 	}
 }

@@ -20,10 +20,13 @@ import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor.application.MonitorComponent;
 
+import er.extensions.appserver.ERXApplication;
+
 public class HostConfigurePage extends MonitorComponent {
 
 	private String _hostTypeSelection;
 	public List<String> hostTypeList = MObject.HOST_TYPES;
+	private MHost _myHost;
 
 	public HostConfigurePage( WOContext aWocontext ) {
 		super( aWocontext );
@@ -74,8 +77,16 @@ public class HostConfigurePage extends MonitorComponent {
 	}
 
 	public static HostConfigurePage create( WOContext context, MHost host ) {
-		HostConfigurePage page = (HostConfigurePage)context.page().pageWithName( HostConfigurePage.class.getName() );
+		final HostConfigurePage page = ERXApplication.erxApplication().pageWithName( HostConfigurePage.class );
 		page.setMyHost( host );
 		return page;
+	}
+	
+	public final MHost myHost() {
+		return _myHost;
+	}
+
+	public void setMyHost( MHost host ) {
+		_myHost = host;
 	}
 }
