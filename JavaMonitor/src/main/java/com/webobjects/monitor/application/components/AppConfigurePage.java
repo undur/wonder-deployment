@@ -52,16 +52,12 @@ public class AppConfigurePage extends MonitorComponent {
 		return aPage;
 	}
 
-	/* ******** New Instance Defaults ******** */
 	public WOComponent defaultsUpdateClicked() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setValues( appDefaults.values() );
 			handler().sendUpdateApplicationToWotaskds( myApplication(), allHosts() );
-		}
-		finally {
-			handler().endReading();
-		}
+		});
 
 		AppConfigurePage aPage = AppConfigurePage.create( context(), myApplication() );
 		aPage.isNewInstanceSectionVisible = true;
@@ -87,6 +83,7 @@ public class AppConfigurePage extends MonitorComponent {
 
 			if( myApplication().isStopped_M() ) {
 				String defaultsName = appDefaults.name();
+
 				if( !defaultsName.equals( myApplication().name() ) ) {
 					MApplication app = myApplication().siteConfig().applicationWithName( appDefaults.name() );
 					if( app == null ) {
@@ -116,7 +113,7 @@ public class AppConfigurePage extends MonitorComponent {
 	}
 
 	private void _defaultsPush() {
-		if( allHosts().size() != 0 ) {
+		if( !allHosts().isEmpty() ) {
 			handler().sendUpdateApplicationAndInstancesToWotaskds( myApplication(), allHosts() );
 		}
 	}
@@ -128,21 +125,19 @@ public class AppConfigurePage extends MonitorComponent {
 	}
 
 	public WOComponent defaultsPushClicked() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setValues( appDefaults.values() );
 			myApplication().pushValuesToInstances();
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updatePathOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setUnixPath( appDefaults.unixPath() );
 			myApplication().setWinPath( appDefaults.winPath() );
 			myApplication().setMacPath( appDefaults.macPath() );
@@ -154,35 +149,34 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takePathFromApplication();
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateAutoRecoverOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setAutoRecover( appDefaults.autoRecover() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
+			final List<MInstance> _instanceArray = myApplication().instanceArray();
+
 			int instanceArrayCount = _instanceArray.size();
+
 			for( int i = 0; i < instanceArrayCount; i++ ) {
 				MInstance anInstance = _instanceArray.get( i );
 				anInstance._takeValueFromApplication( "autoRecover" );
 			}
+
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateMinimumOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setMinimumActiveSessionsCount( appDefaults.minimumActiveSessionsCount() );
 
 			List<MInstance> _instanceArray = myApplication().instanceArray();
@@ -192,16 +186,14 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takeValueFromApplication( "minimumActiveSessionsCount" );
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateCachingOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setCachingEnabled( appDefaults.cachingEnabled() );
 
 			List<MInstance> _instanceArray = myApplication().instanceArray();
@@ -211,16 +203,14 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takeValueFromApplication( "cachingEnabled" );
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateDebuggingOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setDebuggingEnabled( appDefaults.debuggingEnabled() );
 
 			List<MInstance> _instanceArray = myApplication().instanceArray();
@@ -230,16 +220,14 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takeValueFromApplication( "debuggingEnabled" );
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateOutputOnly() {
-		handler().startReading();
-		try {
+		
+		handler().whileReading( () -> {
 			myApplication().setUnixOutputPath( appDefaults.unixOutputPath() );
 			myApplication().setWinOutputPath( appDefaults.winOutputPath() );
 			myApplication().setMacOutputPath( appDefaults.macOutputPath() );
@@ -251,16 +239,14 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takeOutputPathFromApplication();
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateAutoOpenOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setAutoOpenInBrowser( appDefaults.autoOpenInBrowser() );
 
 			List<MInstance> _instanceArray = myApplication().instanceArray();
@@ -270,16 +256,14 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takeValueFromApplication( "autoOpenInBrowser" );
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateLifebeatOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setLifebeatInterval( appDefaults.lifebeatInterval() );
 
 			List<MInstance> _instanceArray = myApplication().instanceArray();
@@ -289,16 +273,14 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takeValueFromApplication( "lifebeatInterval" );
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
 	public WOComponent updateAddArgsOnly() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			myApplication().setAdditionalArgs( appDefaults.additionalArgs() );
 
 			List<MInstance> _instanceArray = myApplication().instanceArray();
@@ -308,14 +290,11 @@ public class AppConfigurePage extends MonitorComponent {
 				anInstance._takeValueFromApplication( "additionalArgs" );
 			}
 			_defaultsPush();
-		}
-		finally {
-			handler().endReading();
-		}
+		});
+
 		return _defaultPage();
 	}
 
-	/* ******** Path Wizard ******** */
 	private WOComponent _pathPickerWizardClicked( String callbackKeyPath, boolean showFiles ) {
 		PathWizardPage1 aPage = PathWizardPage1.create( context() );
 		aPage.setCallbackKeypath( callbackKeyPath );
@@ -349,38 +328,34 @@ public class AppConfigurePage extends MonitorComponent {
 		return _pathPickerWizardClicked( "appDefaults.macOutputPath", false );
 	}
 
-	/* ******* */
-
-	/* ******** Email Section ******** */
 	public boolean isMailingConfigured() {
-		String aHost = siteConfig().SMTPhost();
-		String anAddress = siteConfig().emailReturnAddr();
+		final String aHost = siteConfig().SMTPhost();
+		final String anAddress = siteConfig().emailReturnAddr();
+
 		if( aHost != null && aHost.length() > 0 && anAddress != null && anAddress.length() > 0 ) {
 			return true;
 		}
+
 		return false;
 	}
 
 	public WOComponent emailUpdateClicked() {
-		handler().startReading();
-		try {
+		
+		handler().whileReading( () -> {
 			handler().sendUpdateApplicationToWotaskds( myApplication(), allHosts() );
-		}
-		finally {
-			handler().endReading();
-		}
+		});
 
 		AppConfigurePage aPage = AppConfigurePage.create( context(), myApplication() );
 		aPage.isEmailSectionVisible = true;
 		return aPage;
 	}
 
-	/* ******* */
-
-	/* ******** Scheduling Section ******** */
 	public boolean shouldSchedule() {
-		if( myApplication().instanceArray().count() != 0 )
+
+		if( myApplication().instanceArray().count() != 0 ) {
 			return true;
+		}
+
 		return false;
 	}
 
@@ -427,22 +402,17 @@ public class AppConfigurePage extends MonitorComponent {
 	}
 
 	public WOComponent schedulingUpdateClicked() {
-		handler().startReading();
-		try {
+		
+		handler().whileReading( () -> {
 			if( (myApplication().instanceArray().count() != 0) && (allHosts().size() != 0) ) {
 				handler().sendUpdateInstancesToWotaskds( myApplication().instanceArray(), allHosts() );
 			}
-		}
-		finally {
-			handler().endReading();
-		}
+		});
 
 		AppConfigurePage aPage = AppConfigurePage.create( context(), myApplication() );
 		aPage.isSchedulingSectionVisible = true;
 		return aPage;
 	}
-
-	/** ******* */
 
 	/** ******** Adaptor Settings Section ******** */
 	public String _loadSchedulerSelection = null;
@@ -485,8 +455,8 @@ public class AppConfigurePage extends MonitorComponent {
 	}
 
 	public WOComponent adaptorUpdateClicked() {
-		handler().startReading();
-		try {
+
+		handler().whileReading( () -> {
 			String newValue;
 			int i = loadSchedulerList.indexOf( _loadSchedulerSelection );
 			if( i == 0 ) {
@@ -494,6 +464,7 @@ public class AppConfigurePage extends MonitorComponent {
 			}
 			else if( i == (loadSchedulerList.size() - 1) ) {
 				newValue = customSchedulerName;
+
 				if( !StringExtensions.isValidXMLString( newValue ) ) {
 					newValue = null;
 				}
@@ -504,10 +475,7 @@ public class AppConfigurePage extends MonitorComponent {
 			myApplication().setScheduler( newValue );
 
 			handler().sendUpdateApplicationToWotaskds( myApplication(), allHosts() );
-		}
-		finally {
-			handler().endReading();
-		}
+		});
 
 		AppConfigurePage aPage = AppConfigurePage.create( context(), myApplication() );
 		aPage.isAdaptorSettingsSectionVisible = true;
@@ -527,5 +495,4 @@ public class AppConfigurePage extends MonitorComponent {
 		page.appDefaults = new MApplication( application.values(), _sc, null );
 		return page;
 	}
-
 }
