@@ -26,7 +26,7 @@ public class StatsUtilities {
 	/**
 	 * @return The total number of transactions for all instances of the application 
 	 */
-	public static int totalTransactionsForApplication( MApplication anApp ) {
+	public static int totalTransactionsForApplication( final MApplication anApp ) {
 		int totalTransactionsForApplication = 0;
 
 		for( MInstance anInstance : anApp.instanceArray() ) {
@@ -50,8 +50,8 @@ public class StatsUtilities {
 	 * Returns the total number of transactions for running instances of the given monitored application
 	 * If the monitored application has no running instances, returns Integer.valueOf(0)
 	 */
-	public static Integer totalTransactionsForActiveInstancesOfApplication( MApplication monitoredApplication ) {
-		return sumStatisticOfActiveInstances( monitoredApplication, "transactions" );
+	public static Integer totalTransactionsForActiveInstancesOfApplication( final MApplication anApp ) {
+		return sumStatisticOfActiveInstances( anApp, "transactions" );
 	}
 
 	public static Integer totalActiveSessionsForApplication( MApplication anApp ) {
@@ -81,8 +81,8 @@ public class StatsUtilities {
 	 * Returns the total number of active sessions for running instances of the given monitored application
 	 * If the monitored application has no running instances, returns Integer.valueOf(0)
 	 */
-	public static Integer totalActiveSessionsForActiveInstancesOfApplication( MApplication monitoredApplication ) {
-		Integer totalActiveSessions = sumStatisticOfActiveInstances( monitoredApplication, "activeSessions" );
+	public static Integer totalActiveSessionsForActiveInstancesOfApplication( final MApplication anApp ) {
+		Integer totalActiveSessions = sumStatisticOfActiveInstances( anApp, "activeSessions" );
 		return totalActiveSessions;
 	}
 
@@ -90,9 +90,9 @@ public class StatsUtilities {
 	 * Calculates and returns the sum of the statistic indicated by the given statisticsKey for
 	 * the running instances of the given monitored application.
 	 */
-	private static Integer sumStatisticOfActiveInstances( MApplication monitoredApplication, String statisticsKey ) {
+	private static Integer sumStatisticOfActiveInstances( final MApplication anApp, final String statisticsKey ) {
 		int sum = 0;
-		List<MInstance> instances = monitoredApplication.instanceArray();
+		List<MInstance> instances = anApp.instanceArray();
 		for( MInstance anInstance : instances ) {
 			if( anInstance.isRunning_M() ) {
 				Map statistics = anInstance.statistics();
@@ -111,7 +111,7 @@ public class StatsUtilities {
 		return sumAsInteger;
 	}
 
-	public static Float totalAverageTransactionForApplication( MApplication anApp ) {
+	public static Float totalAverageTransactionForApplication( final MApplication anApp ) {
 		List<MInstance> anInstArray = anApp.instanceArray();
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
@@ -148,7 +148,7 @@ public class StatsUtilities {
 		return Float.valueOf( aTotalAvg );
 	}
 
-	public static Float totalAverageIdleTimeForApplication( MApplication anApp ) {
+	public static Float totalAverageIdleTimeForApplication( final MApplication anApp ) {
 		List<MInstance> anInstArray = anApp.instanceArray();
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
@@ -185,7 +185,7 @@ public class StatsUtilities {
 		return Float.valueOf( aTotalAvg );
 	}
 
-	public static Float actualTransactionsPerSecondForApplication( MApplication anApp ) {
+	public static Float actualTransactionsPerSecondForApplication( final MApplication anApp ) {
 
 		// FIXME: We're going to replace this with java.time stuff eventually // Hugi 2024-10-25
 		NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%Y:%m:%d:%H:%M:%S %Z" );
