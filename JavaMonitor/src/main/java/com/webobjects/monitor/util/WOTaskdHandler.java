@@ -591,8 +591,8 @@ public class WOTaskdHandler {
 							final MInstance anInstance = siteConfig().instanceWithHostnameAndPort( host, port );
 
 							if( anInstance != null ) {
-								for( int k = 0; k < MObject.stateArray.length; k++ ) {
-									if( MObject.stateArray[k].equals( runningState ) ) {
+								for( int k = 0; k < MObject.INSTANCE_STATES.length; k++ ) {
+									if( MObject.INSTANCE_STATES[k].equals( runningState ) ) {
 										anInstance.state = k;
 										break;
 									}

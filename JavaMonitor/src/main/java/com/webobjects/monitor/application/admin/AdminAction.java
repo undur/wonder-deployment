@@ -367,7 +367,7 @@ public class AdminAction extends WODirectAction {
 			result += "\"id\": \"" + minstance.id() + "\", ";
 			result += "\"host\": \"" + minstance.hostName() + "\", ";
 			result += "\"port\": \"" + minstance.port() + "\", ";
-			result += "\"state\": \"" + MObject.stateArray[minstance.state] + "\", ";
+			result += "\"state\": \"" + MObject.INSTANCE_STATES[minstance.state] + "\", ";
 			result += "\"deaths\": \"" + minstance.deathCount() + "\", ";
 			result += "\"refusingNewSessions\": " + minstance.isRefusingNewSessions() + ", ";
 			result += "\"scheduled\": " + minstance.isScheduled() + ", ";

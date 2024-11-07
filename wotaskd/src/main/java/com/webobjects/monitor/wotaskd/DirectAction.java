@@ -583,7 +583,7 @@ public class DirectAction extends WODirectAction {
 						id = anInstance.id();
 						host = anInstance.hostName();
 						port = anInstance.port();
-						runningState = MObject.stateArray[anInstance.state];
+						runningState = MObject.INSTANCE_STATES[anInstance.state];
 						statistics = anInstance.statistics();
 						refusingNewSessions = (anInstance.isRefusingNewSessions()) ? Boolean.TRUE : Boolean.FALSE;
 						deaths = anInstance.deaths();
