@@ -15,7 +15,6 @@ package com.webobjects.monitor.application;
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
-import com.webobjects.foundation.NSPropertyListSerialization;
 import com.webobjects.monitor.application.components.ApplicationsPage;
 import com.webobjects.monitor.application.components.JMLoginPage;
 import com.webobjects.monitor.util.StatsUtilitiesEvenMore;
@@ -58,7 +57,7 @@ public class DirectAction extends ERXDirectAction {
 		final String pw = context().request().stringFormValueForKey( "pw" );
 
 		if( WOTaskdHandler.siteConfig().compareStringWithPassword( pw ) ) {
-			response.appendContentString( NSPropertyListSerialization.stringFromPropertyList( StatsUtilitiesEvenMore.statistics() ) );
+			response.appendContentString( StatsUtilitiesEvenMore.statisticsString() );
 		}
 
 		return response;

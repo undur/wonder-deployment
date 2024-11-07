@@ -6,6 +6,7 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
+import com.webobjects.foundation.NSPropertyListSerialization;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
@@ -16,7 +17,11 @@ import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
 
 public class StatsUtilitiesEvenMore {
 
-	public static NSArray statistics() {
+	public static String statisticsString() {
+		return NSPropertyListSerialization.stringFromPropertyList( StatsUtilitiesEvenMore.statistics() );
+	}
+
+	private static NSArray statistics() {
 		final WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
 			public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
 
