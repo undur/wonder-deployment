@@ -547,9 +547,6 @@ public class LocalMonitor extends ProtoLocalMonitor {
 
 	private static final Logger logger = LoggerFactory.getLogger( LocalMonitor.class );
 
-	/**
-	 * FIXME: Switch to java http client // Hugi 2024-11-01
-	 */
 	private static ResponseWrapper sendInstanceRequest( final String hostName, final MInstance anInstance, final NSDictionary xmlDict ) throws MonitorException {
 
 		final String requestContentXML = new CoderWrapper().encodeRootObjectForKey( xmlDict, "instanceRequest" );
