@@ -194,22 +194,6 @@ public class MObject implements NSKeyValueCoding {
 		return null;
 	}
 
-	public static String validatedStats( String value ) {
-		if( value == null ) {
-			return "0";
-		}
-
-		int i = value.indexOf( '.' );
-		int sLen = value.length() - 1;
-		if( i == -1 ) {
-			return value;
-		}
-		if( (i + 3) > sLen ) {
-			return value;
-		}
-		return value.substring( 0, (i + 4) );
-	}
-
 	public static boolean canAccessFieldsDirectly() {
 		return true;
 	}

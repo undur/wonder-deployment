@@ -512,11 +512,30 @@ public class MInstance extends MObject {
 	}
 
 	public void setStatistics( NSDictionary newStatistics ) {
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "transactions" ) ), "transactions" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "activeSessions" ) ), "activeSessions" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "avgTransactionTime" ) ), "avgTransactionTime" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "averageIdlePeriod" ) ), "averageIdlePeriod" );
-		_statistics.takeValueForKey( MObject.validatedStats( (String)newStatistics.valueForKey( "startedAt" ) ), "startedAt" );
+		_statistics.takeValueForKey( validatedStats( (String)newStatistics.valueForKey( "transactions" ) ), "transactions" );
+		_statistics.takeValueForKey( validatedStats( (String)newStatistics.valueForKey( "activeSessions" ) ), "activeSessions" );
+		_statistics.takeValueForKey( validatedStats( (String)newStatistics.valueForKey( "avgTransactionTime" ) ), "avgTransactionTime" );
+		_statistics.takeValueForKey( validatedStats( (String)newStatistics.valueForKey( "averageIdlePeriod" ) ), "averageIdlePeriod" );
+		_statistics.takeValueForKey( validatedStats( (String)newStatistics.valueForKey( "startedAt" ) ), "startedAt" );
+	}
+
+	/**
+	 * FIXME: This reeally looks like it's just here to validate potentially bad data from wotaskd // Hugi 2024-11-07
+	 */
+	private static String validatedStats( String value ) {
+		if( value == null ) {
+			return "0";
+		}
+
+		int i = value.indexOf( '.' );
+		int sLen = value.length() - 1;
+		if( i == -1 ) {
+			return value;
+		}
+		if( (i + 3) > sLen ) {
+			return value;
+		}
+		return value.substring( 0, (i + 4) );
 	}
 
 	public String transactions() {
