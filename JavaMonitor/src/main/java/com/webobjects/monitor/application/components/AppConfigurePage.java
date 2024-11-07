@@ -69,8 +69,8 @@ public class AppConfigurePage extends MonitorComponent {
 	}
 
 	public WOComponent updateAppDefaultsOnly() {
-		handler().startReading();
-		try {
+		
+		handler().whileReading( () -> {
 			myApplication().setStartingPort( appDefaults.startingPort() );
 			myApplication().setTimeForStartup( appDefaults.timeForStartup() );
 			myApplication().setPhasedStartup( appDefaults.phasedStartup() );
@@ -108,10 +108,7 @@ public class AppConfigurePage extends MonitorComponent {
 			else {
 				_defaultsPush();
 			}
-		}
-		finally {
-			handler().endReading();
-		}
+		});
 
 		AppConfigurePage aPage = AppConfigurePage.create( context(), myApplication() );
 		aPage.isAppConfigureSectionVisible = true;

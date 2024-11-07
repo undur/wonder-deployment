@@ -91,6 +91,20 @@ public class WOTaskdHandler {
 	}
 
 	/**
+	 * Performs the given stuff while keeping a read lock  
+	 */
+	public void whileReading( final Runnable stuffToDoWhileReading ) {
+		startReading();
+		
+		try {
+			stuffToDoWhileReading.run();
+		}
+		finally {
+			endReading();
+		}
+	}
+
+	/**
 	 * FIXME: OK, this is not nice. It's checking which page is invoking this method and then updating status accordingly // Hugi 2024-10-27
 	 */
 	@Deprecated
