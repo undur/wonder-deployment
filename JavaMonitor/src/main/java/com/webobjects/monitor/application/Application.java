@@ -18,6 +18,7 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation._NSUtilities;
 import com.webobjects.monitor._private.MApplication;
+import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor.application.admin.AdminAction;
 import com.webobjects.monitor.util.WOTaskdHandler;
 
@@ -64,5 +65,10 @@ public class Application extends ERXApplication {
 			NSLog.allowDebugLoggingForGroups( NSLog.DebugGroupDeployment );
 			NSLog.debug.setAllowedDebugLevel( NSLog.DebugLevelDetailed );
 		}
+	}
+
+	@Deprecated
+	public MSiteConfig siteConfig() {
+		return WOTaskdHandler.siteConfig();
 	}
 }
