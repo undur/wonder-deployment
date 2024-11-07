@@ -1,32 +1,35 @@
-<h2 class="SectionHeading">Choose a path:</h2>
-<webobject name="JumpToForm">
-  <p>Jump to: <webobject name="JumpToTextField" /> <webobject name="SubmitJumpTo" /></p>
-  <p class="Warning"><webobject name="MessageString" /></p>
-</webobject>
-<webobject name="ShowFileBrowser">
-  <p>Current directory: <code><webobject name="CurrentFilePath" /></code> <webobject name="SelectCurrentDirectoryLink"><span>Select Current</span></webobject></p>
-  <table class="FileBrowseTable">
-    <tr>
-      <th>Name</th>
-      <th>Size</th>
-      <th>Selection</th>
-    </tr>
-    <tr>
-      <td colspan="3"><webobject name="BackLink">.. Back (Up one directory level)</webobject></td>
-    </tr>
-    <webobject name="RowRepetition">
-      <tr>
-        <td class="FileNameWrapper">
-            <webobject name="IsDirectory">
-              <webobject name="DirectoryLink"><webobject name="DirImage" />&nbsp;<webobject name="FileString" /></webobject>
-            </webobject>
-            <webobject name="IsNOTDirectory">
-              <webobject name="SpacerImage" />&nbsp;<webobject name="FileString" />
-            </webobject>
-        </td>
-        <td class="FileSizeWrapper"><webobject name="FileSizeString" /></td>
-        <td class="SelectDirectoryWrapper"><webobject name="SelectThisLink">Select</webobject></td>
-      </tr>
-    </webobject>
-  </table>
-</webobject>
+<h2>Choose a path:</h2>
+
+<wo:form action="$directoryClicked">
+	<p>Jump to: <wo:textfield value="$startingPath" /> <wo:submit action="$jumpToClicked" /></p>
+	<p class="Warning"><wo:str value="$errorMsg" /></p>
+</wo:form>
+
+<wo:if condition="$hasErrorMsg" negate="$true">
+	<p>Current directory: <code><wo:str value="$startingPath" /></code> <wo:link action="$selectCurrentDirClicked"><span>Select Current</span></wo:link></p>
+	
+	<table class="table table-striped table-sm">
+		<tr>
+			<th>Name</th>
+			<th>Size</th>
+			<th>Selection</th>
+		</tr>
+		<tr>
+			<td colspan="3"><wo:link action="$backClicked">.. Back (Up one directory level)</wo:link></td>
+		</tr>
+		<wo:repetition list="$fileList" item="$aCurrentFile">
+			<tr>
+				<td>
+					<wo:if condition="$isCurrentFileDirectory">
+						<wo:link action="$directoryClicked"><wo:img filename="DirectoryIcon.gif" width="12" height="12" /> <wo:str value="$aCurrentFile.file" /></wo:link>
+					</wo:if>
+					<wo:if condition="$isCurrentFileDirectory" negate="$true">
+						<wo:img filename="TransparentPixel.gif" width="12" height="1" /> <wo:str value="$aCurrentFile.file" />
+					</wo:if>
+				</td>
+				<td><wo:str value="$aCurrentFile.fileSize" /></td>
+				<td><wo:link action="$selectClicked">Select</wo:link></td>
+			</tr>
+		</wo:repetition>
+	</table>
+</wo:if>
