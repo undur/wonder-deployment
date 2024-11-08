@@ -723,35 +723,35 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public Integer totalTransactions() {
-		return StatsUtilities.totalTransactionsForApplication( myApplication() );
+		return StatsUtilities.totalTransactions( myApplication() );
 	}
 
 	public Integer totalTransactionsForActiveInstances() {
-		return StatsUtilities.totalTransactionsForActiveInstancesOfApplication( myApplication() );
+		return StatsUtilities.totalTransactionsForRunningInstances( myApplication() );
 	}
 
 	public Integer totalActiveSessions() {
-		return StatsUtilities.totalActiveSessionsForApplication( myApplication() );
+		return StatsUtilities.totalActiveSessions( myApplication() );
 	}
 
 	public Integer totalActiveSessionsForActiveInstances() {
-		return StatsUtilities.totalActiveSessionsForActiveInstancesOfApplication( myApplication() );
+		return StatsUtilities.totalActiveSessionsForRunningInstances( myApplication() );
 	}
 
 	public Float totalAverageTransaction() {
-		return StatsUtilities.totalAverageTransactionForApplication( myApplication() );
+		return StatsUtilities.totalAverageTransaction( myApplication() );
 	}
 
 	public Float totalAverageIdleTime() {
-		return StatsUtilities.totalAverageIdleTimeForApplication( myApplication() );
+		return StatsUtilities.totalAverageIdleTime( myApplication() );
 	}
 
 	public Float actualRatePerSecond() {
-		return StatsUtilities.actualTransactionsPerSecondForApplication( myApplication() );
+		return StatsUtilities.actualTransactionsPerSecond( myApplication() );
 	}
 
 	public Float actualRatePerMinute() {
-		Float aNumber = StatsUtilities.actualTransactionsPerSecondForApplication( myApplication() );
+		Float aNumber = StatsUtilities.actualTransactionsPerSecond( myApplication() );
 		return Float.valueOf( (aNumber.floatValue() * 60) );
 	}
 

@@ -29,72 +29,36 @@ public class StatsUtilities {
 	/**
 	 * @return The total number of transactions for all instances of the application 
 	 */
-	public static int totalTransactionsForApplication( final MApplication anApp ) {
-		int result = 0;
-
-		for( final MInstance instance : anApp.instanceArray() ) {
-			final Map map = instance.statistics();
-
-			if( map != null ) {
-				try {
-					String value = (String)map.get( "transactions" );
-					result += Integer.parseInt( value );
-				}
-				catch( Throwable ex ) {
-					// do nothing
-					// FIXME: Don't fail silently! // Hugi 2024-10-25
-				}
-			}
-		}
-
-		return result;
+	public static Integer totalTransactions( final MApplication anApp ) {
+		return intTotal( anApp, "transactions", false );
 	}
 
 	/**
-	 * Returns the total number of transactions for running instances of the given monitored application
-	 * If the monitored application has no running instances, returns Integer.valueOf(0)
+	 * @return Total number of transactions for running instances of the given monitored application
 	 */
-	public static Integer totalTransactionsForActiveInstancesOfApplication( final MApplication anApp ) {
-		return sumStatisticOfActiveInstances( anApp, "transactions" );
+	public static Integer totalTransactionsForRunningInstances( final MApplication anApp ) {
+		return intTotal( anApp, "transactions", true );
 	}
 
-	public static Integer totalActiveSessionsForApplication( MApplication anApp ) {
-		int result = 0;
-
-		for( final MInstance instance : anApp.instanceArray() ) {
-			final Map map = instance.statistics();
-
-			if( map != null ) {
-				try {
-					String value = (String)map.get( "activeSessions" );
-					result = result + Integer.parseInt( value );
-				}
-				catch( Throwable ex ) {
-					// do nothing
-					// FIXME: Don't fail silently! // Hugi 2024-10-25
-				}
-			}
-		}
-		return Integer.valueOf( result );
+	public static Integer totalActiveSessions( MApplication anApp ) {
+		return intTotal( anApp, "activeSessions", false );
 	}
 
 	/**
-	 * Returns the total number of active sessions for running instances of the given monitored application
-	 * If the monitored application has no running instances, returns Integer.valueOf(0)
+	 * @return Total number of active sessions for running instances of the given monitored application
 	 */
-	public static Integer totalActiveSessionsForActiveInstancesOfApplication( final MApplication anApp ) {
-		return sumStatisticOfActiveInstances( anApp, "activeSessions" );
+	public static Integer totalActiveSessionsForRunningInstances( final MApplication anApp ) {
+		return intTotal( anApp, "activeSessions", true );
 	}
 
 	/**
-	 * Calculates and returns the sum of the statistic indicated by the given statisticsKey for
-	 * the running instances of the given monitored application.
+	 * @return Sum of the statistic indicated by the given statisticsKey of the given monitored application
 	 */
-	private static Integer sumStatisticOfActiveInstances( final MApplication anApp, final String statisticsKey ) {
+	private static Integer intTotal( final MApplication anApp, final String statisticsKey, final boolean runningOnly ) {
 		int result = 0;
 
 		for( final MInstance instance : anApp.instanceArray() ) {
-			if( instance.isRunning_M() ) {
+			if( !runningOnly || instance.isRunning_M() ) {
 				final Map map = instance.statistics();
 
 				if( map != null ) {
@@ -113,7 +77,7 @@ public class StatsUtilities {
 		return Integer.valueOf( result );
 	}
 
-	public static Float totalAverageTransactionForApplication( final MApplication anApp ) {
+	public static Float totalAverageTransaction( final MApplication anApp ) {
 
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
@@ -148,7 +112,7 @@ public class StatsUtilities {
 		return Float.valueOf( aTotalAvg );
 	}
 
-	public static Float totalAverageIdleTimeForApplication( final MApplication anApp ) {
+	public static Float totalAverageIdleTime( final MApplication anApp ) {
 
 		float aTotalTime = (float)0.0;
 		int aTotalTrans = 0;
@@ -183,7 +147,7 @@ public class StatsUtilities {
 		return Float.valueOf( aTotalAvg );
 	}
 
-	public static Float actualTransactionsPerSecondForApplication( final MApplication anApp ) {
+	public static Float actualTransactionsPerSecond( final MApplication anApp ) {
 
 		// FIXME: We're going to replace this with java.time stuff eventually // Hugi 2024-10-25
 		NSTimestampFormatter dateFormatter = new NSTimestampFormatter( "%Y:%m:%d:%H:%M:%S %Z" );
