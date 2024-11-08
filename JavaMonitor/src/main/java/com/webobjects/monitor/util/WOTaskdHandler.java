@@ -66,6 +66,17 @@ public class WOTaskdHandler {
 		}
 	}
 
+	/**
+	 * Creates a WOTaskdHandler that just logs errors (not sending them anywhere else for handling or display)
+	 */
+	public WOTaskdHandler() {
+		this( errors -> {
+			errors.forEach( error -> {
+				logger.error( error );
+			});
+		} );
+	}
+
 	public WOTaskdHandler( ErrorCollector errorCollector ) {
 		_errorCollector = errorCollector;
 	}

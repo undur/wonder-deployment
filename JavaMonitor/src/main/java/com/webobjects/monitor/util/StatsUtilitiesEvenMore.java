@@ -19,7 +19,7 @@ public class StatsUtilitiesEvenMore {
 	}
 
 	private static NSArray statistics() {
-		final WOTaskdHandler handler = new WOTaskdHandler( errors -> {} );
+		final WOTaskdHandler handler = new WOTaskdHandler();
 
 		final NSMutableArray stats = new NSMutableArray();
 
