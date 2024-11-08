@@ -1,7 +1,5 @@
 package com.webobjects.monitor.util;
 
-import java.util.List;
-
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
@@ -9,7 +7,6 @@ import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSPropertyListSerialization;
 import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MInstance;
-import com.webobjects.monitor.util.WOTaskdHandler.ErrorCollector;
 
 /**
  * FIXME: Temporary holder class for some statistics functionality we're moving out of the front end // Hugi 2024-10-26 
@@ -22,34 +19,26 @@ public class StatsUtilitiesEvenMore {
 	}
 
 	private static NSArray statistics() {
-		final WOTaskdHandler handler = new WOTaskdHandler( new ErrorCollector() {
-			public void addObjectsFromArrayIfAbsentToErrorMessageArray( List<String> errors ) {
-
-			}
-		} );
+		final WOTaskdHandler handler = new WOTaskdHandler( errors -> {} );
 
 		final NSMutableArray stats = new NSMutableArray();
 
-		handler.startReading();
-
-		try {
+		handler.whileReading( () -> {
 			for( final MApplication app : WOTaskdHandler.siteConfig().applicationArray() ) {
+				// FIXME: Aren't we redundantly fetching the same info multiple times here? // Hugi 2024-11-08 
 				handler.getInstanceStatusForHosts( app.hostArray() );
-
-				final NSDictionary appStats = statisticsHistoryEntry( app );
-				stats.addObject( appStats );
+				stats.addObject( statistics( app ) );
 			}
-		}
-		finally {
-			handler.endReading();
-		}
+		} );
 
 		return stats;
 	}
 
-	private static NSDictionary statisticsHistoryEntry( MApplication app ) {
+	private static NSDictionary statistics( final MApplication app ) {
+
 		final NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
 		result.setObjectForKey( app.name(), "applicationName" );
+
 		final NSArray<MInstance> allInstances = app.instanceArray();
 		result.setObjectForKey( Integer.valueOf( allInstances.count() ), "configuredInstances" );
 
@@ -62,6 +51,7 @@ public class StatsUtilitiesEvenMore {
 				runningInstances++;
 				instances.addObject( instance );
 			}
+
 			if( instance.isRefusingNewSessions() ) {
 				refusingInstances++;
 			}
@@ -86,7 +76,7 @@ public class StatsUtilitiesEvenMore {
 
 		return result;
 	}
-	
+
 	private static Object nonNull( Object value ) {
 		return value != null ? value : "";
 	}
