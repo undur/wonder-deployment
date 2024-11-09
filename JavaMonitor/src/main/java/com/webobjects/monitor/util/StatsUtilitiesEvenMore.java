@@ -1,5 +1,7 @@
 package com.webobjects.monitor.util;
 
+import java.util.List;
+
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
@@ -36,20 +38,18 @@ public class StatsUtilitiesEvenMore {
 
 	private static NSDictionary statistics( final MApplication app ) {
 
-		final NSMutableDictionary<String, Object> result = new NSMutableDictionary<>();
-		result.setObjectForKey( app.name(), "applicationName" );
+		final NSDictionary<String, Object> result = new NSMutableDictionary<>();
+		result.put( "applicationName", app.name() );
 
-		final NSArray<MInstance> allInstances = app.instanceArray();
-		result.setObjectForKey( Integer.valueOf( allInstances.count() ), "configuredInstances" );
+		final List<MInstance> allInstances = app.instanceArray();
+		result.put( "configuredInstances", Integer.valueOf( allInstances.size() ) );
 
 		int runningInstances = 0;
 		int refusingInstances = 0;
-		final NSMutableArray instances = new NSMutableArray();
 
 		for( MInstance instance : allInstances ) {
 			if( instance.isRunning_M() ) {
 				runningInstances++;
-				instances.addObject( instance );
 			}
 
 			if( instance.isRefusingNewSessions() ) {
@@ -57,22 +57,22 @@ public class StatsUtilitiesEvenMore {
 			}
 		}
 
-		result.setObjectForKey( Integer.valueOf( runningInstances ), "runningInstances" );
-		result.setObjectForKey( Integer.valueOf( refusingInstances ), "refusingInstances" );
+		result.put( "runningInstances", Integer.valueOf( runningInstances ) );
+		result.put( "refusingInstances", Integer.valueOf( refusingInstances ) );
 
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@sum.activeSessionsValue" ) ), "sumSessions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.activeSessionsValue" ) ), "maxSessions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.activeSessionsValue" ) ), "avgSessions" );
+		result.put( "sumSessions", nonNull( app.instanceArray().valueForKeyPath( "@sum.activeSessionsValue" ) ) );
+		result.put( "maxSessions", nonNull( app.instanceArray().valueForKeyPath( "@max.activeSessionsValue" ) ) );
+		result.put( "avgSessions", nonNull( app.instanceArray().valueForKeyPath( "@avg.activeSessionsValue" ) ) );
 
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@sum.transactionsValue" ) ), "sumTransactions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.transactionsValue" ) ), "maxTransactions" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.transactionsValue" ) ), "avgTransactions" );
+		result.put( "sumTransactions", nonNull( app.instanceArray().valueForKeyPath( "@sum.transactionsValue" ) ) );
+		result.put( "maxTransactions", nonNull( app.instanceArray().valueForKeyPath( "@max.transactionsValue" ) ) );
+		result.put( "avgTransactions", nonNull( app.instanceArray().valueForKeyPath( "@avg.transactionsValue" ) ) );
 
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.avgTransactionTimeValue" ) ), "maxAvgTransactionTime" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.avgTransactionTimeValue" ) ), "avgAvgTransactionTime" );
+		result.put( "maxAvgTransactionTime", nonNull( app.instanceArray().valueForKeyPath( "@max.avgTransactionTimeValue" ) ) );
+		result.put( "avgAvgTransactionTime", nonNull( app.instanceArray().valueForKeyPath( "@avg.avgTransactionTimeValue" ) ) );
 
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@max.avgIdleTimeValue" ) ), "maxAvgIdleTime" );
-		result.setObjectForKey( nonNull( app.instanceArray().valueForKeyPath( "@avg.avgIdleTimeValue" ) ), "avgAvgIdleTime" );
+		result.put( "maxAvgIdleTime", nonNull( app.instanceArray().valueForKeyPath( "@max.avgIdleTimeValue" ) ) );
+		result.put( "avgAvgIdleTime", nonNull( app.instanceArray().valueForKeyPath( "@avg.avgIdleTimeValue" ) ) );
 
 		return result;
 	}
