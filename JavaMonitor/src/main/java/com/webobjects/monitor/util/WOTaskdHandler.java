@@ -102,7 +102,7 @@ public class WOTaskdHandler {
 	}
 
 	/**
-	 * Performs the given stuff while keeping a read lock  
+	 * Performs the given stuff while holding a read lock  
 	 */
 	public void whileReading( final Runnable stuffToDoWhileReading ) {
 		startReading();
@@ -112,6 +112,20 @@ public class WOTaskdHandler {
 		}
 		finally {
 			endReading();
+		}
+	}
+
+	/**
+	 * Performs the given stuff while holding a write lock  
+	 */
+	public void whileWriting( final Runnable stuffToDoWhileWriting ) {
+		startWriting();
+		
+		try {
+			stuffToDoWhileWriting.run();
+		}
+		finally {
+			endWriting();
 		}
 	}
 
