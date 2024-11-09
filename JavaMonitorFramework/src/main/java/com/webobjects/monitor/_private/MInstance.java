@@ -422,8 +422,8 @@ public class MInstance extends MObject {
 	}
 
 	public void _takeValueFromApplication( String valueName ) {
-		NSDictionary appValues = _application.values;
-		values.takeValueForKey( appValues.valueForKey( valueName ), valueName );
+		final Object appValue = _application.values.valueForKey( valueName );
+		values.takeValueForKey( appValue, valueName );
 	}
 
 	public void takeValuesFromApplication() {

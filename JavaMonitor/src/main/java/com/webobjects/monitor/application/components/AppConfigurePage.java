@@ -64,6 +64,9 @@ public class AppConfigurePage extends MonitorComponent {
 		return aPage;
 	}
 
+	/**
+	 * Updates the application, without touching the instances (unless it's an application name change)
+	 */
 	public WOComponent updateAppDefaultsOnly() {
 		
 		handler().whileReading( () -> {
@@ -82,17 +85,16 @@ public class AppConfigurePage extends MonitorComponent {
 			boolean pushAppOnly = true;
 
 			if( myApplication().isStopped_M() ) {
-				String defaultsName = appDefaults.name();
+				final String defaultsName = appDefaults.name();
 
 				if( !defaultsName.equals( myApplication().name() ) ) {
-					MApplication app = myApplication().siteConfig().applicationWithName( appDefaults.name() );
+					final MApplication app = myApplication().siteConfig().applicationWithName( appDefaults.name() );
+
 					if( app == null ) {
 						pushAppOnly = false;
 						myApplication().setName( defaultsName );
-						List<MInstance> _instanceArray = myApplication().instanceArray();
-						int instanceArrayCount = _instanceArray.size();
-						for( int i = 0; i < instanceArrayCount; i++ ) {
-							MInstance anInstance = _instanceArray.get( i );
+
+						for( MInstance anInstance : myApplication().instanceArray() ) {
 							anInstance._takeNameFromApplication();
 						}
 					}
@@ -142,12 +144,10 @@ public class AppConfigurePage extends MonitorComponent {
 			myApplication().setWinPath( appDefaults.winPath() );
 			myApplication().setMacPath( appDefaults.macPath() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takePathFromApplication();
 			}
+
 			_defaultsPush();
 		});
 
@@ -159,12 +159,7 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().whileReading( () -> {
 			myApplication().setAutoRecover( appDefaults.autoRecover() );
 
-			final List<MInstance> _instanceArray = myApplication().instanceArray();
-
-			int instanceArrayCount = _instanceArray.size();
-
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeValueFromApplication( "autoRecover" );
 			}
 
@@ -179,12 +174,10 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().whileReading( () -> {
 			myApplication().setMinimumActiveSessionsCount( appDefaults.minimumActiveSessionsCount() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeValueFromApplication( "minimumActiveSessionsCount" );
 			}
+
 			_defaultsPush();
 		});
 
@@ -196,12 +189,10 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().whileReading( () -> {
 			myApplication().setCachingEnabled( appDefaults.cachingEnabled() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeValueFromApplication( "cachingEnabled" );
 			}
+
 			_defaultsPush();
 		});
 
@@ -213,12 +204,10 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().whileReading( () -> {
 			myApplication().setDebuggingEnabled( appDefaults.debuggingEnabled() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeValueFromApplication( "debuggingEnabled" );
 			}
+
 			_defaultsPush();
 		});
 
@@ -232,12 +221,10 @@ public class AppConfigurePage extends MonitorComponent {
 			myApplication().setWinOutputPath( appDefaults.winOutputPath() );
 			myApplication().setMacOutputPath( appDefaults.macOutputPath() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeOutputPathFromApplication();
 			}
+
 			_defaultsPush();
 		});
 
@@ -249,12 +236,10 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().whileReading( () -> {
 			myApplication().setAutoOpenInBrowser( appDefaults.autoOpenInBrowser() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeValueFromApplication( "autoOpenInBrowser" );
 			}
+
 			_defaultsPush();
 		});
 
@@ -266,12 +251,10 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().whileReading( () -> {
 			myApplication().setLifebeatInterval( appDefaults.lifebeatInterval() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeValueFromApplication( "lifebeatInterval" );
 			}
+
 			_defaultsPush();
 		});
 
@@ -283,12 +266,10 @@ public class AppConfigurePage extends MonitorComponent {
 		handler().whileReading( () -> {
 			myApplication().setAdditionalArgs( appDefaults.additionalArgs() );
 
-			List<MInstance> _instanceArray = myApplication().instanceArray();
-			int instanceArrayCount = _instanceArray.size();
-			for( int i = 0; i < instanceArrayCount; i++ ) {
-				MInstance anInstance = _instanceArray.get( i );
+			for( MInstance anInstance : myApplication().instanceArray() ) {
 				anInstance._takeValueFromApplication( "additionalArgs" );
 			}
+
 			_defaultsPush();
 		});
 
@@ -351,12 +332,7 @@ public class AppConfigurePage extends MonitorComponent {
 	}
 
 	public boolean shouldSchedule() {
-
-		if( myApplication().instanceArray().count() != 0 ) {
-			return true;
-		}
-
-		return false;
+		return !myApplication().instanceArray().isEmpty();
 	}
 
 	public MInstance currentScheduledInstance;
