@@ -762,7 +762,7 @@ public class AppDetailPage extends MonitorComponent {
 	/**
 	 * @return A new page instance
 	 */
-	public static AppDetailPage create( final WOContext context, final MApplication mApplication, final List<MInstance> selected ) {
+	public static AppDetailPage create( final WOContext context, final MApplication mApplication, final List<MInstance> selectedInstances ) {
 		final AppDetailPage page = ERXApplication.erxApplication().pageWithName( AppDetailPage.class, context );
 		page.setMyApplication( mApplication );
 
@@ -775,10 +775,11 @@ public class AppDetailPage extends MonitorComponent {
 			page.setAllInstances( instances );
 		}
 
-		if( selected != null ) {
+		// FIXME: I can't even... // Hugi 2024-11-09
+		if( selectedInstances != null ) {
 			final List<MInstance> active = new ArrayList<>();
 
-			for( MInstance instance : selected ) {
+			for( MInstance instance : selectedInstances ) {
 				if( instances.contains( instance ) ) {
 					active.add( instance );
 				}
