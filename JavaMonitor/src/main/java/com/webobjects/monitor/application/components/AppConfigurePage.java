@@ -21,9 +21,9 @@ import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MSiteConfig;
 import com.webobjects.monitor._private.StringExtensions;
-import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.MonitorComponent.AppComponent;
 
-public class AppConfigurePage extends MonitorComponent {
+public class AppConfigurePage extends AppComponent {
 
 	private static MSiteConfig _sc = new MSiteConfig( null );
 

@@ -20,9 +20,9 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
-import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.MonitorComponent.InstComponent;
 
-public class InstConfigurePage extends MonitorComponent {
+public class InstConfigurePage extends InstComponent {
 
 	public InstConfigurePage( WOContext aWocontext ) {
 		super( aWocontext );

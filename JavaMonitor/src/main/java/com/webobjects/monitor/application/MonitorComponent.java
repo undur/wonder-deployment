@@ -21,13 +21,11 @@ public abstract class MonitorComponent extends ERXComponent {
 	public final int MOD_PROXY_PAGE = 6;
 
 	private WOTaskdHandler _handler;
-	private MApplication _myApplication;
-	private MInstance _myInstance;
 	
 	private String _message;
 
-	public MonitorComponent( WOContext aWocontext ) {
-		super( aWocontext );
+	public MonitorComponent( WOContext context ) {
+		super( context );
 		_handler = new WOTaskdHandler( session() );
 	}
 
@@ -64,23 +62,37 @@ public abstract class MonitorComponent extends ERXComponent {
 		return _handler;
 	}
 
-	public final MApplication myApplication() {
-		return _myApplication;
+	public static abstract class AppComponent extends MonitorComponent {
+		
+		private MApplication _myApplication;
+
+		public AppComponent( WOContext context ) {
+			super( context );
+		}
+
+		public final MApplication myApplication() {
+			return _myApplication;
+		}
+		
+		public void setMyApplication( MApplication application ) {
+			_myApplication = application;
+		}
 	}
 
-	public void setMyApplication( MApplication application ) {
-		assert application != null;
-		_myApplication = application;
-		_myInstance = null;
-	}
+	public static abstract class InstComponent extends MonitorComponent {
 
-	public final MInstance myInstance() {
-		return _myInstance;
-	}
+		private MInstance _myInstance;
 
-	public void setMyInstance( MInstance instance ) {
-		assert instance != null;
-		_myInstance = instance;
-		_myApplication = instance.application();
+		public InstComponent( WOContext context ) {
+			super( context );
+		}
+		
+		public final MInstance myInstance() {
+			return _myInstance;
+		}
+		
+		public void setMyInstance( MInstance instance ) {
+			_myInstance = instance;
+		}
 	}
 }

@@ -18,7 +18,7 @@ import com.webobjects.monitor._private.MApplication;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor._private.MObject;
-import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.MonitorComponent.AppComponent;
 import com.webobjects.monitor.application.components.ConfirmationPage.ConfirmationDelegate;
 import com.webobjects.monitor.application.starter.ApplicationStarter;
 import com.webobjects.monitor.application.starter.GracefulBouncer;
@@ -28,7 +28,7 @@ import com.webobjects.monitor.util.StatsUtilities;
 
 import er.extensions.appserver.ERXApplication;
 
-public class AppDetailPage extends MonitorComponent {
+public class AppDetailPage extends AppComponent {
 
 	public MInstance currentInstance;
 	public boolean isClearDeathSectionVisible;

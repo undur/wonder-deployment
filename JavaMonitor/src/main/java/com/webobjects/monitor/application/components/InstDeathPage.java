@@ -17,9 +17,9 @@ import java.util.List;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MInstance;
-import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.MonitorComponent.InstComponent;
 
-public class InstDeathPage extends MonitorComponent {
+public class InstDeathPage extends InstComponent {
 
 	public String currentDeath;
 	public int index;
@@ -30,11 +30,11 @@ public class InstDeathPage extends MonitorComponent {
 
 	public WOComponent clearDeathsClicked() {
 		handler().sendClearDeathsToWotaskds( List.of( myInstance() ), List.of( myInstance().host() ) );
-		return AppDetailPage.create( context(), myApplication() );
+		return AppDetailPage.create( context(), myInstance().application() );
 	}
 
 	public WOComponent returnClicked() {
-		return AppDetailPage.create( context(), myApplication() );
+		return AppDetailPage.create( context(), myInstance().application() );
 	}
 
 	public int indexPlusOne() {

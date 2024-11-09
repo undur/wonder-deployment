@@ -6,13 +6,13 @@ import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MInstance;
-import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.MonitorComponent.InstComponent;
 import com.webobjects.monitor.util.ExperimentalUtilities;
 import com.webobjects.monitor.util.JMLogViewerPage;
 
 import er.extensions.appserver.ERXApplication;
 
-public class InstDetailPage extends MonitorComponent {
+public class InstDetailPage extends InstComponent {
 
 	public String jstackString;
 
