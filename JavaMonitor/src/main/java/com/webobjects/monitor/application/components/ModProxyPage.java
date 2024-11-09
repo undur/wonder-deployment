@@ -82,8 +82,8 @@ public class ModProxyPage extends MonitorComponent {
 			for( MInstance anInst : anApp.instanceArray() ) {
 				anInst.extractAdaptorValuesFromApplication();
 
-				String host = anInst.values().valueForKey( "hostName" ).toString();
-				String port = anInst.values().valueForKey( "port" ).toString();
+				String host = anInst.hostName();
+				String port = anInst.port().toString();
 
 				String url = "http://" + host + ":" + port + adaptorPath + anApp.name() + ".woa";
 
