@@ -1,0 +1,23 @@
+<wo:JMTablerLook currentPage="$APP_PAGE">
+	<div class="row">
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-body">
+					<h2>Instance deaths</h2>
+					<p><wo:link action="$clearDeathsClicked" class="btn btn-sm">Clear History</wo:link> <wo:link action="$returnClicked" class="btn btn-sm">Back to App Detail View</wo:link></p>
+					<table class="table table-sm table-striped mb-0">
+						<tr>
+							<th colspan="2">Date/Time Occurred</th>
+						</tr>
+						<wo:repetition list="$myInstance.deaths" item="$currentDeath" index="$index">
+							<tr>
+								<td><wo:str value="$indexPlusOne" /> </td>
+								<td><wo:str value="$currentDeath" /> </td>
+							</tr>
+						</wo:repetition>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</wo:JMTablerLook>

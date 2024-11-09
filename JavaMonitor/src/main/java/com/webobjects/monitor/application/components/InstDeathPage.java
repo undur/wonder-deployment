@@ -19,16 +19,12 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.monitor._private.MInstance;
 import com.webobjects.monitor.application.MonitorComponent;
 
-/**
- * FIXME: I'm thinking this page should probably be called InstDeathPage, since it really applies to an instance, not an app // Hugi 2024-11-06 
- */
+public class InstDeathPage extends MonitorComponent {
 
-public class AppDeathPage extends MonitorComponent {
+	public String currentDeath;
+	public int index;
 
-	public Object aDeath;
-	public int anIndex;
-
-	public AppDeathPage( WOContext aWocontext ) {
+	public InstDeathPage( WOContext aWocontext ) {
 		super( aWocontext );
 	}
 
@@ -41,12 +37,12 @@ public class AppDeathPage extends MonitorComponent {
 		return AppDetailPage.create( context(), myApplication() );
 	}
 
-	public int anIndexPlusOne() {
-		return anIndex + 1;
+	public int indexPlusOne() {
+		return index + 1;
 	}
 
-	public static AppDeathPage create( WOContext context, MInstance instance ) {
-		AppDeathPage page = (AppDeathPage)context.page().pageWithName( AppDeathPage.class.getName() );
+	public static InstDeathPage create( WOContext context, MInstance instance ) {
+		InstDeathPage page = (InstDeathPage)context.page().pageWithName( InstDeathPage.class.getName() );
 		page.setMyInstance( instance );
 		return page;
 	}

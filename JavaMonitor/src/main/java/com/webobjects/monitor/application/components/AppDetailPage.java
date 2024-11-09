@@ -282,7 +282,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent instanceDeathDetailClicked() {
-		return AppDeathPage.create( context(), currentInstance );
+		return InstDeathPage.create( context(), currentInstance );
 	}
 
 	public WOComponent clearAllDeathsClicked() {
