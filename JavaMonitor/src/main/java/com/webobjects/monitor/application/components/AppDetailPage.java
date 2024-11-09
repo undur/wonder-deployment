@@ -180,9 +180,9 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public boolean hasInstances() {
-		final List<MInstance> instancesArray = myApplication().instanceArray();
+		final List<MInstance> instances = myApplication().instanceArray();
 
-		if( instancesArray == null || instancesArray.isEmpty() ) {
+		if( instances == null || instances.isEmpty() ) {
 			return false;
 		}
 
@@ -237,7 +237,7 @@ public class AppDetailPage extends MonitorComponent {
 		StringBuffer aURL = null;
 		if( adaptorURL != null ) {
 			// using adaptor URL
-			aURL = new StringBuffer( hrefToInst() );
+			aURL = new StringBuffer( linkToInstance() );
 		}
 		else {
 			// direct connect
@@ -250,27 +250,27 @@ public class AppDetailPage extends MonitorComponent {
 		return aURL.toString();
 	}
 
-	public String hrefToApp() {
+	public String linkToApp() {
 		String adaptorURL = siteConfig().woAdaptor();
 
 		if( adaptorURL == null ) {
 			adaptorURL = WOApplication.application().cgiAdaptorURL();
 		}
 
-		String _hrefToApp;
+		String hrefToApp;
 
 		if( adaptorURL.charAt( adaptorURL.length() - 1 ) == '/' ) {
-			_hrefToApp = adaptorURL + myApplication().name();
+			hrefToApp = adaptorURL + myApplication().name();
 		}
 		else {
-			_hrefToApp = adaptorURL + "/" + myApplication().name();
+			hrefToApp = adaptorURL + "/" + myApplication().name();
 		}
 		
-		return _hrefToApp;
+		return hrefToApp;
 	}
 
-	public String hrefToInst() {
-		return hrefToApp() + ".woa/" + currentInstance.id();
+	public String linkToInstance() {
+		return linkToApp() + ".woa/" + currentInstance.id();
 	}
 
 	public String hrefToInstDirect() {
@@ -324,13 +324,9 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent toggleAutoRecover() {
-		if( isTrueNullSafe( currentInstance.autoRecover() ) ) {
-			currentInstance.setAutoRecover( Boolean.FALSE );
-		}
-		else {
-			currentInstance.setAutoRecover( Boolean.TRUE );
-		}
+		final boolean autoRecover = isTrueNullSafe( currentInstance.autoRecover() );
 
+		currentInstance.setAutoRecover( !autoRecover );
 		sendUpdateInstances( List.of( currentInstance ) );
 
 		return newDetailPage();
@@ -343,22 +339,19 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public WOComponent toggleScheduling() {
-		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
-			currentInstance.setSchedulingEnabled( Boolean.FALSE );
-		}
-		else {
-			currentInstance.setSchedulingEnabled( Boolean.TRUE );
-		}
-
+		final boolean schedulingEnabled = isTrueNullSafe( currentInstance.schedulingEnabled() );
+		
+		currentInstance.setSchedulingEnabled( !schedulingEnabled );
 		sendUpdateInstances( List.of( currentInstance ) );
-
+		
 		return newDetailPage();
 	}
 
 	private void sendUpdateInstances( final List<MInstance> instances ) {
-		handler().startReading();
 
-		try {
+		// FIXME: Aren't we really.... writing? Still getting the hang of this locking mechanism // Hugi 2024-11-09
+
+		handler().whileReading( () -> {
 			final Set<MHost> hosts = new HashSet<>();
 
 			for( MInstance instance : instances ) {
@@ -366,10 +359,7 @@ public class AppDetailPage extends MonitorComponent {
 			}
 
 			handler().sendUpdateInstancesToWotaskds( instances, new ArrayList<>( hosts ) );
-		}
-		finally {
-			handler().endReading();
-		}
+		} );
 	}
 
 	public List<MInstance> allInstances() {
@@ -438,15 +428,13 @@ public class AppDetailPage extends MonitorComponent {
 				() -> {
 					handler().startReading();
 					try {
-						if( application.hostArray().size() != 0 ) {
+						if( !application.hostArray().isEmpty() ) {
 							handler().sendStopInstancesToWotaskds( instances, application.hostArray() );
 						}
 
-						for( int i = 0; i < instances.size(); i++ ) {
-							final MInstance anInst = instances.get( i );
-
-							if( anInst.state != MObject.DEAD ) {
-								anInst.state = MObject.STOPPING;
+						for( final MInstance instance : instances ) {
+							if( instance.state != MObject.DEAD ) {
+								instance.state = MObject.STOPPING;
 							}
 						}
 					}
@@ -472,7 +460,7 @@ public class AppDetailPage extends MonitorComponent {
 					try {
 						siteConfig().removeInstances_M( application, instances );
 
-						if( siteConfig().hostArray().size() != 0 ) {
+						if( !siteConfig().hostArray().isEmpty() ) {
 							handler().sendRemoveInstancesToWotaskds( instances, siteConfig().hostArray() );
 						}
 					}
@@ -489,14 +477,11 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			final List<MInstance> instancesArray = selectedInstances();
-
-			for( int i = 0; i < instancesArray.size(); i++ ) {
-				MInstance anInst = instancesArray.get( i );
+			for( MInstance anInst : selectedInstances() ) {
 				anInst.setAutoRecover( Boolean.TRUE );
 			}
 
-			handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
+			handler().sendUpdateInstancesToWotaskds( selectedInstances(), allHosts() );
 		}
 		finally {
 			handler().endReading();
@@ -510,14 +495,11 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			final List<MInstance> instancesArray = selectedInstances();
-
-			for( int i = 0; i < instancesArray.size(); i++ ) {
-				MInstance anInst = instancesArray.get( i );
-				anInst.setAutoRecover( Boolean.FALSE );
+			for( MInstance instance : selectedInstances() ) {
+				instance.setAutoRecover( Boolean.FALSE );
 			}
 
-			handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
+			handler().sendUpdateInstancesToWotaskds( selectedInstances(), allHosts() );
 		}
 		finally {
 			handler().endReading();
@@ -548,8 +530,9 @@ public class AppDetailPage extends MonitorComponent {
 			handler().sendRefuseSessionToWotaskds( selectedInstances(), myApplication().hostArray(), true );
 
 			// FIXME: Why is this method invocation here? A relic of some method call, used to refresh a cache? // Hugi 2024-11-03
-			@SuppressWarnings("unused")
-			List<MInstance> instancesArray = selectedInstances();
+			// FIXME: Disabled on 2024-11-09
+//			@SuppressWarnings("unused")
+//			List<MInstance> instancesArray = selectedInstances();
 		}
 		finally {
 			handler().endReading();
@@ -563,15 +546,12 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			List<MInstance> instancesArray = selectedInstances();
-
-			for( int i = 0; i < instancesArray.size(); i++ ) {
-				MInstance anInst = instancesArray.get( i );
-				anInst.setSchedulingEnabled( Boolean.TRUE );
+			for( final MInstance instance : selectedInstances() ) {
+				instance.setSchedulingEnabled( Boolean.TRUE );
 			}
 
-			if( allHosts().size() != 0 ) {
-				handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
+			if( !allHosts().isEmpty() ) {
+				handler().sendUpdateInstancesToWotaskds( selectedInstances(), allHosts() );
 			}
 		}
 		finally {
@@ -599,14 +579,11 @@ public class AppDetailPage extends MonitorComponent {
 		handler().startReading();
 
 		try {
-			final List<MInstance> instancesArray = selectedInstances();
-
-			for( int i = 0; i < instancesArray.size(); i++ ) {
-				MInstance anInst = instancesArray.get( i );
+			for( final MInstance anInst : selectedInstances() ) {
 				anInst.setSchedulingEnabled( Boolean.FALSE );
 			}
 
-			handler().sendUpdateInstancesToWotaskds( instancesArray, allHosts() );
+			handler().sendUpdateInstancesToWotaskds( selectedInstances(), allHosts() );
 		}
 		finally {
 			handler().endReading();
@@ -638,12 +615,7 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public String autoRecoverLabel() {
-
-		if( isTrueNullSafe( currentInstance.autoRecover() ) ) {
-			return "On";
-		}
-
-		return "Off";
+		return isTrueNullSafe( currentInstance.autoRecover() ) ? "On" : "Off";
 	}
 
 	public String autoRecoverDivClass() {
@@ -657,9 +629,6 @@ public class AppDetailPage extends MonitorComponent {
 		return results;
 	}
 
-	/**
-	 * FIXME: We're going to have to take into account those scheduling classes // Hugi 2024-10-25 
-	 */
 	public String refuseNewSessionsClass() {
 		String base = "AppControl";
 		String result = base + " " + base + "NotRefusingNewSessions";
@@ -701,13 +670,12 @@ public class AppDetailPage extends MonitorComponent {
 	}
 
 	public String nextShutdown() {
-		String result = "N/A";
 
 		if( isTrueNullSafe( currentInstance.schedulingEnabled() ) ) {
-			result = currentInstance.nextScheduledShutdownString();
+			return currentInstance.nextScheduledShutdownString();
 		}
 
-		return result;
+		return "N/A";
 	}
 
 	/**

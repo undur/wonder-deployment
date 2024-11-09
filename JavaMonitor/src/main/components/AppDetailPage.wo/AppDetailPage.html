@@ -47,7 +47,7 @@
 			<div class="col">
 				<h1> 
 					<wo:if condition="$myApplication.isRunning_M">
-						"<wo:link href="$hrefToApp" target="new"><wo:str value="$myApplication.name" /></wo:link>"
+						"<wo:link href="$linkToApp" target="new"><wo:str value="$myApplication.name" /></wo:link>"
 					</wo:if>
 					<wo:if condition="$myApplication.isRunning_M" negate="$true">
 						"<wo:str value="$myApplication.name" />"
@@ -114,7 +114,7 @@
 					<td>
 						<wo:link action="$instanceDetailClicked"><wo:str value="$currentInstance.displayName" /></wo:link>
 						<wo:if condition="$currentInstance.isRunning_M">
-							<wo:link href="$hrefToInst" target="new" title="Open through proxy/adaptor/webserver" style="float: right"><wo:JMIcon name="Link" /></wo:link>
+							<wo:link href="$linkToInstance" target="new" title="Open through proxy/adaptor/webserver" style="float: right"><wo:JMIcon name="Link" /></wo:link>
 						</wo:if>
 					</td>
 					<td class="InstanceHostPort">
