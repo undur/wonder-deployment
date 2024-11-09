@@ -13,6 +13,7 @@ import er.extensions.components.ERXComponent;
 
 public abstract class MonitorComponent extends ERXComponent {
 
+	// FIXME: Get these constants out of the way and make "currentl selected page" mechanism nicer // Hugi 2024-11-09
 	public final int APP_PAGE = 0;
 	public final int HOST_PAGE = 1;
 	public final int SITE_PAGE = 2;
@@ -50,10 +51,6 @@ public abstract class MonitorComponent extends ERXComponent {
 		return (Session)super.session();
 	}
 
-	public List<MHost> allHosts() {
-		return siteConfig().hostArray();
-	}
-
 	public MSiteConfig siteConfig() {
 		return WOTaskdHandler.siteConfig();
 	}
@@ -76,6 +73,14 @@ public abstract class MonitorComponent extends ERXComponent {
 		
 		public void setMyApplication( MApplication application ) {
 			_myApplication = application;
+		}
+		
+		/**
+		 * FIXME: We should really just inline invocations of this method // Hugi 2024-11-09
+		 */
+		@Deprecated
+		protected List<MHost> allHosts() {
+			return siteConfig().hostArray();
 		}
 	}
 
