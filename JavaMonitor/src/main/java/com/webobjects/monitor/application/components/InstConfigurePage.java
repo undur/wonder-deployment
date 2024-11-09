@@ -108,7 +108,7 @@ public class InstConfigurePage extends InstComponent {
 	public WOComponent startupUpdateClicked() {
 		handler().startReading();
 		try {
-			handler().sendUpdateInstancesToWotaskds( List.of( myInstance() ), allHosts() );
+			handler().sendUpdateInstancesToWotaskds( List.of( myInstance() ), siteConfig().hostArray() );
 		}
 		finally {
 			handler().endReading();
@@ -119,7 +119,7 @@ public class InstConfigurePage extends InstComponent {
 	public WOComponent adaptorSettingsUpdateClicked() {
 		handler().startReading();
 		try {
-			handler().sendUpdateInstancesToWotaskds( List.of( myInstance() ), allHosts() );
+			handler().sendUpdateInstancesToWotaskds( List.of( myInstance() ), siteConfig().hostArray() );
 		}
 		finally {
 			handler().endReading();
