@@ -52,18 +52,15 @@ public class HostConfigurePage extends MonitorComponent {
 	}
 
 	public WOComponent configureHostClicked() {
-		handler().startWriting();
-		try {
-			MHost host = myHost();
+		
+		handler().whileWriting(() -> {
+			final MHost host = myHost();
 
-			if( (_hostTypeSelection != null) && (!(_hostTypeSelection.toUpperCase().equals( host.osType() ))) ) {
+			if( _hostTypeSelection != null && !_hostTypeSelection.toUpperCase().equals( host.osType() ) ) {
 				host.setOsType( _hostTypeSelection.toUpperCase() );
 				handler().sendUpdateHostToWotaskds( host, siteConfig().hostArray() );
 			}
-		}
-		finally {
-			handler().endWriting();
-		}
+		} );
 
 		return HostConfigurePage.create( context(), myHost() );
 	}
