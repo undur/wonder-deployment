@@ -216,17 +216,14 @@ public class AppDetailPage extends AppComponent {
 				"Are you sure you want to delete this instance (" + instance.displayName() + " running on " + instance.hostName() + ")",
 				"Selecting 'Yes' will shutdown the selected instance of this application and delete its instance configuration.",
 				() -> {
-					handler().startWriting();
-					try {
+					handler().whileWriting( () -> {
 						siteConfig().removeInstance_M( instance );
 
-						if( siteConfig().hostArray().count() != 0 ) {
+						if( !siteConfig().hostArray().isEmpty() ) {
 							handler().sendRemoveInstancesToWotaskds( List.of( instance ), siteConfig().hostArray() );
 						}
-					}
-					finally {
-						handler().endWriting();
-					}
+					});
+
 					return AppDetailPage.create( context(), instance.application() );
 				},
 				() -> AppDetailPage.create( context(), instance.application() ) ) );
@@ -456,17 +453,13 @@ public class AppDetailPage extends AppComponent {
 				"Are you sure you want to delete the selected <i>" + instances.size() + "</i> instances of application " + application.name() + "?",
 				"Selecting 'Yes' will shutdown any shutdown the selected instances of this application, and delete all matching instance configurations.",
 				() -> {
-					handler().startWriting();
-					try {
+					handler().whileWriting( () -> {
 						siteConfig().removeInstances_M( application, instances );
 
 						if( !siteConfig().hostArray().isEmpty() ) {
 							handler().sendRemoveInstancesToWotaskds( instances, siteConfig().hostArray() );
 						}
-					}
-					finally {
-						handler().endWriting();
-					}
+					});
 					return AppDetailPage.create( context(), application, instances );
 				},
 				() -> AppDetailPage.create( context(), application, instances ) ) );
@@ -733,17 +726,13 @@ public class AppDetailPage extends AppComponent {
 			return newDetailPage();
 		}
 
-		handler().startWriting();
-		try {
+		handler().whileWriting( () -> {
 			List<MInstance> newInstanceArray = siteConfig().addInstances_M( selectedHost, myApplication(), numberOfInstancesToAdd );
 
 			if( allHosts().size() != 0 ) {
 				handler().sendAddInstancesToWotaskds( newInstanceArray, allHosts() );
 			}
-		}
-		finally {
-			handler().endWriting();
-		}
+		});
 
 		return newDetailPage();
 	}

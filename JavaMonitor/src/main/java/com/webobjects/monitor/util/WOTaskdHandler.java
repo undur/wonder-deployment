@@ -93,14 +93,6 @@ public class WOTaskdHandler {
 		_lock.readLock().unlock();
 	}
 
-	public void startWriting() {
-		_lock.writeLock().lock();
-	}
-
-	public void endWriting() {
-		_lock.writeLock().unlock();
-	}
-
 	/**
 	 * Performs the given stuff while holding a read lock  
 	 */
@@ -119,13 +111,13 @@ public class WOTaskdHandler {
 	 * Performs the given stuff while holding a write lock  
 	 */
 	public void whileWriting( final Runnable stuffToDoWhileWriting ) {
-		startWriting();
+		_lock.writeLock().lock();
 		
 		try {
 			stuffToDoWhileWriting.run();
 		}
 		finally {
-			endWriting();
+			_lock.writeLock().unlock();
 		}
 	}
 

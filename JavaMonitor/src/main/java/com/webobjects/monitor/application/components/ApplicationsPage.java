@@ -105,17 +105,15 @@ public class ApplicationsPage extends MonitorComponent {
 		final MApplication application = currentApplication;
 
 		final Supplier<WOActionResults> confirm = () -> {
-			handler().startWriting();
-			try {
+			
+			handler().whileWriting( () -> {
 				siteConfig().removeApplication_M( application );
 
 				if( siteConfig().hostArray().count() != 0 ) {
 					handler().sendRemoveApplicationToWotaskds( application, siteConfig().hostArray() );
 				}
-			}
-			finally {
-				handler().endWriting();
-			}
+			});
+
 			return ApplicationsPage.create( context() );
 		};
 

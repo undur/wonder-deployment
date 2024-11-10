@@ -29,15 +29,14 @@ public class HostsPage extends MonitorComponent {
 	}
 
 	public WOComponent addHostClicked() {
-		String nullOrError = null;
 
 		if( newHostName != null && (newHostName.length() > 0) && (StringExtensions.isValidXMLString( newHostName )) ) {
 			try {
 				InetAddress anAddress = InetAddress.getByName( newHostName );
 
-				handler().startWriting();
+				handler().whileWriting( () -> {
+					String nullOrError = null;
 
-				try {
 					if( newHostName.equalsIgnoreCase( "localhost" ) || newHostName.equals( "127.0.0.1" ) ) {
 						// only allow this to happen if we have no other hosts!
 						if( !((siteConfig().hostArray() != null) && (siteConfig().hostArray().count() == 0)) ) {
@@ -81,10 +80,7 @@ public class HostsPage extends MonitorComponent {
 							session().addErrorIfAbsent( "The host " + newHostName + " has already been added" );
 						}
 					}
-				}
-				finally {
-					handler().endWriting();
-				}
+				});
 			}
 			catch( UnknownHostException ex ) {
 				session().addErrorIfAbsent( "ERROR: Cannot find IP address for hostname: " + newHostName );
@@ -107,17 +103,14 @@ public class HostsPage extends MonitorComponent {
 				"Are you sure you want to delete the host <I>" + host.name() + "</I>?",
 				"Selecting 'Yes' will shutdown any running instances of this host, and remove those instance configurations.",
 				() -> {
-					handler().startWriting();
-					try {
+					handler().whileWriting( () -> {
 						siteConfig().removeHost_M( host );
 						final List<MHost> tempHostArray = new ArrayList( siteConfig().hostArray() );
 						tempHostArray.add( host );
 
 						handler().sendRemoveHostToWotaskds( host, tempHostArray );
-					}
-					finally {
-						handler().endWriting();
-					}
+					});
+
 					return HostsPage.create( context() );
 				},
 				() -> HostsPage.create( context() ) ) );
