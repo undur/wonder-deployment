@@ -206,7 +206,7 @@ public class FileBrowser extends MonitorComponent {
 				final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( host.name(), WOApplication.application().lifebeatDestinationPort() );
 				anHTTPConnection.setReceiveTimeout( 5000 );
 
-				final NSMutableDictionary<String, NSMutableArray<String>> headers = (NSMutableDictionary<String, NSMutableArray<String>>)WOTaskdHandler.siteConfig().passwordDictionary().mutableClone();
+				final NSMutableDictionary<String, NSMutableArray<String>> headers = WOTaskdHandler.siteConfig().passwordDictionary().mutableClone();
 
 				if( path != null && path.length() > 0 ) {
 					headers.put( "filepath", new NSMutableArray<>( path ) );
