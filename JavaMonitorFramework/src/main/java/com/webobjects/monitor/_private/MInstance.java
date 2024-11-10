@@ -934,6 +934,8 @@ public class MInstance extends MObject {
 
 	/**
 	 * Overridden for Scheduling
+	 *
+	 * FIXME: I don't think this ever gets invoked? // Hugi 2024-11-10
 	 */
 	@Override
 	public void setValues( NSMutableDictionary newValues ) {

@@ -586,7 +586,7 @@ public class MApplication extends MObject {
 		return instanceWithID( ID ) != null;
 	}
 
-	public MInstance instanceWithID( Integer ID ) {
+	private MInstance instanceWithID( Integer ID ) {
 		int instanceArrayCount = _instanceArray.count();
 
 		for( int i = 0; i < instanceArrayCount; i++ ) {

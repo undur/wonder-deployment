@@ -269,7 +269,7 @@ public class MSiteConfig extends MObject {
 	}
 
 	/********** Change Notifications **********/
-	protected boolean _hasChanges = true;
+	private boolean _hasChanges = true;
 
 	public boolean hasChanges() {
 		return _hasChanges;
@@ -387,7 +387,9 @@ public class MSiteConfig extends MObject {
 	}
 
 	public NSMutableArray<MInstance> addInstances_M( MHost selectedHost, MApplication anApplication, int numberToAdd ) {
+
 		backup( "addInstances-" + anApplication.name() + "-" + selectedHost.name() + "-" + numberToAdd );
+
 		final NSMutableArray<MInstance> newInstanceArray = new NSMutableArray<>( numberToAdd );
 
 		for( int i = 0; i < numberToAdd; i++ ) {
@@ -396,6 +398,7 @@ public class MSiteConfig extends MObject {
 			addInstance_M( newInstance );
 			newInstanceArray.addObject( newInstance );
 		}
+
 		return newInstanceArray;
 	}
 
@@ -421,22 +424,28 @@ public class MSiteConfig extends MObject {
 	}
 
 	public void removeInstances_M( MApplication application, List<MInstance> instances ) {
+
 		backup( "removeInstances-" + application + "-" + instances.size() );
+
 		for( final MInstance instance : instances ) {
 			removeInstance_M( instance, false );
 		}
 	}
 
 	private void removeInstance_M( MInstance anInstance, boolean doBackup ) {
+
 		if( doBackup ) {
 			backup( "removeInstance-" + anInstance.displayName() );
 		}
+
 		_removeInstance( anInstance );
 	}
 
 	public void removeInstance_W( MInstance anInstance ) {
+
 		if( (anInstance._host == _localHost) && anInstance.isRunning_W() ) {
 			final ProtoLocalMonitor plMonitor = (ProtoLocalMonitor)WOApplication.application().valueForKey( "localMonitor" );
+
 			try {
 				plMonitor.stopInstance( anInstance );
 			}
@@ -444,6 +453,7 @@ public class MSiteConfig extends MObject {
 				logger.error( "Can't remove", me );
 			}
 		}
+
 		_removeInstance( anInstance );
 	}
 
@@ -863,22 +873,22 @@ public class MSiteConfig extends MObject {
 	public static MSiteConfig unarchiveSiteConfig( boolean isWotaskd ) {
 		MSiteConfig aConfig = null;
 
+		// The file may not exist, but we can create it.
+		// It is awkward to do the file creation here, in this way, but this stuff needs to be factored properly.
+		// This may throw an exception when it tries to create the file. Go to the utility method to see the exception being dropped.
 		if( !fileForSiteConfig().exists() ) {
-
-			// The file may not exist, but we can create it.
-			// It is awkward to do the file creation here, in this way, but this stuff needs to be factored properly.
-			// This may throw an exception when it tries to create the file. Go to the utility method to see the exception being dropped.
-
-			_NSStringUtilities.writeToFile( fileForSiteConfig(), new CoderWrapper().encodeRootObjectForKey( NSDictionary.EmptyDictionary, "SiteConfig" ) );
+			final String emptySiteConfig = new CoderWrapper().encodeRootObjectForKey( NSDictionary.EmptyDictionary, "SiteConfig" );
+			_NSStringUtilities.writeToFile( fileForSiteConfig(), emptySiteConfig );
 		}
 
-		// now, the file should exist, or we have an error.
-
+		// Now, the file should exist, or we have an error.
 		if( fileForSiteConfig().exists() ) {
 			if( fileForSiteConfig().canRead() ) {
 				try {
-					final NSDictionary siteDict = (NSDictionary)(new CoderWrapper().decodeRootObject( pathForSiteConfig() ));
+					final NSDictionary siteDict = (NSDictionary)new CoderWrapper().decodeRootObject( pathForSiteConfig() );
+
 					aConfig = new MSiteConfig( siteDict );
+
 					if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
 						NSLog.debug.appendln( "the SiteConfig is \n" + aConfig.generateSiteConfigXML() );
 					}
@@ -901,9 +911,11 @@ public class MSiteConfig extends MObject {
 		else {
 			logger.error( "SiteConfig file {} doesn't exist. Continuing as if empty.", pathForSiteConfig() );
 		}
+
 		if( aConfig == null ) {
 			aConfig = new MSiteConfig( null );
 		}
+
 		return aConfig;
 	}
 
@@ -911,7 +923,7 @@ public class MSiteConfig extends MObject {
 		try {
 			final File sc = fileForSiteConfig();
 			if( sc.exists() ) {
-				final NSTimestampFormatter formatter = new NSTimestampFormatter( "%Y%m%d%H%M%S%F" );
+				final NSTimestampFormatter formatter = new NSTimestampFormatter( "%Y%m%d%H%M%S%F" ); // FIXME: Replace with java.time // Hugi 2024-11-10
 				final File renamedFile = new File( pathForSiteConfig() + "." + formatter.format( new NSTimestamp() ) );
 				sc.renameTo( renamedFile );
 			}
@@ -925,33 +937,35 @@ public class MSiteConfig extends MObject {
 		saveSiteConfig( fileForSiteConfig(), generateSiteConfigXML(), false );
 	}
 
-	private void saveSiteConfig( File sc, String value, boolean compress ) {
+	private void saveSiteConfig( File siteConfigFile, String serialisedSiteConfig, boolean compress ) {
 		try {
-			if( sc.exists() && !sc.canWrite() ) {
-				logger.error( "Don't have permission to write to file {} as this user, please change the permissions.", sc.getAbsolutePath() );
+			if( siteConfigFile.exists() && !siteConfigFile.canWrite() ) {
+				logger.error( "Don't have permission to write to file {} as this user, please change the permissions.", siteConfigFile.getAbsolutePath() );
 				final String pre = WOApplication.application().name() + " - " + localHostName;
-				globalErrorDictionary.takeValueForKey( pre + " Don't have permission to write to file " + sc.getAbsolutePath() + " as this user, please change the permissions.", "archiveSiteConfig" );
+				globalErrorDictionary.takeValueForKey( pre + " Don't have permission to write to file " + siteConfigFile.getAbsolutePath() + " as this user, please change the permissions.", "archiveSiteConfig" );
 				return;
 			}
+
 			if( compress ) {
-				sc = new File( sc.getParentFile(), sc.getName() + ".gz" );
-				stringToGZippedFile( value, sc );
+				siteConfigFile = new File( siteConfigFile.getParentFile(), siteConfigFile.getName() + ".gz" );
+				stringToGZippedFile( serialisedSiteConfig, siteConfigFile );
 			}
 			else {
-				_NSStringUtilities.writeToFile( sc, value );
+				_NSStringUtilities.writeToFile( siteConfigFile, serialisedSiteConfig );
 			}
+
 			globalErrorDictionary.takeValueForKey( null, "archiveSiteConfig" );
 		}
 		catch( final IOException e ) {
-			final String message = "Cannot write to file " + sc.getAbsolutePath() + ". IOException: " + e.getLocalizedMessage();
+			final String message = "Cannot write to file " + siteConfigFile.getAbsolutePath() + ". IOException: " + e.getLocalizedMessage();
 			logger.error( message );
 			final String pre = WOApplication.application().name() + " - " + localHostName;
 			globalErrorDictionary.takeValueForKey( pre + message, "archiveSiteConfig" );
 		}
 		catch( final NSForwardException ne ) {
-			logger.error( "Cannot write to file {}. Possible Permissions Problem.", sc.getAbsolutePath() );
+			logger.error( "Cannot write to file {}. Possible Permissions Problem.", siteConfigFile.getAbsolutePath() );
 			final String pre = WOApplication.application().name() + " - " + localHostName;
-			globalErrorDictionary.takeValueForKey( pre + " Cannot write to file " + sc.getAbsolutePath() + ". Possible Permissions Problem.", "archiveSiteConfig" );
+			globalErrorDictionary.takeValueForKey( pre + " Cannot write to file " + siteConfigFile.getAbsolutePath() + ". Possible Permissions Problem.", "archiveSiteConfig" );
 		}
 	}
 
@@ -986,8 +1000,6 @@ public class MSiteConfig extends MObject {
 		}
 	}
 
-	/********** Archiving Support **********/
-	// KH - speed this up by uniquing the strings
 	public String generateAdaptorConfigXML( boolean onlyIncludeRunningInstances, boolean shouldIncludeUnregisteredInstances ) {
 		final StringBuilder sb = new StringBuilder( "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<adaptor>\n" );
 
@@ -1106,7 +1118,7 @@ public class MSiteConfig extends MObject {
 	}
 
 	public String generateSiteConfigXML() {
-		return (new CoderWrapper()).encodeRootObjectForKey( dictionaryForArchive(), "SiteConfig" );
+		return new CoderWrapper().encodeRootObjectForKey( dictionaryForArchive(), "SiteConfig" );
 	}
 
 	private String _lastConfig;
@@ -1168,12 +1180,8 @@ public class MSiteConfig extends MObject {
 
 	@Override
 	public String toString() {
-		return values.toString() + "\n" +
-				"hasChanges = " + _hasChanges + "\n" +
-				"configDirectoryPath = " + _configDirectoryPath;
+		return values.toString() + "\n" + "hasChanges = " + _hasChanges + "\n" + "configDirectoryPath = " + _configDirectoryPath;
 	}
-
-	/**********/
 
 	// KH - all these should be cached!
 	public long autoRecoverInterval() {
@@ -1196,21 +1204,22 @@ public class MSiteConfig extends MObject {
 	}
 
 	public MApplication applicationWithName( String anAppName ) {
+
 		if( anAppName == null ) {
 			return null;
 		}
 
-		final int applicationArrayCount = _applicationArray.count();
-		for( int i = 0; i < applicationArrayCount; i++ ) {
-			final MApplication anApp = _applicationArray.objectAtIndex( i );
+		for( final MApplication anApp : _applicationArray ) {
 			if( anApp.name().equals( anAppName ) ) {
 				return anApp;
 			}
 		}
+
 		return null;
 	}
 
 	public MHost hostWithName( String aHostName ) {
+
 		if( aHostName == null ) {
 			return null;
 		}
@@ -1219,79 +1228,86 @@ public class MSiteConfig extends MObject {
 			return localHost();
 		}
 
-		final int hostArrayCount = _hostArray.count();
-		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MHost aHost = _hostArray.objectAtIndex( i );
+		for( final MHost aHost : _hostArray ) {
 			if( aHost.name().equals( aHostName ) ) {
 				return aHost;
 			}
 		}
+
 		return null;
 	}
 
 	public boolean localhostOrLoopbackHostExists() {
+
 		final String localhost = "localhost";
 		final String loopback = "127.0.0.1";
-		final int hostArrayCount = _hostArray.count();
-		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MHost aHost = _hostArray.objectAtIndex( i );
-			if( (aHost.name().equals( localhost )) || (aHost.name().equals( loopback )) ) {
+
+		for( final MHost aHost : _hostArray ) {
+			if( aHost.name().equals( localhost ) || aHost.name().equals( loopback ) ) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
 	public MHost hostWithAddress( InetAddress anAddress ) {
+
 		if( anAddress == null ) {
 			return null;
 		}
 
-		if( (_localHost != null) && (anAddress.equals( localHostAddress )) ) {
+		if( _localHost != null && anAddress.equals( localHostAddress ) ) {
 			return _localHost;
 		}
 
-		final int hostArrayCount = _hostArray.count();
-		for( int i = 0; i < hostArrayCount; i++ ) {
-			final MHost aHost = _hostArray.objectAtIndex( i );
+		for( final MHost aHost : _hostArray ) {
 			if( anAddress.equals( aHost.address() ) ) {
 				return aHost;
 			}
 		}
+
 		return null;
 	}
 
 	public MInstance instanceWithName( String anInstanceName ) {
+
 		if( anInstanceName == null ) {
 			return null;
 		}
 
-		final int instanceArrayCount = _instanceArray.count();
-		for( int i = 0; i < instanceArrayCount; i++ ) {
-			final MInstance anInstance = _instanceArray.objectAtIndex( i );
+		for( final MInstance anInstance : _instanceArray ) {
 			if( anInstance.displayName().equals( anInstanceName ) ) {
 				return anInstance;
 			}
 		}
+
 		return null;
 	}
 
 	public MInstance instanceWithHostnameAndPort( String hostName, Integer port ) {
+
 		final MHost aHost = hostWithName( hostName );
+
 		if( aHost == null ) {
 			return null;
 		}
+
 		return aHost.instanceWithPort( port );
 	}
 
 	public MInstance instanceWithHostAndPort( String name, InetAddress host, String port ) {
+
 		try {
 			final Integer anIntPort = Integer.valueOf( port );
 			final MHost aHost = hostWithAddress( host );
+
 			if( aHost == null ) {
 				return null;
 			}
+
 			final MInstance anInstance = aHost.instanceWithPort( anIntPort );
+
 			if( anInstance != null ) {
 				if( anInstance.applicationName().equals( name ) ) {
 					return anInstance;
@@ -1301,6 +1317,7 @@ public class MSiteConfig extends MObject {
 		catch( final Exception e ) {
 			logger.error( "Exception getting instance: {}:{}", host, port, e );
 		}
+
 		return null;
 	}
 
