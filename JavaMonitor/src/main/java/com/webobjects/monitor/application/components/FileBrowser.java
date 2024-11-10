@@ -156,17 +156,16 @@ public class FileBrowser extends MonitorComponent {
 				}
 
 				CoderWrapper aDecoder = new CoderWrapper();
+
 				try {
 					byte[] evilHackCombined = new byte[responseContentBytes.length + evilHack.length];
 					// System.arraycopy(src, src_pos, dst, dst_pos, length);
 					System.arraycopy( evilHack, 0, evilHackCombined, 0, evilHack.length );
-					System.arraycopy( responseContentBytes, 0, evilHackCombined, evilHack.length,
-							responseContentBytes.length );
+					System.arraycopy( responseContentBytes, 0, evilHackCombined, evilHack.length, responseContentBytes.length );
 					anArray = (NSArray)aDecoder.decodeRootObject( new NSData( evilHackCombined ) );
 				}
 				catch( WOXMLException wxe ) {
-					NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding response: "
-							+ responseContentString );
+					NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding response: " + responseContentString );
 					throw new MonitorException( "Host returned bad response for path " + thePath );
 				}
 
@@ -201,9 +200,10 @@ public class FileBrowser extends MonitorComponent {
 				WOHTTPConnection anHTTPConnection = new WOHTTPConnection( aHost.name(), theApplication.lifebeatDestinationPort() );
 				@SuppressWarnings("cast")
 				NSMutableDictionary<String, NSMutableArray<String>> aHeadersDict = (NSMutableDictionary<String, NSMutableArray<String>>)WOTaskdHandler.siteConfig().passwordDictionary().mutableClone();
-				WORequest aRequest = null;
-				WOResponse aResponse = null;
+				WORequest request = null;
+				WOResponse response = null;
 				boolean requestSucceeded = false;
+
 				if( aString != null && aString.length() > 0 ) {
 					aHeadersDict.setObjectForKey( new NSMutableArray<>( aString ), "filepath" );
 				}
@@ -211,27 +211,27 @@ public class FileBrowser extends MonitorComponent {
 					aHeadersDict.setObjectForKey( new NSMutableArray<>( "YES" ), "showFiles" );
 				}
 
-				aRequest = new WORequest( MObject._GET, RemoteBrowseClient.getPathString, MObject._HTTP1, aHeadersDict,
-						null, null );
+				request = new WORequest( MObject._GET, RemoteBrowseClient.getPathString, MObject._HTTP1, aHeadersDict, null, null );
 				anHTTPConnection.setReceiveTimeout( 5000 );
 
-				requestSucceeded = anHTTPConnection.sendRequest( aRequest );
+				requestSucceeded = anHTTPConnection.sendRequest( request );
 
 				if( requestSucceeded ) {
-					aResponse = anHTTPConnection.readResponse();
+					response = anHTTPConnection.readResponse();
 				}
 
-				if( (aResponse == null) || (!requestSucceeded) || (aResponse.status() != 200) ) {
+				if( response == null || !requestSucceeded || response.status() != 200 ) {
 					throw new MonitorException( "Error requesting directory listing for " + aString + " from " + aHost.name() );
 				}
 
 				try {
-					aFileListDictionary = _getFileListOutOfResponse( aResponse, aString );
+					aFileListDictionary = _getFileListOutOfResponse( response, aString );
 				}
 				catch( MonitorException me ) {
-					if( NSLog
-							.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelCritical, NSLog.DebugGroupDeployment ) )
+					if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelCritical, NSLog.DebugGroupDeployment ) ) {
 						NSLog.debug.appendln( "caught exception: " + me );
+					}
+
 					throw me;
 				}
 
@@ -245,9 +245,9 @@ public class FileBrowser extends MonitorComponent {
 				aHost.isAvailable = false;
 				NSLog.err.appendln( "Exception requesting directory listing: " );
 				localException.printStackTrace();
-				throw new MonitorException( "Exception requesting directory listing for " + aString + " from "
-						+ aHost.name() + ": " + localException.toString() );
+				throw new MonitorException( "Exception requesting directory listing for " + aString + " from " + aHost.name() + ": " + localException.toString() );
 			}
+
 			return aFileListDictionary;
 		}
 	}
