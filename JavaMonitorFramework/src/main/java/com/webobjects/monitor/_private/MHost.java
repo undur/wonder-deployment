@@ -298,7 +298,7 @@ public class MHost extends MObject {
 	 * FIXME: Part of weird error handling mechanism // Hugi 2024-11-03
 	 */
 	private static String errorResponseString( final MHost host ) {
-		return new CoderWrapper().encodeRootObjectForKey( new NSDictionary<String, NSArray>( new NSArray( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
+		return new CoderWrapper().encodeRootObjectForKey( new NSDictionary<>( new NSArray<>( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
 	}
 
 	@Override
