@@ -1,6 +1,7 @@
 package com.webobjects.monitor.application.components;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,13 +28,11 @@ import com.webobjects.foundation.NSData;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
-import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MHost;
 import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MonitorException;
-import com.webobjects.monitor.application.Application;
 import com.webobjects.monitor.application.MonitorComponent;
 import com.webobjects.monitor.util.WOTaskdHandler;
 
@@ -206,7 +205,7 @@ public class FileBrowser extends MonitorComponent {
 				final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( host.name(), WOApplication.application().lifebeatDestinationPort() );
 				anHTTPConnection.setReceiveTimeout( 5000 );
 
-				final NSMutableDictionary<String, NSMutableArray<String>> headers = WOTaskdHandler.siteConfig().passwordDictionary().mutableClone();
+				final Map<String, List<String>> headers = new HashMap<>( WOTaskdHandler.siteConfig().passwordHeaderMap() );
 
 				if( path != null && path.length() > 0 ) {
 					headers.put( "filepath", new NSMutableArray<>( path ) );
