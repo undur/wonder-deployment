@@ -1,11 +1,5 @@
 package com.webobjects.monitor.application.components;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.webobjects.appserver.WOApplication;
 /*
  © Copyright 2006- 2007 Apple Computer, Inc. All rights reserved.
 
@@ -18,28 +12,42 @@ import com.webobjects.appserver.WOApplication;
  IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN  ADVISED OF THE POSSIBILITY OF 
  SUCH DAMAGE.
  */
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.Builder;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.appserver.WOHTTPConnection;
-import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.xml.WOXMLException;
-import com.webobjects.foundation.NSArray;
-import com.webobjects.foundation.NSData;
-import com.webobjects.foundation.NSDictionary;
-import com.webobjects.foundation.NSLog;
-import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.monitor._private.CoderWrapper;
 import com.webobjects.monitor._private.MHost;
-import com.webobjects.monitor._private.MObject;
 import com.webobjects.monitor._private.MonitorException;
 import com.webobjects.monitor.application.MonitorComponent;
+import com.webobjects.monitor.application.components.FileBrowser.RemoteBrowseClient.RemoteFile;
+import com.webobjects.monitor.application.components.FileBrowser.RemoteBrowseClient.RemoteResult;
 import com.webobjects.monitor.util.WOTaskdHandler;
+
+import x.ResponseWrapper;
 
 public class FileBrowser extends MonitorComponent {
 
-	public record RemoteResult( boolean isRoots, String filepath, List<RemoteFile> files ) {}
-	public record RemoteFile( String file, Integer fileSize, String fileType ) {}
+	private static final Logger logger = LoggerFactory.getLogger( FileBrowser.class );
 
 	public String startingPath; // passed in
 	public String callbackUpdateAction; // passed in
@@ -71,7 +79,7 @@ public class FileBrowser extends MonitorComponent {
 
 	private String retrieveFileList() {
 		try {
-			RemoteResult fetched = RemoteBrowseClient.fileListForStartingPathHost( startingPath, host, showFiles );
+			RemoteResult fetched = RemoteBrowseClient.getFileList( startingPath, host, showFiles );
 			_fileList = fetched.files();
 			isRoots = fetched.isRoots();
 			startingPath = fetched.filepath();
@@ -80,7 +88,7 @@ public class FileBrowser extends MonitorComponent {
 		catch( MonitorException me ) {
 			if( isRoots )
 				startingPath = null;
-			NSLog.err.appendln( "Path Wizard Error: " + me.getMessage() );
+			logger.error( "Path Wizard Error: " + me.getMessage() );
 			me.printStackTrace();
 			errorMsg = me.getMessage();
 		}
@@ -144,17 +152,29 @@ public class FileBrowser extends MonitorComponent {
 		return performParentAction( callbackSelectionAction );
 	}
 
-	private static class RemoteBrowseClient {
+	public static class RemoteBrowseClient {
 
-		// FIXME: Dear lord. I feel the pain of whoever wrote this // Hugi 2024-11-10
-		private static byte[] evilHack = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>".getBytes();
+		public record RemoteResult( boolean isRoots, String filepath, List<RemoteFile> files ) {}
 
-		private static RemoteResult _getFileListOutOfResponse( final WOResponse response, final String sourcePath ) throws MonitorException {
-			final NSData responseContent = response.content();
-			NSArray<NSDictionary> anArray = NSArray.EmptyArray;
+		public record RemoteFile( String file, Integer fileSize, String fileType ) {}
 
-			if( responseContent != null ) {
-				final byte[] responseContentBytes = responseContent.bytes();
+		private static final Logger logger = LoggerFactory.getLogger( RemoteBrowseClient.class );
+
+		/**
+		 * The URL invoked to get a remote file list.
+		 */
+		private static String BROWSE_URL = "/cgi-bin/WebObjects/wotaskd.woa/wa/RemoteBrowse/getPath";
+
+		// FIXME: Dear lord. I feel the pain of whomever wrote this // Hugi 2024-11-10
+		private static byte[] EVIL_HACK = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>".getBytes();
+
+		private static RemoteResult extractFileListFromResponse( final ResponseWrapper response, final String sourcePath ) throws MonitorException {
+
+			final byte[] responseContentBytes = response.content();
+
+			List<Map<String, ?>> deserializedResponseContent = Collections.emptyList();
+
+			if( responseContentBytes != null ) {
 				final String responseContentString = new String( responseContentBytes );
 
 				if( responseContentString.startsWith( "ERROR" ) ) {
@@ -162,18 +182,18 @@ public class FileBrowser extends MonitorComponent {
 				}
 
 				try {
-					final byte[] evilHackCombined = new byte[responseContentBytes.length + evilHack.length];
-					System.arraycopy( evilHack, 0, evilHackCombined, 0, evilHack.length );
-					System.arraycopy( responseContentBytes, 0, evilHackCombined, evilHack.length, responseContentBytes.length );
-					anArray = (NSArray)new CoderWrapper().decodeRootObject( evilHackCombined );
+					final byte[] evilHackCombined = new byte[responseContentBytes.length + EVIL_HACK.length];
+					System.arraycopy( EVIL_HACK, 0, evilHackCombined, 0, EVIL_HACK.length );
+					System.arraycopy( responseContentBytes, 0, evilHackCombined, EVIL_HACK.length, responseContentBytes.length );
+					deserializedResponseContent = (List<Map<String,?>>)new CoderWrapper().decodeRootObject( evilHackCombined );
 				}
 				catch( WOXMLException wxe ) {
-					NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding response: " + responseContentString );
+					logger.error( "RemoteBrowseClient _getFileListOutOfResponse Error decoding response: " + responseContentString );
 					throw new MonitorException( "Host returned bad response for path " + sourcePath, wxe );
 				}
 			}
 			else {
-				NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding null response" );
+				logger.error( "RemoteBrowseClient _getFileListOutOfResponse Error decoding null response" );
 				throw new MonitorException( "Host returned null response for path " + sourcePath );
 			}
 
@@ -182,7 +202,7 @@ public class FileBrowser extends MonitorComponent {
 
 			final RemoteResult remoteResult = new RemoteResult( isRoots != null, filepath, new ArrayList<>() );
 
-			for( Map<String,Object> map : anArray ) {
+			for( Map<String, ?> map : deserializedResponseContent ) {
 				final String file = (String)map.get( "file" );
 				final Integer fileSize = (Integer)map.get( "fileSize" );
 				final String fileType = (String)map.get( "fileType" );
@@ -192,53 +212,59 @@ public class FileBrowser extends MonitorComponent {
 			return remoteResult;
 		}
 
-		private static String getPathString = "/cgi-bin/WebObjects/wotaskd.woa/wa/RemoteBrowse/getPath";
+		public static RemoteResult getFileList( final String path, final MHost host, final boolean showFiles ) throws MonitorException {
 
-		/**
-		 * FIXME: Switch to java http client // Hugi 2024-11-01
-		 */
-		public static RemoteResult fileListForStartingPathHost( final String path, final MHost host, final boolean showFiles ) throws MonitorException {
-
-			RemoteResult aFileListDictionary = null;
+			RemoteResult result = null;
 
 			try {
-				final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( host.name(), WOApplication.application().lifebeatDestinationPort() );
-				anHTTPConnection.setReceiveTimeout( 5000 );
+				// CHECKME: We can reuse the client. Future performance thoughts
+				final HttpClient client = HttpClient
+						.newBuilder()
+						.build();
 
+				final Builder requestBuilder = HttpRequest
+						.newBuilder()
+						.uri( URI.create( "http://%s:%s%s".formatted( host.name(), WOApplication.application().lifebeatDestinationPort(), RemoteBrowseClient.BROWSE_URL ) ) )
+						.timeout( Duration.ofMillis( 5000 ) )
+						.GET();
+
+				// FIXME: Entering an extremely lame method of constructing and setting the headers. Later... // Hugi 2024-11-06
 				final Map<String, List<String>> headers = new HashMap<>( WOTaskdHandler.siteConfig().passwordHeaderMap() );
 
+				// FIXME: I don't think the path can/should ever be null or empty. Validate in method invocation and handle in UI? // Hugi 2024-11-10
 				if( path != null && path.length() > 0 ) {
-					headers.put( "filepath", new NSMutableArray<>( path ) );
+					headers.put( "filepath", List.of( path ) );
 				}
 
 				if( showFiles ) {
-					headers.put( "showFiles", new NSMutableArray<>( "YES" ) );
+					headers.put( "showFiles", List.of( "YES" ) );
 				}
 
-				final WORequest request = new WORequest( MObject._GET, RemoteBrowseClient.getPathString, MObject._HTTP1, headers, null, null );
-
-				WOResponse response = null;
-				boolean requestSucceeded = anHTTPConnection.sendRequest( request );
-
-				if( requestSucceeded ) {
-					response = anHTTPConnection.readResponse();
+				for( final Entry<String, List<String>> entry : headers.entrySet() ) {
+					for( final String headerValue : entry.getValue() ) {
+						requestBuilder.setHeader( entry.getKey(), headerValue );
+					}
 				}
 
-				if( response == null || !requestSucceeded || response.status() != 200 ) {
+				final HttpRequest request = requestBuilder.build();
+
+				logger.info( "--> Sending request: =======" );
+				logger.info( "{}", request );
+				final HttpResponse<byte[]> response = client.send( request, BodyHandlers.ofByteArray() );
+				logger.info( "--> Response received ======= " + response.headers() );
+
+				// FIXME: Look into this error handling // Hugi 2024-11-10
+				if( response.statusCode() != 200 ) {
 					throw new MonitorException( "Error requesting directory listing for " + path + " from " + host.name() );
 				}
 
-				try {
-					aFileListDictionary = _getFileListOutOfResponse( response, path );
-				}
-				catch( MonitorException me ) {
-					if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelCritical, NSLog.DebugGroupDeployment ) ) {
-						NSLog.debug.appendln( "caught exception: " + me );
-					}
+				final ResponseWrapper responseWrapper = new ResponseWrapper();
+				responseWrapper._content = response.body();
+				responseWrapper._headers = response.headers();
 
-					throw me;
-				}
-
+				result = extractFileListFromResponse( responseWrapper, path );
+				
+				// By submitting a successful request, we've certainly certified that the host is available. Should probably stay...
 				host.isAvailable = true;
 			}
 			catch( MonitorException me ) {
@@ -247,12 +273,12 @@ public class FileBrowser extends MonitorComponent {
 			}
 			catch( Exception localException ) {
 				host.isAvailable = false;
-				NSLog.err.appendln( "Exception requesting directory listing: " );
+				logger.error( "Exception requesting directory listing: " );
 				localException.printStackTrace();
 				throw new MonitorException( "Exception requesting directory listing for " + path + " from " + host.name() + ": " + localException.toString(), localException );
 			}
 
-			return aFileListDictionary;
+			return result;
 		}
 	}
 }
