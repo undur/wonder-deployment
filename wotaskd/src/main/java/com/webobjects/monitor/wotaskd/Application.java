@@ -52,6 +52,8 @@ public class Application extends ERXApplication {
 	
 	private static final Logger logger = LoggerFactory.getLogger( Application.class );
 	
+	private static final String _HTTP1 = "HTTP/1.0";
+
 	private LocalMonitor _localMonitor;
 	private MSiteConfig _siteConfig;
 	private ListenThread listenThread;
@@ -392,8 +394,8 @@ public class Application extends ERXApplication {
 	// Overridden createRequest because WO ObjC apps send 'GET /... HTTP/1.0 ' (note extra space) which doesn't parse very well.
 	public WORequest createRequest( String aMethod, String aURL, String anHTTPVersion, NSDictionary someHeaders, NSData aContent, NSDictionary someInfo ) {
 		if( (anHTTPVersion == null) && (aURL != null) && (aURL.endsWith( " HTTP/1.0" )) ) {
-			anHTTPVersion = MObject._HTTP1;
-			aURL = aURL.substring( 0, (aURL.length() - MObject._HTTP1.length() - 1) );
+			anHTTPVersion = _HTTP1;
+			aURL = aURL.substring( 0, (aURL.length() - _HTTP1.length() - 1) );
 		}
 		return super.createRequest( aMethod, aURL, anHTTPVersion, someHeaders, aContent, someInfo );
 	}
