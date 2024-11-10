@@ -38,8 +38,6 @@ public class MObject /* implements NSKeyValueCoding */ {
 	public static final int DEAD = 4;
 	public static final int CRASHING = 5;
 
-	public static final String _POST = "POST";
-	public static final String _GET = "GET";
 	public static final String _HTTP1 = "HTTP/1.0";
 
 	public static final String WOTASKD_DIRECT_ACTION_URL = "/cgi-bin/WebObjects/wotaskd.woa/wa/monitorRequest";
