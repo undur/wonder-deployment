@@ -162,11 +162,11 @@ public class FileBrowser extends MonitorComponent {
 					// System.arraycopy(src, src_pos, dst, dst_pos, length);
 					System.arraycopy( evilHack, 0, evilHackCombined, 0, evilHack.length );
 					System.arraycopy( responseContentBytes, 0, evilHackCombined, evilHack.length, responseContentBytes.length );
-					anArray = (NSArray)aDecoder.decodeRootObject( new NSData( evilHackCombined ) );
+					anArray = (NSArray)aDecoder.decodeRootObject( evilHackCombined );
 				}
 				catch( WOXMLException wxe ) {
 					NSLog.err.appendln( "RemoteBrowseClient _getFileListOutOfResponse Error decoding response: " + responseContentString );
-					throw new MonitorException( "Host returned bad response for path " + thePath );
+					throw new MonitorException( "Host returned bad response for path " + thePath, wxe );
 				}
 
 			}

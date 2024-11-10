@@ -19,11 +19,15 @@ public class MonitorException extends Exception {
 	 */
 	private static final long serialVersionUID = 9035477737937670328L;
 
+	public MonitorException() {
+		super();
+	}
+
 	public MonitorException( String s ) {
 		super( s );
 	}
 
-	public MonitorException() {
-		super();
+	public MonitorException( String s, Exception e ) {
+		super( s, e );
 	}
 }
