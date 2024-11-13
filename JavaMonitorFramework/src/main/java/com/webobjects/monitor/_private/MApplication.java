@@ -446,15 +446,19 @@ public class MApplication extends MObject {
 
 	/********** Adding and Removing Instance primitives **********/
 	public void _addInstancePrimitive( MInstance anInstance ) {
+
 		_instanceArray.addObject( anInstance );
+
 		if( !_hostArray.containsObject( anInstance._host ) ) {
 			_hostArray.addObject( anInstance._host );
 		}
 	}
 
 	public void _removeInstancePrimitive( MInstance anInstance ) {
+
 		_instanceArray.removeObject( anInstance );
 		boolean uniqueHost = true;
+
 		for( Enumeration e = _instanceArray.objectEnumerator(); e.hasMoreElements(); ) {
 			MInstance anInst = (MInstance)e.nextElement();
 			if( anInstance._host == anInst._host ) {
@@ -462,6 +466,7 @@ public class MApplication extends MObject {
 				break;
 			}
 		}
+
 		if( uniqueHost ) {
 			_hostArray.removeObject( anInstance._host );
 		}
@@ -525,10 +530,9 @@ public class MApplication extends MObject {
 	}
 
 	public void pushValuesToInstances() {
-		int instanceArrayCount = _instanceArray.count();
-		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInstance = _instanceArray.objectAtIndex( i );
-			anInstance.takeValuesFromApplication();
+
+		for( final MInstance instance : _instanceArray ) {
+			instance.takeValuesFromApplication();
 		}
 	}
 
@@ -587,12 +591,10 @@ public class MApplication extends MObject {
 	}
 
 	private MInstance instanceWithID( Integer ID ) {
-		int instanceArrayCount = _instanceArray.count();
 
-		for( int i = 0; i < instanceArrayCount; i++ ) {
-			MInstance anInst = _instanceArray.objectAtIndex( i );
-			if( anInst.id().equals( ID ) ) {
-				return anInst;
+		for( final MInstance instance : _instanceArray ) {
+			if( instance.id().equals( ID ) ) {
+				return instance;
 			}
 		}
 
@@ -601,11 +603,9 @@ public class MApplication extends MObject {
 
 	public Integer runningInstancesCount_W() {
 		int runningInstances = 0;
-		int numInstances = _instanceArray.count();
 
-		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = _instanceArray.objectAtIndex( i );
-			if( anInstance.isRunning_W() ) {
+		for( final MInstance instance : _instanceArray ) {
+			if( instance.isRunning_W() ) {
 				runningInstances++;
 			}
 		}
@@ -639,14 +639,14 @@ public class MApplication extends MObject {
 	}
 
 	public NSArray<MInstance> runningInstances_M() {
-		NSMutableArray<MInstance> instances = new NSMutableArray<>();
-		int numInstances = _instanceArray.count();
-		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = _instanceArray.objectAtIndex( i );
-			if( anInstance.isRunning_M() ) {
-				instances.addObject( anInstance );
+		final NSMutableArray<MInstance> instances = new NSMutableArray<>();
+
+		for( final MInstance instance : _instanceArray ) {
+			if( instance.isRunning_M() ) {
+				instances.addObject( instance );
 			}
 		}
+
 		return instances;
 	}
 
@@ -655,11 +655,9 @@ public class MApplication extends MObject {
 	}
 
 	public boolean isStopped_M() {
-		int numInstances = _instanceArray.count();
 
-		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = _instanceArray.objectAtIndex( i );
-			if( anInstance.state != MObject.DEAD ) {
+		for( final MInstance instance : _instanceArray ) {
+			if( instance.state != MObject.DEAD ) {
 				return false;
 			}
 		}
