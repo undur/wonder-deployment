@@ -63,8 +63,35 @@ public class MHost extends MObject {
 	public boolean isAvailable = false;
 
 	// From the UI
-	public MHost( MSiteConfig aConfig, String name, String type ) {
-		this( new NSDictionary<Object, Object>( new Object[] { name, type }, new Object[] { "name", "type" } ), aConfig );
+	public MHost( final MSiteConfig siteConfig, final String name, final String type ) {
+		this( new NSDictionary<>( new Object[] { name, type }, new Object[] { "name", "type" } ), siteConfig );
+	}
+
+	// Unarchiving or Monitor Update
+	public MHost( NSDictionary valuesDict, MSiteConfig siteConfig ) {
+		values = new NSMutableDictionary( valuesDict );
+		_siteConfig = siteConfig;
+		_instanceArray = new NSMutableArray<>();
+
+		int tries = 0;
+		while( tries++ < 5 ) {
+			try {
+				_address = InetAddress.getByName( name() );
+				break;
+			}
+			catch( UnknownHostException anException ) {
+				// AK: From *my* POV, we should check if this is the localhost and exit if it is,
+				// as I had this happen when you set -WOHost something and DNS isn't available.
+				// As it stands now, wotaskd will launch, but not really register and app (or get weirdo exceptions)
+				logger.error( "Error getting address for Host: {}", name() );
+				try {
+					Thread.sleep( 2000 );
+				}
+				catch( InterruptedException e ) {
+					logger.error( "Interrupted" );
+				}
+			}
+		}
 	}
 
 	public String name() {
@@ -89,35 +116,9 @@ public class MHost extends MObject {
 		return _instanceArray;
 	}
 
-	// Unarchiving or Monitor Update
-	public MHost( NSDictionary aValuesDict, MSiteConfig aConfig ) {
-		values = new NSMutableDictionary( aValuesDict );
-		_siteConfig = aConfig;
-		_instanceArray = new NSMutableArray<>();
-
-		int tries = 0;
-		while( tries++ < 5 ) {
-			try {
-				_address = InetAddress.getByName( name() );
-				break;
-			}
-			catch( UnknownHostException anException ) {
-				// AK: From *my* POV, we should check if this is the localhost and exit if it is,
-				// as I had this happen when you set -WOHost something and DNS isn't available.
-				// As it stands now, wotaskd will launch, but not really register and app (or get weirdo exceptions)
-				logger.error( "Error getting address for Host: {}", name() );
-				try {
-					Thread.sleep( 2000 );
-				}
-				catch( InterruptedException e ) {
-					logger.error( "Interrupted" );
-				}
-			}
-		}
-	}
-
 	public void _addInstancePrimitive( MInstance anInstance ) {
 		_instanceArray.addObject( anInstance );
+
 		if( !_applicationArray.contains( anInstance._application ) ) {
 			_applicationArray.add( anInstance._application );
 		}
@@ -152,21 +153,15 @@ public class MHost extends MObject {
 		if( _address != null ) {
 			return _address.getHostAddress();
 		}
-		return "Unknown";
-	}
 
-	/** ******** Archiving Support ********* */
-	public NSDictionary dictionaryForArchive() {
-		return values;
+		return "Unknown";
 	}
 
 	public Integer runningInstancesCount_W() {
 		int runningInstances = 0;
-		int numInstances = _instanceArray.size();
 
-		for( int i = 0; i < numInstances; i++ ) {
-			MInstance anInstance = _instanceArray.get( i );
-			if( anInstance.isRunning_W() ) {
+		for( MInstance instance : _instanceArray ) {
+			if( instance.isRunning_W() ) {
 				runningInstances++;
 			}
 		}
@@ -300,6 +295,10 @@ public class MHost extends MObject {
 	 */
 	private static String errorResponseString( final MHost host ) {
 		return new CoderWrapper().encodeRootObjectForKey( new NSDictionary<>( new NSArray<>( "Failed to contact " + host.name() + "-" + WOApplication.application().lifebeatDestinationPort() ), "errorResponse" ), "instanceResponse" );
+	}
+
+	public NSDictionary dictionaryForArchive() {
+		return values;
 	}
 
 	@Override
