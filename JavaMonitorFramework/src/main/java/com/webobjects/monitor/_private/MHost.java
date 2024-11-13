@@ -181,7 +181,8 @@ public class MHost extends MObject {
 	// KH - this is probably slow :)
 	public Integer nextAvailablePort( Integer startingPort ) {
 		Integer retVal = null;
-		do {
+
+		while( retVal == null ) {
 			if( isPortInUse( startingPort ) ) {
 				startingPort = Integer.valueOf( startingPort.intValue() + 1 );
 			}
@@ -189,7 +190,7 @@ public class MHost extends MObject {
 				retVal = startingPort;
 			}
 		}
-		while( retVal == null );
+
 		return retVal;
 	}
 
@@ -263,7 +264,7 @@ public class MHost extends MObject {
 				logger.info( "--> Response received =======" );
 				responseWrapper._content = response.body();
 			}
-			catch( IOException | InterruptedException e ) {
+			catch( IOException e ) {
 				e.printStackTrace();
 				isAvailable = false;
 			}
