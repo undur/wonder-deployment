@@ -633,62 +633,6 @@ public class MSiteConfig extends MObject {
 		return NSDictionary.emptyDictionary();
 	}
 
-	/**
-	 * FIXME: Switch to java http client // Hugi 2024-11-01
-	 * FIXME: This seems unused. Disabled, probably removable // Hugi 2024-11-02
-	 */
-	/*
-	public static MSiteConfig getSiteConfigFromHostAndPort( String configHostName, int aPort ) throws MonitorException {
-		if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelInformational, NSLog.DebugGroupDeployment ) ) {
-			NSLog.debug.appendln( "!@#$!@#$ getSiteConfigFromHostAndPort creates a WOHTTPConnection" );
-		}
-		final NSDictionary<String, String> monitorRequest = new NSDictionary<>( "SITE", "queryWotaskd" );
-		final NSData content = new NSData( (new CoderWrapper()).encodeRootObjectForKey( monitorRequest, "monitorRequest" ) );
-	
-		final WORequest aRequest = new ERXRequest( MObject._POST, MObject.directActionString, MObject._HTTP1, NSDictionary.EmptyDictionary, content, null );
-		WOResponse aResponse = null;
-	
-		try {
-			final WOHTTPConnection anHTTPConnection = new WOHTTPConnection( configHostName, aPort );
-			anHTTPConnection.setReceiveTimeout( 5000 );
-	
-			if( anHTTPConnection.sendRequest( aRequest ) ) {
-				aResponse = anHTTPConnection.readResponse();
-			}
-		}
-		catch( final Exception localException ) {
-			logger.error( "Failed to connect to Host: {} and Port: {}", configHostName, aPort );
-			throw new MonitorException( "Failed to connect to Host: " + configHostName + " and Port: " + aPort );
-		}
-	
-		NSDictionary xmlDict = NSDictionary.EmptyDictionary;
-		if( aResponse != null ) {
-			try {
-				xmlDict = (NSDictionary)new CoderWrapper().decodeRootObject( aResponse.content() );
-			}
-			catch( final WOXMLException wxe ) {
-				logger.error( "Got non-parsable data from Host: {} + and Port: {}. Data received was: {}. It is possible that the Wotaskd on the remote host is of the wrong version", configHostName, aPort, aResponse.contentString() );
-				throw new MonitorException( "Got non-parsable data from Host: " + configHostName + " + and Port: " + aPort + ". Data received was: " + aResponse.contentString() + ". It is possible that the Wotaskd on the remote host is of the wrong version" );
-			}
-		}
-	
-		final NSArray errorResponse = (NSArray)xmlDict.valueForKey( "errorResponse" );
-		if( errorResponse != null ) {
-			String errorString = "";
-			for( int i = 0; i < errorResponse.count(); i++ ) {
-				errorString = errorString + (String)errorResponse.objectAtIndex( i ) + "\n";
-			}
-			throw new MonitorException( errorString );
-		}
-	
-		final NSDictionary queryWotaskdResponse = (NSDictionary)xmlDict.valueForKey( "queryWotaskdResponse" );
-		if( queryWotaskdResponse != null ) {
-			return new MSiteConfig( (NSDictionary)queryWotaskdResponse.valueForKey( "SiteConfig" ) );
-		}
-		return new MSiteConfig( null );
-	}
-	*/
-
 	public MSiteConfig( NSDictionary xmlDict ) {
 		localHostAddress = WOApplication.application().hostAddress();
 		localHostName = WOApplication.application().host();
