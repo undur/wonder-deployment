@@ -649,8 +649,7 @@ public class MSiteConfig extends MObject {
 				// rdar://3935864 - Seed: "Null Pointer Exception" for WO Application Instances
 				// It seems this should not be necessary, but there is no other place for default values to get fed in. -rrk
 				//
-				values = new NSMutableDictionary( new NSArray( new Object[] { Boolean.TRUE, Integer.valueOf( 60 ) } ),
-						new NSArray( new Object[] { "viewRefreshEnabled", "viewRefreshRate" } ) );
+				values = new NSMutableDictionary( new NSArray( new Object[] { Boolean.TRUE, Integer.valueOf( 60 ) } ), new NSArray( new Object[] { "viewRefreshEnabled", "viewRefreshRate" } ) );
 			}
 			else {
 				values = new NSMutableDictionary( siteDict );
@@ -682,32 +681,38 @@ public class MSiteConfig extends MObject {
 		_lastConfig = generateSiteConfigXML();
 	}
 
-	private void _initHostsWithArray( NSArray anArray ) {
-		if( anArray == null ) {
+	private void _initHostsWithArray( final List<NSDictionary> list ) {
+
+		if( list == null ) {
 			return;
 		}
-		for( int i = 0; i < anArray.count(); i++ ) {
-			final MHost aHost = new MHost( (NSDictionary)anArray.objectAtIndex( i ), this );
+
+		for( final NSDictionary map : list ) {
+			final MHost aHost = new MHost( map, this );
 			_addHost( aHost );
 		}
 	}
 
-	private void _initApplicationsWithArray( NSArray anArray ) {
-		if( anArray == null ) {
+	private void _initApplicationsWithArray( final List<NSDictionary> list ) {
+
+		if( list == null ) {
 			return;
 		}
-		for( int i = 0; i < anArray.count(); i++ ) {
-			final MApplication anApplication = new MApplication( (NSDictionary)anArray.objectAtIndex( i ), this );
+
+		for( final NSDictionary map : list ) {
+			final MApplication anApplication = new MApplication( map, this );
 			_addApplication( anApplication );
 		}
 	}
 
-	private void _initInstancesWithArray( NSArray anArray ) {
-		if( anArray == null ) {
+	private void _initInstancesWithArray( final List<NSDictionary> list ) {
+
+		if( list == null ) {
 			return;
 		}
-		for( int i = 0; i < anArray.count(); i++ ) {
-			final MInstance anInstance = new MInstance( (NSDictionary)anArray.objectAtIndex( i ), this );
+
+		for( final NSDictionary map : list ) {
+			final MInstance anInstance = new MInstance( map, this );
 			_addInstance( anInstance );
 		}
 	}
