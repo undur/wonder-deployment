@@ -43,7 +43,6 @@ import com.webobjects.foundation.NSForwardException;
 import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
-import com.webobjects.foundation.NSPathUtilities;
 import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation.NSTimestampFormatter;
 import com.webobjects.foundation._NSStringUtilities;
@@ -728,40 +727,18 @@ public class MSiteConfig extends MObject {
 
 	public static String configDirectoryPath() {
 
-		final String _fS = File.separator;
-
 		if( _configDirectoryPath == null ) {
 			_configDirectoryPath = System.getProperty( "WODeploymentConfigurationDirectory" );
-			if( _configDirectoryPath != null ) {
-				NSLog.debug.appendln( "WODeploymentConfigurationDirectory set to non-default: " + _configDirectoryPath );
+
+			if( _configDirectoryPath == null || _configDirectoryPath.isEmpty() ) {
+				logger.error( "WODeploymentConfigurationDirectory not set" );
+				System.exit( 1 );
 			}
 
-			if( (_configDirectoryPath == null) || (_configDirectoryPath.length() == 0) ) {
+			logger.info( "WODeploymentConfigurationDirectory is: " + _configDirectoryPath );
 
-				String localRoot = System.getProperty( "WOLocalRootDirectory" ); // should reference WO_HOME variable, someday
-
-				if( (localRoot != null) && (!localRoot.equals( "" )) ) {
-					NSLog.debug.appendln( "WOLocalRootDirectory set to non-default: " + localRoot );
-				}
-
-				if( localRoot == null ) {
-					if( System.getProperties().getProperty( "os.name" ).toLowerCase().startsWith( "win" ) ) {
-						logger.error( "WOLocalRootDirectory was not set and the os.name returned something that started " + "with 'win' or 'WIN' - guessing that path should be 'C:/Apple/Local'" );
-						localRoot = "C:" + _fS + "Apple" + _fS + "Local";
-					}
-					else {
-						localRoot = "";
-					}
-				}
-				_configDirectoryPath = NSPathUtilities.stringByAppendingPathComponent( localRoot, _fS + "Library" + _fS + "WebObjects" + _fS + "Configuration" );
-			}
-
-			if( !_configDirectoryPath.endsWith( _fS ) ) {
-				_configDirectoryPath = _configDirectoryPath + _fS;
-			}
-
-			if( NSLog.debugLoggingAllowedForLevelAndGroups( NSLog.DebugLevelDetailed, NSLog.DebugGroupDeployment ) ) {
-				NSLog.debug.appendln( "configDirectoryPath = " + _configDirectoryPath );
+			if( !_configDirectoryPath.endsWith( File.separator ) ) {
+				_configDirectoryPath = _configDirectoryPath + File.separator;
 			}
 
 			final File configDir = new File( _configDirectoryPath );
